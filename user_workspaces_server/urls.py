@@ -19,14 +19,14 @@ from . import views
 
 workspace_view_patterns = [
     path('', views.WorkspaceView.as_view()),
-    path('<int:workspace_uuid>/', views.WorkspaceView.as_view()),
-    path('<int:workspace_uuid>/<str:put_type>/', views.WorkspaceView.as_view()),
+    path('<int:workspace_id>/', views.WorkspaceView.as_view()),
+    path('<int:workspace_id>/<str:put_type>/', views.WorkspaceView.as_view()),
 ]
 
 job_view_patterns = [
     path('', views.JobView.as_view()),
-    path('<int:job_uuid>/', views.JobView.as_view()),
-    path('<int:job_uuid>/<str:put_type>/', views.JobView.as_view()),
+    path('<int:job_id>/', views.JobView.as_view()),
+    path('<int:job_id>/<str:put_type>/', views.JobView.as_view()),
 ]
 
 job_type_view_patterns = [
