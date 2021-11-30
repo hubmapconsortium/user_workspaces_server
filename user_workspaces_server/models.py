@@ -32,5 +32,3 @@ class ExternalUserMapping(models.Model):
     external_user_id = models.IntegerField()
     external_username = models.CharField(max_length=64)
     user_authentication_name = models.CharField(max_length=64)
-
-
