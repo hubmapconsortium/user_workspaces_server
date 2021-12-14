@@ -10,10 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import json
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+CONFIG = json.load(open(
+    os.path.join(BASE_DIR, 'example_config.json' if os.environ.get('GITHUB_WORKFLOW') else 'config.json')
+))
 
 
 # Quick-start development settings - unsuitable for production
@@ -32,6 +38,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'user_workspaces_server',
+    'rest_framework',
+    'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
