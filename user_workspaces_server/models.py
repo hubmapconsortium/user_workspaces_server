@@ -1,7 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Workspace(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=64, default="")
     description = models.TextField(default="")
     file_path = models.CharField(max_length=64, default="")
@@ -12,6 +14,7 @@ class Workspace(models.Model):
 
 class Job(models.Model):
     workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
+    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     job_type = models.CharField(max_length=64)
     resource_name = models.CharField(max_length=64)
     status = models.CharField(max_length=64)
@@ -22,6 +25,7 @@ class Job(models.Model):
 
 
 class UserQuota(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     max_disk_space = models.IntegerField()
     max_core_hours = models.IntegerField()
     used_disk_space = models.IntegerField()
@@ -29,6 +33,7 @@ class UserQuota(models.Model):
 
 
 class ExternalUserMapping(models.Model):
-    external_user_id = models.IntegerField()
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    external_user_id = models.CharField(max_length=128)
     external_username = models.CharField(max_length=64)
     user_authentication_name = models.CharField(max_length=64)
