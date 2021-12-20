@@ -17,6 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 
+token_view_patterns = [
+    path('', views.UserWorkspacesServerTokenView.as_view())
+]
+
 workspace_view_patterns = [
     path('', views.WorkspaceView.as_view()),
     path('<int:workspace_id>/', views.WorkspaceView.as_view()),
@@ -34,6 +38,7 @@ job_type_view_patterns = [
 ]
 
 urlpatterns = [
+    path('tokens/', include(token_view_patterns)),
     path('workspaces/', include(workspace_view_patterns)),
     path('jobs/', include(job_view_patterns)),
     path('job_types/', include(job_type_view_patterns)),
