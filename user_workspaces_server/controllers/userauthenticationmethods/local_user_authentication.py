@@ -2,6 +2,7 @@ from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_
     AbstractUserAuthentication
 import pwd
 import subprocess
+from django.forms.models import model_to_dict
 
 
 class LocalUserAuthentication(AbstractUserAuthentication):
@@ -32,7 +33,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                 })
 
         # If the mapping does exist, we just get that external user, to confirm it exists
-        return self.get_external_user({'external_user_id': external_user_mapping['external_user_id']})
+        return self.get_external_user({'external_user_id': model_to_dict(external_user_mapping)})
 
     def api_authenticate(self, request):
         return True
