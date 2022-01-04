@@ -62,17 +62,26 @@ class WorkspaceView(APIView):
 
         # Have to define file_path still
 
+        main_storage = apps.get_app_config('user_workspaces_server').main_storage
+        external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
+
+        if not external_user_mapping:
+            return JsonResponse(
+                {
+                    'message': 'User could not be found/created on main storage system.',
+                    'success': False
+                },
+                status=500
+            )
+
         workspace = models.Workspace(**workspace_data)
         workspace.save()
-
-        main_storage = apps.get_app_config('user_workspaces_server').main_storage
-        if not main_storage.storage_user_authentication.has_permission(request.user):
-            print('not found')
 
         # file_path should be relative, not absolute
         workspace.file_path = os.path.join(request.user.username, str(workspace.pk))
 
         main_storage.create_dir(workspace.file_path)
+        main_storage.set_ownership(workspace.file_path, external_user_mapping)
 
         workspace.save()
 
