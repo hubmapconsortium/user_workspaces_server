@@ -68,6 +68,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             if 'username' in external_user_info:
                 external_user = pwd.getpwnam(external_user_info['username'])
             elif 'external_user_id' in external_user_info:
+                print(external_user_info['external_user_id'])
                 external_user = pwd.getpwuid(external_user_info['external_user_id'])
             else:
                 external_user = False
