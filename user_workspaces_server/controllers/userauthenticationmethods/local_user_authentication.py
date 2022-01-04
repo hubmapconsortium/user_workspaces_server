@@ -54,6 +54,8 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                 output = subprocess.run(['useradd', user_info['name']], capture_output=True)
                 if output.returncode == 0:
                     return pwd.getpwnam(user_info['name'])
+                else:
+                    print(output.stdout)
             elif self.operating_system == 'osx':
                 pass
             # Need to return username and id
