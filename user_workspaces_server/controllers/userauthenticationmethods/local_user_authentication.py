@@ -19,30 +19,29 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             # If the mapping does not exist, we have to try to "find" an external user
             # based on the info we have from the internal user
             external_user = self.get_external_user({'username': internal_user.username})
+
             if not external_user:
                 # No user found, return false
                 if self.create_external_users:
                     external_user = self.create_external_user({'name': internal_user.username})
-                    if external_user:
-                        external_user_mapping = self.create_external_user_mapping({
-                            'user_id': internal_user,
-                            'user_authentication_name': type(self).__name__,
-                            'external_user_id': external_user[2],
-                            'external_username': external_user[0]
-                        })
-                        return self.get_external_user({'external_user_id': external_user_mapping.external_user_id})
-                return external_user
-            else:
-                # User found, create mapping
-                external_user_mapping = self.create_external_user_mapping({
-                    'user_id': internal_user,
-                    'user_authentication_name': type(self).__name__,
-                    'external_user_id': external_user[2],
-                    'external_username': external_user[0]
-                })
+                    if not external_user:
+                        return False
+                else:
+                    return False
 
-        # If the mapping does exist, we just get that external user, to confirm it exists
-        return self.get_external_user({'external_user_id': external_user_mapping.external_user_id})
+            # User found, create mapping
+            external_user_mapping = self.create_external_user_mapping({
+                'user_id': internal_user,
+                'user_authentication_name': type(self).__name__,
+                'external_user_id': external_user['external_user_uid'],
+                'external_username': external_user['external_user_name']
+            })
+            # If the mapping does exist, we just get that external user, to confirm it exists
+            return external_user_mapping \
+                if self.get_external_user({'external_user_id': external_user_mapping.external_user_id}) \
+                else False
+        else:
+            return external_user_mapping
 
     def api_authenticate(self, request):
         return True
@@ -70,7 +69,11 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                 external_user = pwd.getpwuid(int(external_user_info['external_user_id']))
             else:
                 external_user = False
-            return external_user
+            return {
+                'external_user_name': external_user[0],
+                'external_user_uid': external_user[2],
+                'external_user_gid': external_user[3]
+            } if external_user else external_user
         except Exception as e:
             print(e)
             return False
