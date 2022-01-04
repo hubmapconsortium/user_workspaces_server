@@ -22,6 +22,16 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             external_user = self.get_external_user({'username': internal_user.username})
             if not external_user:
                 # No user found, return false
+                if self.create_external_users:
+                    external_user = self.create_external_user({'name': internal_user.username})
+                    if external_user:
+                        external_user_mapping = self.create_external_user_mapping({
+                            'user_id': internal_user,
+                            'user_authentication_name': type(self).__name__,
+                            'external_user_id': '',
+                            'external_username': ''
+                        })
+                        return self.get_external_user({'external_user_id': model_to_dict(external_user_mapping)})
                 return external_user
             else:
                 # User found, create mapping
@@ -41,9 +51,9 @@ class LocalUserAuthentication(AbstractUserAuthentication):
     def create_external_user(self, user_info):
         if self.create_external_users and self.operating_system in ['linux', 'osx']:
             if self.operating_system == 'linux':
-                # TODO: Deploy on linux and test
-                output = subprocess.run(['useradd', '--disabled-password', user_info['name']], capture_output=True)
-                print(output.stdout)
+                output = subprocess.run(['useradd', user_info['name']], capture_output=True)
+                if output.returncode == 0:
+                    return pwd.getpwnam(user_info['name'])
             elif self.operating_system == 'osx':
                 pass
             # Need to return username and id
