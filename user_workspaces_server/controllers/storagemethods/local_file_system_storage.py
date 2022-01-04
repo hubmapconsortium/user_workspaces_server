@@ -1,4 +1,5 @@
 from user_workspaces_server.controllers.storagemethods.abstract_storage import AbstractStorage
+from django.forms import model_to_dict
 import os
 
 
@@ -27,4 +28,13 @@ class LocalFileSystemStorage(AbstractStorage):
 
     def get_dir_tree(self, path):
         return os.fwalk(os.path.join(path))
+
+    def set_ownership(self, path, owner_mapping):
+        external_user = self.storage_user_authentication.get_external_user(model_to_dict(owner_mapping))
+        os.chown(
+            os.path.join(self.root_dir, path),
+            external_user['external_user_uid'],
+            external_user['external_user_gid']
+        )
+
 
