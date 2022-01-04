@@ -23,9 +23,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             if not external_user:
                 # No user found, return false
                 if self.create_external_users:
-                    print('attempting to create user')
                     external_user = self.create_external_user({'name': internal_user.username})
-                    print(external_user)
                     if external_user:
                         external_user_mapping = self.create_external_user_mapping({
                             'user_id': internal_user,
@@ -51,22 +49,19 @@ class LocalUserAuthentication(AbstractUserAuthentication):
         return True
 
     def create_external_user(self, user_info):
-        print(self.operating_system)
-        if self.operating_system in ['linux', 'osx']:
-            if self.operating_system == 'linux':
-                print('creating user for linux?')
-                output = subprocess.run(['useradd', user_info['name']], capture_output=True)
-                print(output)
-                if output.returncode == 0:
-                    return pwd.getpwnam(user_info['name'])
-                else:
-                    print(output.stdout)
-            elif self.operating_system == 'osx':
-                pass
-            # Need to return username and id
-            return {}
+        if self.operating_system == 'linux':
+            output = subprocess.run(['useradd', user_info['name']], capture_output=True)
+            if output.returncode == 0:
+                external_user = pwd.getpwnam(user_info['name'])
+            else:
+                # TODO: Add logging here
+                external_user = False
+        elif self.operating_system == 'osx':
+            external_user = False
         else:
-            return False
+            external_user = False
+        # Need to return username and id
+        return external_user
 
     def get_external_user(self, external_user_info):
         try:
