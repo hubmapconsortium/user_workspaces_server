@@ -22,10 +22,10 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             external_user = self.get_external_user({'username': internal_user.username})
             if not external_user:
                 # No user found, return false
-                print(self.create_external_users)
                 if self.create_external_users:
                     print('attempting to create user')
                     external_user = self.create_external_user({'name': internal_user.username})
+                    print(external_user)
                     if external_user:
                         external_user_mapping = self.create_external_user_mapping({
                             'user_id': internal_user,
