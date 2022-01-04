@@ -28,8 +28,8 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                         external_user_mapping = self.create_external_user_mapping({
                             'user_id': internal_user,
                             'user_authentication_name': type(self).__name__,
-                            'external_user_id': '',
-                            'external_username': ''
+                            'external_user_id': external_user[2],
+                            'external_username': external_user[0]
                         })
                         return self.get_external_user({'external_user_id': model_to_dict(external_user_mapping)})
                 return external_user
