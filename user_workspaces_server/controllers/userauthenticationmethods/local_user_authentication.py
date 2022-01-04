@@ -8,7 +8,7 @@ from django.forms.models import model_to_dict
 class LocalUserAuthentication(AbstractUserAuthentication):
     def __init__(self, config):
         self.create_external_users = config.get('create_external_users', False)
-        self.operating_system = config.get('operating_system', '').lower
+        self.operating_system = config.get('operating_system', '').lower()
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping({
