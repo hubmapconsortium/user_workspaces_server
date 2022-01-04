@@ -17,3 +17,7 @@ class AbstractStorage(ABC):
     @abstractmethod
     def get_dir_tree(self, path):
         pass
+
+    @abstractmethod
+    def set_ownership(self, path, owner_mapping):
+        pass
