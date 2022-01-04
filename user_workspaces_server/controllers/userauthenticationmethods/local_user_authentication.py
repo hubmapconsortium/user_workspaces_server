@@ -51,9 +51,10 @@ class LocalUserAuthentication(AbstractUserAuthentication):
         return True
 
     def create_external_user(self, user_info):
-        if self.create_external_users and self.operating_system in ['linux', 'osx']:
+        if self.operating_system in ['linux', 'osx']:
             if self.operating_system == 'linux':
                 output = subprocess.run(['useradd', user_info['name']], capture_output=True)
+                print(output)
                 if output.returncode == 0:
                     return pwd.getpwnam(user_info['name'])
                 else:
