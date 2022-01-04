@@ -51,6 +51,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
         return True
 
     def create_external_user(self, user_info):
+        print(self.operating_system)
         if self.operating_system in ['linux', 'osx']:
             if self.operating_system == 'linux':
                 print('creating user for linux?')
