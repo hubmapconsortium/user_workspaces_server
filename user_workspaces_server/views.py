@@ -60,8 +60,6 @@ class WorkspaceView(APIView):
             "workspace_details": body['workspace_details']
         }
 
-        # Have to define file_path still
-
         main_storage = apps.get_app_config('user_workspaces_server').main_storage
         external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
 
