@@ -19,7 +19,9 @@ import os
 class UserWorkspacesServerTokenView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         # grab the main auth method, just force globus auth for now
-        user_auth = globus_user_authentication.GlobusUserAuthentication(
+
+        api_user_authentication = apps.get_app_config('user_workspaces_server').api_user_authentication
+        user_auth = api_user_authentication(
             settings.CONFIG['available_user_authentication'][settings.CONFIG['api_user_authentication']]
             ['connection_details']
         )
