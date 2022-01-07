@@ -21,13 +21,9 @@ class UserWorkspacesServerTokenView(ObtainAuthToken):
         # grab the main auth method, just force globus auth for now
 
         api_user_authentication = apps.get_app_config('user_workspaces_server').api_user_authentication
-        user_auth = api_user_authentication(
-            settings.CONFIG['available_user_authentication'][settings.CONFIG['api_user_authentication']]
-            ['connection_details']
-        )
 
         # hit the api_authenticate method
-        api_user = user_auth.api_authenticate(request)
+        api_user = api_user_authentication.api_authenticate(request)
 
         if type(api_user) == User:
             token, created = Token.objects.get_or_create(user=api_user)
