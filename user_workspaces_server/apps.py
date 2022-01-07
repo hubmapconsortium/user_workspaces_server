@@ -19,7 +19,8 @@ class UserWorkspacesServerConfig(AppConfig):
             settings.CONFIG['main_storage']
         ]
 
-        self.api_user_authentication = globus_user_authentication.GlobusUserAuthentication(
+        # TODO: Assign this dynamically.
+        self.api_user_authentication = local_user_authentication.LocalUserAuthentication(
             api_user_authentication_details['connection_details']
         )
 
