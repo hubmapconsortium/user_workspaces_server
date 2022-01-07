@@ -112,7 +112,11 @@ class LocalUserAuthentication(AbstractUserAuthentication):
         else:
             external_user = False
         # Need to return username and id
-        return external_user
+        return {
+            'external_user_name': external_user[0],
+            'external_user_uid': external_user[2],
+            'external_user_gid': external_user[3]
+        } if external_user else external_user
 
     def get_external_user(self, external_user_info):
         try:
