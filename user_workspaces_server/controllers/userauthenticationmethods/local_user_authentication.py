@@ -58,7 +58,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
 
         try:
             client_token = body['client_token']
-            token = Token.object.get(key=client_token)
+            token = Token.objects.get(key=client_token)
             token_user = token.user
 
             if not token_user.groups.filter(name='api_clients').exists():
