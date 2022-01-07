@@ -2,6 +2,10 @@ from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_
     AbstractUserAuthentication
 import pwd
 import subprocess
+import json
+from rest_framework.exceptions import APIException
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 
 
 class LocalUserAuthentication(AbstractUserAuthentication):
@@ -44,7 +48,56 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             return external_user_mapping
 
     def api_authenticate(self, request):
-        return True
+        body = json.loads(request.body)
+
+        if 'client_token' not in body:
+            raise APIException('Missing client_token. Please have admin generate a token for you.')
+
+        if 'user_info' not in body:
+            raise APIException('Missing user_info. Please provide user_info to get user_token.')
+
+        try:
+            client_token = body['client_token']
+            token = Token.object.get(key=client_token)
+            token_user = token.user
+
+            if not token_user.groups.filter(name='api_clients').exists():
+                raise APIException('Token is invalid for api_authentication. '
+                                   'Please contact administrator to generate valid token.')
+
+            # Let's require username and email here
+            user_info = body['user_info']
+
+            if 'username' not in user_info or 'email' not in user_info:
+                raise APIException('Missing username or email in user_info.')
+
+            external_user_mapping = self.get_external_user_mapping({
+                'user_authentication_name': type(self).__name__,
+                'external_username': user_info['username']
+            })
+
+            if not external_user_mapping:
+                internal_user = self.get_internal_user({
+                    'username': user_info['username'],
+                    'email': user_info['email']
+                })
+
+                if not internal_user:
+                    internal_user = self.create_internal_user({
+                        "username": user_info['username'],
+                        "email": user_info['email']
+                    })
+
+                return internal_user
+            else:
+                return external_user_mapping.user_id
+
+
+
+        except Exception as e:
+            # TODO: Move print to log
+            print(e)
+            return e
 
     def create_external_user(self, user_info):
         if self.operating_system == 'linux':
