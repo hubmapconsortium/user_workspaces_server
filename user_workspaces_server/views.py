@@ -1,9 +1,7 @@
-from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.models import User
 from . import models
-from .controllers.userauthenticationmethods import globus_user_authentication
 from django.apps import apps
 import json
 from datetime import datetime

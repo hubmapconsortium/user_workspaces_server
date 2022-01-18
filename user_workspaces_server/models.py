@@ -14,7 +14,6 @@ class Workspace(models.Model):
 
 class Job(models.Model):
     workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
-    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     job_type = models.CharField(max_length=64)
     resource_name = models.CharField(max_length=64)
     status = models.CharField(max_length=64)
