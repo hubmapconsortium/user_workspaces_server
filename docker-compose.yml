@@ -1,0 +1,20 @@
+version: '3'
+#services:
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8000:5050"
+#    volumes:
+#      - ./:/code
+#    environment:
+#      DJANGO_MODE: deve
+services:
+  web:
+    build: .
+    command: uwsgi --http :5050 -w user_workspaces_server_project.wsgi:application
+    volumes:
+      - .:/code
+    ports:
+      - "8000:5050"
