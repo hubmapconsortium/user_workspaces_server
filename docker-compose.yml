@@ -6,4 +6,4 @@ services:
     volumes:
       - .:/code
     ports:
-      - "8000:5050"
+      - "5050:5050"
