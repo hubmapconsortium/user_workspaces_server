@@ -1,7 +1,7 @@
 from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import \
     AbstractUserAuthentication
 from rest_framework.response import Response
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ParseError
 import globus_sdk
 import json
 from hubmap_commons.hm_auth import AuthHelper
@@ -82,7 +82,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
 
     def globus_oauth_get_user_info(self, body):
         if 'redirect_url' not in body:
-            raise APIException('Missing redirect url.')
+            raise ParseError('Missing redirect url.')
 
         redirect_url = body['redirect_url']
         self.oauth.oauth2_start_flow(redirect_url)
@@ -104,7 +104,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
 
     def globus_token_get_user_info(self, body):
         if 'auth_token' not in body:
-            raise APIException('Missing auth_token.')
+            raise ParseError('Missing auth_token.')
 
         return self.introspect_globus_user(
             body.get('auth_token'))
