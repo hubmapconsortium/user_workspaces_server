@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.models import User
+import user_workspaces_server.controllers.job_types.local_test_job
 from . import models
 from django.apps import apps
 import json
@@ -8,10 +9,11 @@ from datetime import datetime
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError
 import os
+from django_q.tasks import async_task
 
 
 class UserWorkspacesServerTokenView(ObtainAuthToken):
@@ -84,19 +86,41 @@ class WorkspaceView(APIView):
     def put(self, request, workspace_id, put_type):
         if put_type.lower() == 'start':
             body = json.loads(request.body)
-            workspace = models.Workspace.objects.filter(id=workspace_id).first()
+            if 'job_type' not in body or 'job_details' not in body:
+                raise ParseError('Missing job_type or job_details')
+
+            try:
+                workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
+            except models.Workspace.DoesNotExist:
+                raise PermissionDenied('Workspace does not exist/is not owned by this user.')
+
+            resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
+
+            # I think that instantiating the job here and passing that through to the resource makes the most sense
+
+            # TODO: Grab the correct job type based on the request
+            job_to_launch = user_workspaces_server.controllers.job_types.local_test_job.LocalTestJob()
+
+            resource_job_id = resource.launch_job(job_to_launch, workspace)
+
             job_data = {
                 "workspace_id": workspace,
                 "job_type": body['job_type'],
                 "datetime_created": datetime.now(),
-                "job_details": body['job_details']
+                "job_details": {
+                    'request_job_details': body['job_details']
+                },
+                "resource_job_id": resource_job_id,
+                "resource_name": type(resource).__name__,
+                "status": "Pending"
             }
-
-            # TODO: Once we have JobType defined, we need to do it like this
-            # job = models.JobType(**job_data)
 
             job = models.Job(**job_data)
             job.save()
+
+            # This function should also spin up a loop for the job to be updated.
+            async_task('user_workspaces_server.tasks.update_job_status', job.pk,
+                       hook='user_workspaces_server.tasks.queue_job_update')
 
             return JsonResponse({'message': 'Successful start!', 'success': True})
         else:
@@ -105,7 +129,7 @@ class WorkspaceView(APIView):
 
 class JobView(View):
     def get(self, request, job_id=None):
-        job = models.Job.objects.filter(id=job_id).first()
+        job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
 
         # TODO: Add url parameter searching functionality
 
@@ -113,9 +137,7 @@ class JobView(View):
 
     def put(self, request, job_id, put_type):
         if put_type.lower() == 'stop':
-            job = models.Job.objects.filter(id=job_id).first()
-
-            # job.stop()
+            job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
 
             return JsonResponse({'message': 'Successful stop!', 'success': True})
         else:
