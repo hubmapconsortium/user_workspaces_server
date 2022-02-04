@@ -16,8 +16,6 @@ def update_job_status(job_id):
     resource_job_info = resource.get_job(job.resource_job_id)
     job.status = resource_job_info['status']
 
-    print(job.datetime_start)
-
     if job.status == 'running' and job.datetime_start is None:
         job.datetime_start = datetime.datetime.now()
     elif job.status in ['zombie', 'complete']:
