@@ -7,5 +7,11 @@ class AbstractResource(ABC):
         self.resource_user_authentication = resource_user_authentication
 
     @abstractmethod
-    def get_current_job(self):
+    def launch_job(self, job, workspace):
+        # Should return resource_job_id
+        pass
+
+    @abstractmethod
+    def get_job(self, resource_job_id):
+        # Should get the resource's job information (status
         pass
