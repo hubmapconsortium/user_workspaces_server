@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'user_workspaces_server',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_q',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -138,3 +139,5 @@ REST_FRAMEWORK = {
         'user_workspaces_server.auth.UserWorkspacesTokenAuthentication'
     ]
 }
+
+Q_CLUSTER = CONFIG['Q_CLUSTER']
