@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.models import User
-import user_workspaces_server.controllers.job_types.local_test_job
+import user_workspaces_server.controllers.job_types.jupyter_lab_job
 from . import models
 from django.apps import apps
 import json
@@ -99,7 +99,7 @@ class WorkspaceView(APIView):
             # I think that instantiating the job here and passing that through to the resource makes the most sense
 
             # TODO: Grab the correct job type based on the request
-            job_to_launch = user_workspaces_server.controllers.job_types.local_test_job.LocalTestJob()
+            job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob()
 
             resource_job_id = resource.launch_job(job_to_launch, workspace)
 
