@@ -2,17 +2,11 @@ from abc import ABC, abstractmethod
 
 
 class AbstractJob(ABC):
-    def __init__(self, name):
-        self.name = name
-
     @abstractmethod
-    def start(self):
-        pass
-
-    @abstractmethod
-    def stop(self):
+    def get_script(self):
         pass
 
     @abstractmethod
     def status_check(self):
+        # Should return job_details information
         pass
