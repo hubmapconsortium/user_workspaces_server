@@ -14,10 +14,12 @@ class Workspace(models.Model):
 
 class Job(models.Model):
     workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
+    resource_job_id = models.IntegerField()
     job_type = models.CharField(max_length=64)
     resource_name = models.CharField(max_length=64)
     status = models.CharField(max_length=64)
-    datetime_start = models.DateTimeField()
+    datetime_created = models.DateTimeField()
+    datetime_start = models.DateTimeField(null=True)
     datetime_end = models.DateTimeField(null=True)
     core_hours = models.IntegerField(default=0)
     job_details = models.JSONField()
