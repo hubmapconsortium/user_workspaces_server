@@ -1,8 +1,9 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views import View
 from django.contrib.auth.models import User
 import user_workspaces_server.controllers.job_types.jupyter_lab_job
 from . import models
+from django.conf import settings
 from django.apps import apps
 import json
 from datetime import datetime
@@ -14,6 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError
 import os
 from django_q.tasks import async_task
+import requests as http_r
 
 
 class UserWorkspacesServerTokenView(ObtainAuthToken):
@@ -94,27 +96,30 @@ class WorkspaceView(APIView):
             except models.Workspace.DoesNotExist:
                 raise PermissionDenied('Workspace does not exist/is not owned by this user.')
 
+            # TODO: Grabbing the resource needs to be a bit more intelligent
             resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
-
-            # I think that instantiating the job here and passing that through to the resource makes the most sense
-
-            # TODO: Grab the correct job type based on the request
-            job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob()
-
-            resource_job_id = resource.launch_job(job_to_launch, workspace)
 
             job_data = {
                 "workspace_id": workspace,
                 "job_type": body['job_type'],
                 "datetime_created": datetime.now(),
                 "job_details": {
-                    'request_job_details': body['job_details']
+                    'request_job_details': body['job_details'],
+                    'current_job_details': {}
                 },
-                "resource_job_id": resource_job_id,
                 "resource_name": type(resource).__name__,
                 "status": "Pending"
             }
 
+            # I think that instantiating the job here and passing that through to the resource makes the most sense
+            # TODO: Grab the correct job type based on the request
+            #
+            job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob(
+                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details']['local_resource'], job_data)
+
+            resource_job_id = resource.launch_job(job_to_launch, workspace)
+
+            job_data['resource_job_id'] = resource_job_id
             job = models.Job(**job_data)
             job.save()
 
@@ -149,3 +154,41 @@ class JobTypeView(View):
         # TODO: Grab job types from the config.
         job_types = {}
         return JsonResponse({'message': 'Successful!', 'success': True, 'data': {'job_types': job_types}})
+
+
+class PassthroughView(View):
+    def get(self, request, hostname, resource_job_id, remainder):
+        try:
+            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            connection_details = job_model.job_details['current_job_details']['connection_details']
+            port = connection_details['port']
+            url = f'{hostname}:{port}{request.path}'
+            response = http_r.get(url, params=request.GET.dict(), cookies=request.COOKIES)
+            return HttpResponse(response, headers=response.headers)
+        except Exception as e:
+            print(repr(e))
+            return HttpResponse(status=500)
+
+    def post(self, request, hostname, resource_job_id, remainder):
+        try:
+            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            connection_details = job_model.job_details['current_job_details']['connection_details']
+            port = connection_details['port']
+            url = f'{hostname}:{port}{request.path}'
+            response = http_r.post(url, data=request.body, cookies=request.COOKIES)
+            return HttpResponse(response, headers=response.headers)
+        except Exception as e:
+            print(repr(e))
+            return HttpResponse(status=500)
+
+    def put(self, request, hostname, resource_job_id, remainder):
+        try:
+            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            connection_details = job_model.job_details['current_job_details']['connection_details']
+            port = connection_details['port']
+            url = f'{hostname}:{port}{request.path}'
+            response = http_r.put(url, data=request.body, cookies=request.COOKIES)
+            return HttpResponse(response, headers=response.headers)
+        except Exception as e:
+            print(repr(e))
+            return HttpResponse(status=500)
