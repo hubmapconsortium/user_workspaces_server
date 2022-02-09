@@ -13,8 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from . import views
 
 token_view_patterns = [
@@ -37,9 +36,14 @@ job_type_view_patterns = [
     path('', views.JobTypeView.as_view()),
 ]
 
+passthrough_view_patterns = [
+    path('<str:hostname>/<int:resource_job_id>/<path:remainder>', views.PassthroughView.as_view())
+]
+
 urlpatterns = [
     path('tokens/', include(token_view_patterns)),
     path('workspaces/', include(workspace_view_patterns)),
     path('jobs/', include(job_view_patterns)),
     path('job_types/', include(job_type_view_patterns)),
+    path('passthrough/', include(passthrough_view_patterns))
 ]
