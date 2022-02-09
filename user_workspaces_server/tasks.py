@@ -3,6 +3,7 @@ from . import models
 import datetime
 from user_workspaces_server.controllers.job_types.jupyter_lab_job import JupyterLabJob
 from django.apps import apps
+from django.conf import settings
 
 
 def update_job_status(job_id):
@@ -20,6 +21,12 @@ def update_job_status(job_id):
         job.datetime_start = datetime.datetime.now()
     elif job.status in ['zombie', 'complete']:
         job.datetime_end = datetime.datetime.now()
+
+    # TODO: Initialize appropriate JobType
+    job_type = JupyterLabJob(
+        settings.CONFIG['available_job_types']['jupyter_lab']['environment_details']['local_resource'], job)
+
+    job.job_details['current_job_details'].update(job_type.status_check(job))
 
     job.save()
 
