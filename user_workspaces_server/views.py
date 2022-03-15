@@ -1,10 +1,11 @@
 from django.http import JsonResponse, HttpResponse
-from django.views import View
 from django.contrib.auth.models import User
 import user_workspaces_server.controllers.job_types.jupyter_lab_job
 from . import models
 from django.conf import settings
 from django.apps import apps
+from django.core.files.base import ContentFile
+from django.forms.models import model_to_dict
 import json
 from datetime import datetime
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -42,14 +43,28 @@ class WorkspaceView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, workspace_id=None):
-        workspace = models.Workspace.objects.filter(id=workspace_id, user_id=request.user).first()
+        workspace = models.Workspace.objects.filter(user_id=request.user)
+
+        if workspace_id:
+            workspace = workspace.filter(id=workspace_id)
 
         # TODO: Add url parameter searching functionality
 
-        return JsonResponse({'message': 'Successful!', 'success': True, 'data': {'workspace': workspace}})
+        workspaces = list(workspace.all()
+                         .values(*models.Workspace.get_dict_fields()))
+
+        return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'workspaces': workspaces}})
 
     def post(self, request):
         body = json.loads(request.body)
+
+        if 'name' not in body or 'description' not in body:
+            raise ParseError('Missing required fields.')
+
+        workspace_details = body.get('workspace_details', {})
+
+        if type(workspace_details) != dict:
+            raise ParseError('Workspace details not JSON')
 
         workspace_data = {
             "user_id": request.user,
@@ -57,7 +72,10 @@ class WorkspaceView(APIView):
             "description": body['description'],
             "disk_space": 0,
             "datetime_created": datetime.now(),
-            "workspace_details": body['workspace_details']
+            "workspace_details": {
+                "request_workspace_details": workspace_details,
+                "current_workspace_details": {}
+            }
         }
 
         main_storage = apps.get_app_config('user_workspaces_server').main_storage
@@ -81,20 +99,56 @@ class WorkspaceView(APIView):
         main_storage.create_dir(workspace.file_path)
         main_storage.set_ownership(workspace.file_path, external_user_mapping)
 
+        for symlink in workspace_details.get('symlinks', []):
+            main_storage.create_symlink(workspace.file_path, symlink)
+
+        for file in workspace_details.get('files', []):
+            # Create a file object here
+            content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
+            main_storage.create_file(workspace.file_path, content_file)
+
         workspace.save()
 
-        return JsonResponse({'message': 'Successful!', 'success': True})
+        return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
 
-    def put(self, request, workspace_id, put_type):
+    def put(self, request, workspace_id, put_type=None):
+        main_storage = apps.get_app_config('user_workspaces_server').main_storage
+
+        try:
+            workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
+        except models.Workspace.DoesNotExist:
+            raise PermissionDenied('Workspace does not exist/is not owned by this user.')
+
+        if not put_type:
+            body = json.loads(request.body)
+            workspace.name = body.get('name', workspace.name)
+            workspace.description = body.get('description', workspace.description)
+
+            workspace.save()
+
+            workspace_details = body.get('workspace_details', {})
+
+            if type(workspace_details) != dict:
+                raise ParseError('Workspace details not JSON')
+
+            for symlink in workspace_details.get('symlinks', []):
+                main_storage.create_symlink(workspace.file_path, symlink)
+
+            for file in workspace_details.get('files', []):
+                content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
+                main_storage.create_file(workspace.file_path, content_file)
+
+            return JsonResponse({'message': 'Update successful.', 'success': True})
+
         if put_type.lower() == 'start':
             body = json.loads(request.body)
-            if 'job_type' not in body or 'job_details' not in body:
+            if 'job_type' not in body:
                 raise ParseError('Missing job_type or job_details')
 
-            try:
-                workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
-            except models.Workspace.DoesNotExist:
-                raise PermissionDenied('Workspace does not exist/is not owned by this user.')
+            job_details = body.get('job_details', {})
+
+            if type(job_details) != dict:
+                raise ParseError('Job details not JSON.')
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
             resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
@@ -104,7 +158,7 @@ class WorkspaceView(APIView):
                 "job_type": body['job_type'],
                 "datetime_created": datetime.now(),
                 "job_details": {
-                    'request_job_details': body['job_details'],
+                    'request_job_details': job_details,
                     'current_job_details': {}
                 },
                 "resource_name": type(resource).__name__,
@@ -127,43 +181,56 @@ class WorkspaceView(APIView):
             async_task('user_workspaces_server.tasks.update_job_status', job.pk,
                        hook='user_workspaces_server.tasks.queue_job_update')
 
-            return JsonResponse({'message': 'Successful start!', 'success': True})
+            return JsonResponse({'message': 'Successful start.', 'success': True, 'data': {'job': model_to_dict(job, models.Job.get_dict_fields())}})
+        elif put_type.lower() == 'upload':
+            for file_index, file in request.FILES.items():
+                main_storage.create_file(workspace.file_path, file)
+
+            return JsonResponse({'message': 'Successful upload.', 'success': True})
         else:
             return JsonResponse({'message': 'Invalid type passed.', 'success': False})
 
 
-class JobView(View):
+class JobView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, job_id=None):
-        job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
+        job = models.Job.objects.filter(workspace_id__user_id=request.user)
+
+        if job_id:
+            job = job.filter(id=job_id)
 
         # TODO: Add url parameter searching functionality
 
-        return JsonResponse({'message': 'Successful!', 'success': True, 'data': {'job': job}})
+        job = list(job.all()
+                   .values(*models.Job.get_dict_fields()))
+
+        return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'jobs': job}})
 
     def put(self, request, job_id, put_type):
         if put_type.lower() == 'stop':
             job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
 
-            return JsonResponse({'message': 'Successful stop!', 'success': True})
+            return JsonResponse({'message': 'Successful stop.', 'success': True})
         else:
             return JsonResponse({'message': 'Invalid type passed.', 'success': False})
 
 
-class JobTypeView(View):
+class JobTypeView(APIView):
     def get(self, request):
         # TODO: Grab job types from the config.
         job_types = {}
-        return JsonResponse({'message': 'Successful!', 'success': True, 'data': {'job_types': job_types}})
+        return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'job_types': job_types}})
 
 
-class PassthroughView(View):
+class PassthroughView(APIView):
     def get(self, request, hostname, resource_job_id, remainder):
         try:
             job_model = models.Job.objects.get(resource_job_id=resource_job_id)
             connection_details = job_model.job_details['current_job_details']['connection_details']
             port = connection_details['port']
-            url = f'{hostname}:{port}{request.path}'
-            response = http_r.get(url, params=request.GET.dict(), cookies=request.COOKIES)
+            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
+            response = http_r.get(url, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers)
         except Exception as e:
             print(repr(e))
@@ -174,8 +241,20 @@ class PassthroughView(View):
             job_model = models.Job.objects.get(resource_job_id=resource_job_id)
             connection_details = job_model.job_details['current_job_details']['connection_details']
             port = connection_details['port']
-            url = f'{hostname}:{port}{request.path}'
+            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.post(url, data=request.body, cookies=request.COOKIES)
+            return HttpResponse(response, headers=response.headers)
+        except Exception as e:
+            print(repr(e))
+            return HttpResponse(status=500)
+
+    def patch(self, request, hostname, resource_job_id, remainder):
+        try:
+            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            connection_details = job_model.job_details['current_job_details']['connection_details']
+            port = connection_details['port']
+            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
+            response = http_r.patch(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers)
         except Exception as e:
             print(repr(e))
@@ -186,9 +265,22 @@ class PassthroughView(View):
             job_model = models.Job.objects.get(resource_job_id=resource_job_id)
             connection_details = job_model.job_details['current_job_details']['connection_details']
             port = connection_details['port']
-            url = f'{hostname}:{port}{request.path}'
+            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.put(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers)
         except Exception as e:
             print(repr(e))
             return HttpResponse(status=500)
+
+    def delete(self, request, hostname, resource_job_id, remainder):
+        try:
+            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            connection_details = job_model.job_details['current_job_details']['connection_details']
+            port = connection_details['port']
+            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
+            response = http_r.delete(url, data=request.body, cookies=request.COOKIES)
+            return HttpResponse(response, headers=response.headers)
+        except Exception as e:
+            print(repr(e))
+            return HttpResponse(status=500)
+
