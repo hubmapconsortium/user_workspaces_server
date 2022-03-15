@@ -37,4 +37,41 @@ class LocalFileSystemStorage(AbstractStorage):
             external_user['external_user_gid']
         )
 
+    def create_symlink(self, path, symlink):
+        symlink_name = symlink.get('name', '')
+        symlink_source_path = symlink.get('source_path', '')
+
+        # Detect the relative path from symlink name so that it more closely mirrors the file name functionality
+        symlink_path_list = symlink_name.split('/')
+        symlink_name = symlink_path_list[-1]
+        symlink_dest_path = symlink_path_list[:-1]
+
+        symlink_full_dest_path = os.path.join(self.root_dir, path, '/'.join(symlink_dest_path))
+
+        os.makedirs(symlink_full_dest_path, exist_ok=True)
+
+        if os.path.exists(symlink_source_path):
+            if os.path.exists(os.path.join(symlink_full_dest_path, symlink_name)):
+                os.remove(os.path.join(symlink_full_dest_path, symlink_name))
+            os.symlink(symlink_source_path, os.path.join(symlink_full_dest_path, symlink_name))
+        else:
+            raise NotADirectoryError
+
+    def create_file(self, path, file):
+        file_path_list = file.name.split('/')
+        file_name = file_path_list[-1]
+        file_dest_path = file_path_list[:-1]
+
+        file_full_dest_path = os.path.join(self.root_dir, path, '/'.join(file_dest_path))
+
+        os.makedirs(file_full_dest_path, exist_ok=True)
+
+        if os.path.exists(os.path.join(file_full_dest_path, file_name)):
+            os.remove(os.path.join(file_full_dest_path, file_name))
+
+        with open(os.path.join(file_full_dest_path, file_name), 'wb') as new_file:
+            for chunk in file.chunks():
+                new_file.write(chunk)
+        return
+
 
