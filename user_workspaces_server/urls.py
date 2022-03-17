@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.urls import path, include, re_path
 from . import views
+from . import ws_consumers
 
 token_view_patterns = [
     path('', views.UserWorkspacesServerTokenView.as_view())
@@ -46,4 +47,8 @@ urlpatterns = [
     path('jobs/', include(job_view_patterns)),
     path('job_types/', include(job_type_view_patterns)),
     path('passthrough/', include(passthrough_view_patterns))
+]
+
+ws_urlpatterns = [
+    path('passthrough/<str:hostname>/<int:resource_job_id>/<path:remainder>', ws_consumers.PassthroughConsumer.as_asgi()),
 ]
