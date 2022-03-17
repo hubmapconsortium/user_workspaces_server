@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,5 @@ REST_FRAMEWORK = {
 }
 
 Q_CLUSTER = CONFIG['Q_CLUSTER']
+
+ASGI_APPLICATION = "user_workspaces_server_project.asgi.application"
