@@ -1,6 +1,7 @@
 from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import \
     AbstractUserAuthentication
 from rest_framework.response import Response
+from flask.wrappers import Response as flask_response
 from rest_framework.exceptions import ParseError
 import globus_sdk
 import json
@@ -28,7 +29,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
         globus_user_info = self.globus_oauth_get_user_info(body) if self.authentication_type == 'oauth' \
             else (self.globus_token_get_user_info(body) if self.authentication_type == 'token' else False)
 
-        if type(globus_user_info) == Response:
+        if type(globus_user_info) in [Response, flask_response]:
             return globus_user_info
 
         external_user_mapping = self.get_external_user_mapping({
