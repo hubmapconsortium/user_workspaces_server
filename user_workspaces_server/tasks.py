@@ -4,6 +4,8 @@ import datetime
 from user_workspaces_server.controllers.job_types.jupyter_lab_job import JupyterLabJob
 from django.apps import apps
 from django.conf import settings
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 def update_job_status(job_id):
@@ -29,6 +31,13 @@ def update_job_status(job_id):
     job.job_details['current_job_details'].update(job_type.status_check(job))
 
     job.save()
+
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(f'job_status_{job_id}', {
+        "type": "job_status_update",
+        "message": job.job_details['current_job_details']
+    })
 
 
 def queue_job_update(task):
