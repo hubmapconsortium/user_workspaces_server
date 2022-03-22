@@ -144,3 +144,12 @@ REST_FRAMEWORK = {
 Q_CLUSTER = CONFIG['Q_CLUSTER']
 
 ASGI_APPLICATION = "user_workspaces_server_project.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    }
+}
