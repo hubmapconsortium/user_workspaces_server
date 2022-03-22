@@ -2,6 +2,8 @@ from channels.generic.websocket import WebsocketConsumer
 from . import models
 import websocket
 import threading
+from asgiref.sync import async_to_sync
+import json
 
 
 class PassthroughConsumer(WebsocketConsumer):
@@ -38,3 +40,36 @@ class PassthroughConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data=None, bytes_data=None):
         self.request_ws_client.send(text_data)
+
+
+class JobStatusConsumer(WebsocketConsumer):
+
+    def connect(self):
+        job_id = self.scope['url_route']['kwargs']['job_id']
+        self.room_group_name = f'job_status_{job_id}'
+
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+        self.accept()
+
+    def disconnect(self, close_code):
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    # Receive message from WebSocket
+    def receive(self, text_data=None, bytes_data=None):
+        # TODO: What would a client want to get from this.
+        pass
+
+    # Receive message from room group
+    def job_status_update(self, event):
+        job_status = event['message']
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'current_job_details': job_status
+        }))
