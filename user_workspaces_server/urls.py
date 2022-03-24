@@ -38,7 +38,7 @@ job_type_view_patterns = [
 ]
 
 passthrough_view_patterns = [
-    path('<str:hostname>/<int:resource_job_id>/<path:remainder>', views.PassthroughView.as_view())
+    path('<str:hostname>/<int:job_id>/<path:remainder>', views.PassthroughView.as_view())
 ]
 
 urlpatterns = [
@@ -50,6 +50,6 @@ urlpatterns = [
 ]
 
 ws_urlpatterns = [
-    path('passthrough/<str:hostname>/<int:resource_job_id>/<path:remainder>', ws_consumers.PassthroughConsumer.as_asgi()),
+    path('passthrough/<str:hostname>/<int:job_id>/<path:remainder>', ws_consumers.PassthroughConsumer.as_asgi()),
     path('jobs/<int:job_id>/', ws_consumers.JobStatusConsumer.as_asgi()),
 ]
