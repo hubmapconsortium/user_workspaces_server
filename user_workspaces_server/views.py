@@ -162,19 +162,22 @@ class WorkspaceView(APIView):
                     'current_job_details': {}
                 },
                 "resource_name": type(resource).__name__,
-                "status": "Pending"
+                "status": "Pending",
+                "resource_job_id": -1
             }
+
+            job = models.Job(**job_data)
+            job.save()
 
             # I think that instantiating the job here and passing that through to the resource makes the most sense
             # TODO: Grab the correct job type based on the request
             #
             job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob(
-                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details']['local_resource'], job_data)
+                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details']['local_resource'], model_to_dict(job))
 
             resource_job_id = resource.launch_job(job_to_launch, workspace)
 
-            job_data['resource_job_id'] = resource_job_id
-            job = models.Job(**job_data)
+            job.resource_job_id = resource_job_id
             job.save()
 
             # This function should also spin up a loop for the job to be updated.
@@ -224,9 +227,9 @@ class JobTypeView(APIView):
 
 
 class PassthroughView(APIView):
-    def get(self, request, hostname, resource_job_id, remainder):
+    def get(self, request, hostname, job_id, remainder):
         try:
-            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            job_model = models.Job.objects.get(pk=job_id)
             connection_details = job_model.job_details['current_job_details']['connection_details']
             port = connection_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
@@ -236,9 +239,9 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def post(self, request, hostname, resource_job_id, remainder):
+    def post(self, request, hostname, job_id, remainder):
         try:
-            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            job_model = models.Job.objects.get(pk=job_id)
             connection_details = job_model.job_details['current_job_details']['connection_details']
             port = connection_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
@@ -248,9 +251,9 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def patch(self, request, hostname, resource_job_id, remainder):
+    def patch(self, request, hostname, job_id, remainder):
         try:
-            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            job_model = models.Job.objects.get(pk=job_id)
             connection_details = job_model.job_details['current_job_details']['connection_details']
             port = connection_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
@@ -260,9 +263,9 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def put(self, request, hostname, resource_job_id, remainder):
+    def put(self, request, hostname, job_id, remainder):
         try:
-            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            job_model = models.Job.objects.get(pk=job_id)
             connection_details = job_model.job_details['current_job_details']['connection_details']
             port = connection_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
@@ -272,9 +275,9 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def delete(self, request, hostname, resource_job_id, remainder):
+    def delete(self, request, hostname, job_id, remainder):
         try:
-            job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+            job_model = models.Job.objects.get(pk=job_id)
             connection_details = job_model.job_details['current_job_details']['connection_details']
             port = connection_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
