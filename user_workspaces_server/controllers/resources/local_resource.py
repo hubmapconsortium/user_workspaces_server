@@ -3,6 +3,7 @@ import psutil
 import subprocess
 import os
 import time
+from django.forms.models import model_to_dict
 
 
 class LocalResource(AbstractResource):
@@ -14,9 +15,13 @@ class LocalResource(AbstractResource):
         with open(script_path, 'w') as script:
             script.write(job.get_script())
 
+        self.resource_storage.set_ownership(script_path, workspace.user_id)
+        user_info = self.resource_storage.storage_user_authentication.get_external_user(model_to_dict(workspace.user_id))
         os.chmod(script_path, 0o744)
-        process = subprocess.Popen(script_path,
-                                   stdin=None, stdout=None, stderr=None, cwd=workspace_full_path)
+
+        process = subprocess.Popen(['sudo', 'su', user_info['external_user_name'], '-s', '/bin/bash', script_path],
+                                   stdin=None, stdout=None, stderr=None, cwd=workspace_full_path,
+                                   )
         return process.pid
 
     def get_job(self, resource_job_id):
