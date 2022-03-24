@@ -4,6 +4,7 @@ from user_workspaces_server.controllers.job_types.abstract_job import AbstractJo
 import os
 from django.apps import apps
 from urllib import parse
+from django.template import loader
 
 
 class JupyterLabJob(AbstractJob):
@@ -13,16 +14,13 @@ class JupyterLabJob(AbstractJob):
 
     # TODO: Modify the script that gets generated based on passed parameters.
     def get_script(self):
-        with open(os.path.join(
-                os.path.abspath(os.getcwd()), 'user_workspaces_server/controllers/job_types/script_templates',
-                self.script_template_name), 'r') as f:
-
-            script = f.read()
+        template = loader.get_template(f'script_templates/{self.script_template_name}')
+        script = template.render({"job_id": self.job_details["id"]})
 
         return script
 
     def status_check(self, job_model):
-        output_file_name = f"{job_model.resource_job_id}_output.log"
+        output_file_name = f"JupyterLabJob_{job_model.id}_output.log"
         resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
 
         # Check to see if we already have a connection url in place.
@@ -57,7 +55,7 @@ class JupyterLabJob(AbstractJob):
             return {'message': 'Token undefined.'}
 
         urllib.parse.urlencode({'node': hostname, 'port': port, 'token': token})
-        connection_string = f'/passthrough/{hostname}/{job_model.resource_job_id}' \
+        connection_string = f'/passthrough/{hostname}/{job_model.id}' \
                             f'/lab?token={token}'
 
         return {'message': 'Webserver ready.',
