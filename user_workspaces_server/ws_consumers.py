@@ -10,8 +10,8 @@ class PassthroughConsumer(WebsocketConsumer):
 
     def connect(self):
         hostname = self.scope['url_route']['kwargs']['hostname']
-        resource_job_id = self.scope['url_route']['kwargs']['resource_job_id']
-        job_model = models.Job.objects.get(resource_job_id=resource_job_id)
+        job_id = self.scope['url_route']['kwargs']['job_id']
+        job_model = models.Job.objects.get(pk=job_id)
         connection_details = job_model.job_details['current_job_details']['connection_details']
         port = connection_details['port']
         headers = {}
