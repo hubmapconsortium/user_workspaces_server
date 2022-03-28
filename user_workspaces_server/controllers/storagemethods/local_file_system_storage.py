@@ -29,12 +29,65 @@ class LocalFileSystemStorage(AbstractStorage):
     def get_dir_tree(self, path):
         return os.fwalk(os.path.join(path))
 
-    def set_ownership(self, path, owner_mapping):
+    def set_ownership(self, path, owner_mapping, recursive=False):
+        # TODO: Consider adding an option to make this recursive, so that all the parts of the dir
+        # are owned by the same user.
         external_user = self.storage_user_authentication.get_external_user(model_to_dict(owner_mapping))
         os.chown(
             os.path.join(self.root_dir, path),
             external_user['external_user_uid'],
             external_user['external_user_gid']
         )
+
+        if recursive:
+            for dirpath, dirnames, filenames, dirfd in self.get_dir_tree(os.path.join(self.root_dir, path)):
+                os.chown(
+                    dirpath,
+                    external_user['external_user_uid'],
+                    external_user['external_user_gid']
+                )
+                for filename in filenames:
+                    os.chown(
+                        os.path.join(dirpath, filename),
+                        external_user['external_user_uid'],
+                        external_user['external_user_gid']
+                    )
+
+    def create_symlink(self, path, symlink):
+        symlink_name = symlink.get('name', '')
+        symlink_source_path = symlink.get('source_path', '')
+
+        # Detect the relative path from symlink name so that it more closely mirrors the file name functionality
+        symlink_path_list = symlink_name.split('/')
+        symlink_name = symlink_path_list[-1]
+        symlink_dest_path = symlink_path_list[:-1]
+
+        symlink_full_dest_path = os.path.join(self.root_dir, path, '/'.join(symlink_dest_path))
+
+        os.makedirs(symlink_full_dest_path, exist_ok=True)
+
+        if os.path.exists(symlink_source_path):
+            if os.path.exists(os.path.join(symlink_full_dest_path, symlink_name)):
+                os.remove(os.path.join(symlink_full_dest_path, symlink_name))
+            os.symlink(symlink_source_path, os.path.join(symlink_full_dest_path, symlink_name))
+        else:
+            raise NotADirectoryError
+
+    def create_file(self, path, file):
+        file_path_list = file.name.split('/')
+        file_name = file_path_list[-1]
+        file_dest_path = file_path_list[:-1]
+
+        file_full_dest_path = os.path.join(self.root_dir, path, '/'.join(file_dest_path))
+
+        os.makedirs(file_full_dest_path, exist_ok=True)
+
+        if os.path.exists(os.path.join(file_full_dest_path, file_name)):
+            os.remove(os.path.join(file_full_dest_path, file_name))
+
+        with open(os.path.join(file_full_dest_path, file_name), 'wb') as new_file:
+            for chunk in file.chunks():
+                new_file.write(chunk)
+        return
 
 

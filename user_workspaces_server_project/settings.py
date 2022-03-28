@@ -40,12 +40,14 @@ INSTALLED_APPS = [
     'user_workspaces_server',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_q',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -135,6 +137,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication'
+        'user_workspaces_server.auth.UserWorkspacesTokenAuthentication'
     ]
+}
+
+Q_CLUSTER = CONFIG['Q_CLUSTER']
+
+ASGI_APPLICATION = "user_workspaces_server_project.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    }
 }

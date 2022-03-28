@@ -11,16 +11,27 @@ class Workspace(models.Model):
     datetime_created = models.DateTimeField()
     workspace_details = models.JSONField()
 
+    @staticmethod
+    def get_dict_fields():
+        return ["id", "name", "description", "disk_space", "datetime_created", "workspace_details"]
+
 
 class Job(models.Model):
     workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
+    resource_job_id = models.IntegerField()
     job_type = models.CharField(max_length=64)
     resource_name = models.CharField(max_length=64)
     status = models.CharField(max_length=64)
-    datetime_start = models.DateTimeField()
+    datetime_created = models.DateTimeField()
+    datetime_start = models.DateTimeField(null=True)
     datetime_end = models.DateTimeField(null=True)
     core_hours = models.IntegerField(default=0)
     job_details = models.JSONField()
+
+    @staticmethod
+    def get_dict_fields():
+        return ["id", "resource_job_id", "job_type", "status", "datetime_created",
+                           "datetime_start", "datetime_end", "core_hours", "job_details"]
 
 
 class UserQuota(models.Model):

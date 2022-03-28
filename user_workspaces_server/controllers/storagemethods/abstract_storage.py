@@ -21,3 +21,11 @@ class AbstractStorage(ABC):
     @abstractmethod
     def set_ownership(self, path, owner_mapping):
         pass
+
+    @abstractmethod
+    def create_symlink(self, path, symlink):
+        pass
+
+    @abstractmethod
+    def create_file(self, path, file):
+        pass

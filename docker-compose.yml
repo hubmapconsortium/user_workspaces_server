@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: uwsgi --socket :5050 -w user_workspaces_server_project.wsgi:application
+    volumes:
+      - .:/code
+    ports:
+      - "5050:5050"
