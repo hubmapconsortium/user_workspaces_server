@@ -29,7 +29,7 @@ class LocalFileSystemStorage(AbstractStorage):
     def get_dir_tree(self, path):
         return os.fwalk(os.path.join(path))
 
-    def set_ownership(self, path, owner_mapping):
+    def set_ownership(self, path, owner_mapping, recursive=False):
         # TODO: Consider adding an option to make this recursive, so that all the parts of the dir
         # are owned by the same user.
         external_user = self.storage_user_authentication.get_external_user(model_to_dict(owner_mapping))
@@ -38,6 +38,20 @@ class LocalFileSystemStorage(AbstractStorage):
             external_user['external_user_uid'],
             external_user['external_user_gid']
         )
+
+        if recursive:
+            for dirpath, dirnames, filenames, dirfd in self.get_dir_tree(os.path.join(self.root_dir, path)):
+                os.chown(
+                    dirpath,
+                    external_user['external_user_uid'],
+                    external_user['external_user_gid']
+                )
+                for filename in filenames:
+                    os.chown(
+                        os.path.join(dirpath, filename),
+                        external_user['external_user_uid'],
+                        external_user['external_user_gid']
+                    )
 
     def create_symlink(self, path, symlink):
         symlink_name = symlink.get('name', '')
