@@ -97,7 +97,6 @@ class WorkspaceView(APIView):
         workspace.file_path = os.path.join(request.user.username, str(workspace.pk))
 
         main_storage.create_dir(workspace.file_path)
-        main_storage.set_ownership(workspace.file_path, external_user_mapping)
 
         for symlink in workspace_details.get('symlinks', []):
             main_storage.create_symlink(workspace.file_path, symlink)
@@ -107,12 +106,25 @@ class WorkspaceView(APIView):
             content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
             main_storage.create_file(workspace.file_path, content_file)
 
+        main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
+
         workspace.save()
 
         return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
 
     def put(self, request, workspace_id, put_type=None):
         main_storage = apps.get_app_config('user_workspaces_server').main_storage
+
+        external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
+
+        if not external_user_mapping:
+            return JsonResponse(
+                {
+                    'message': 'User could not be found/created on main storage system.',
+                    'success': False
+                },
+                status=500
+            )
 
         try:
             workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
@@ -137,6 +149,8 @@ class WorkspaceView(APIView):
             for file in workspace_details.get('files', []):
                 content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
                 main_storage.create_file(workspace.file_path, content_file)
+
+            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
@@ -188,6 +202,8 @@ class WorkspaceView(APIView):
         elif put_type.lower() == 'upload':
             for file_index, file in request.FILES.items():
                 main_storage.create_file(workspace.file_path, file)
+
+            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             return JsonResponse({'message': 'Successful upload.', 'success': True})
         else:
