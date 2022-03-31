@@ -26,7 +26,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             if not external_user:
                 # No user found, return false
                 if self.create_external_users:
-                    external_user = self.create_external_user({'name': internal_user.username})
+                    external_user = self.create_external_user({'username': internal_user.username})
                     if not external_user:
                         return False
                 else:
@@ -98,9 +98,9 @@ class LocalUserAuthentication(AbstractUserAuthentication):
 
     def create_external_user(self, user_info):
         if self.operating_system == 'linux':
-            output = subprocess.run(['useradd', user_info['name']], capture_output=True)
+            output = subprocess.run(['useradd', user_info['username']], capture_output=True)
             if output.returncode == 0:
-                external_user = pwd.getpwnam(user_info['name'])
+                external_user = pwd.getpwnam(user_info['username'])
             else:
                 # TODO: Add logging here
                 external_user = False
