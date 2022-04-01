@@ -46,7 +46,10 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
             })
 
             if not internal_user:
+                full_name = globus_user_info.get('name', []).split(' ')
                 internal_user = self.create_internal_user({
+                    "first_name": full_name[0],
+                    "last_name": full_name[-1],
                     "username": username,
                     "email": globus_user_info['email']
                 })
@@ -109,4 +112,3 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
 
         return self.introspect_globus_user(
             body.get('auth_token'))
-
