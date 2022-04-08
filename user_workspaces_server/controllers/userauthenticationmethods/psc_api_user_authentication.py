@@ -14,6 +14,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         self.root_url = config.get('root_url', '')
         self.jwt_token = config.get('jwt_token', '')
         self.grant_number = config.get('grant_number', '')
+        self.resource_name = config.get('resource_name', '')
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping({
@@ -103,6 +104,8 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             return e
 
     def create_external_user(self, user_info):
+        allocation = self.get_allocation()
+
         body = {
             "operationName": "AddUserWithAllocations",
             "query": """
@@ -144,16 +147,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                         "last": f"{user_info.get('last_name', user_info.get('username'))}"
                     },
                     "affiliation": {
-                        "affiliationCode": "HIVE"
+                        "affiliationCode": "WS_API"
                     },
                     "email": {
                         "primary": f"{user_info['email']}"
                     },
                     "allocations": [
                         {
-                            "grant": {
-                                "number": "OTH200002P"
-                            }
+                            "allocationId": f"{allocation.get('id')}"
                         }
                     ]
                 }
@@ -162,7 +163,15 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         }
 
         response = http_r.post(self.root_url, json=body, headers={'Authorization': f"JWT {self.jwt_token}"})
-        external_user = response.json().get('data', {}).get('addUser', {}).get('user', {})
+        external_user = response.json()
+
+        if 'errors' in external_user:
+            message = ''
+            for error in external_user.get('errors', {}):
+                message += f"{error.get('message', '')}\n"
+            raise PermissionDenied(f'Issue(s) when creating user:\n {message}')
+
+        external_user = external_user.get('data', {}).get('addUser', {}).get('user', {})
         gid = False
 
         if external_user is None:
@@ -248,3 +257,47 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
     def delete_external_user(self, user_id):
         pass
+
+    def get_allocation(self):
+        body = {
+            "operationName": "",
+            "query": """
+                query GetAllocationAndAllocationUsers($grantNumber: String!, $resourceName: String!) {
+                    allocation(grantNumber: $grantNumber, resourceName: $resourceName) {
+                    id
+                    startDate
+                    endDate
+                    active
+                    grant {
+                      number
+                    }
+                    resource {
+                      name
+                      active
+                    }
+                    allocationUsers {
+                      active
+                      user {
+                        name {
+                          first
+                          last
+                        }
+                      }
+                    }
+                  }
+                }
+            """,
+            "variables": {
+              "grantNumber": f"{self.grant_number}",
+              "resourceName": f"{self.resource_name}"
+            }
+        }
+
+        response = http_r.post(self.root_url, json=body,
+                               headers={'Authorization': f'JWT {self.jwt_token}'})
+        allocation = response.json().get('data', {}).get('allocation', None)
+
+        if not allocation:
+            raise PermissionDenied(f'No valid allocation found for grant number {self.grant_number} and resource {self.resource_name}')
+
+        return allocation
