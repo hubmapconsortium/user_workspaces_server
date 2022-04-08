@@ -1,3 +1,5 @@
+import grp
+import pwd
 from user_workspaces_server.controllers.storagemethods.abstract_storage import AbstractStorage
 from django.forms import model_to_dict
 import os
@@ -30,27 +32,31 @@ class LocalFileSystemStorage(AbstractStorage):
         return os.fwalk(os.path.join(path))
 
     def set_ownership(self, path, owner_mapping, recursive=False):
-        # TODO: Consider adding an option to make this recursive, so that all the parts of the dir
-        # are owned by the same user.
         external_user = self.storage_user_authentication.get_external_user(model_to_dict(owner_mapping))
+
+        uid = pwd.getpwnam(external_user['external_username'])[2] if type(external_user['external_user_uid']) == str \
+            else external_user['external_user_uid']
+        gid = grp.getgrnam(external_user['external_user_gid'])[2] if type(external_user['external_user_gid']) == str \
+            else external_user['external_user_gid']
+
         os.chown(
             os.path.join(self.root_dir, path),
-            external_user['external_user_uid'],
-            external_user['external_user_gid']
+            uid,
+            gid
         )
 
         if recursive:
             for dirpath, dirnames, filenames, dirfd in self.get_dir_tree(os.path.join(self.root_dir, path)):
                 os.chown(
                     dirpath,
-                    external_user['external_user_uid'],
-                    external_user['external_user_gid']
+                    uid,
+                    gid
                 )
                 for filename in filenames:
                     os.chown(
                         os.path.join(dirpath, filename),
-                        external_user['external_user_uid'],
-                        external_user['external_user_gid']
+                        uid,
+                        gid
                     )
 
     def create_symlink(self, path, symlink):
