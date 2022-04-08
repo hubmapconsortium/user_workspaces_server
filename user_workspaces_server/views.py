@@ -106,6 +106,7 @@ class WorkspaceView(APIView):
             content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
             main_storage.create_file(workspace.file_path, content_file)
 
+        main_storage.set_ownership(external_user_mapping.external_username, external_user_mapping)
         main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
         workspace.save()
