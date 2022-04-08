@@ -37,7 +37,8 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                 'user_id': internal_user,
                 'user_authentication_name': type(self).__name__,
                 'external_user_id': external_user['external_user_uid'],
-                'external_username': external_user['external_user_name']
+                'external_username': external_user['external_username'],
+                'external_user_details': external_user['external_user_details']
             })
             # If the mapping does exist, we just get that external user, to confirm it exists
             return external_user_mapping \
@@ -110,9 +111,11 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             external_user = False
         # Need to return username and id
         return {
-            'external_user_name': external_user[0],
+            'external_username': external_user[0],
+            'external_user_id': external_user[2],
             'external_user_uid': external_user[2],
-            'external_user_gid': external_user[3]
+            'external_user_gid': external_user[3],
+            'external_user_details': external_user
         } if external_user else external_user
 
     def get_external_user(self, external_user_info):
@@ -124,9 +127,11 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             else:
                 external_user = False
             return {
-                'external_user_name': external_user[0],
+                'external_username': external_user[0],
+                'external_user_id': external_user[2],
                 'external_user_uid': external_user[2],
-                'external_user_gid': external_user[3]
+                'external_user_gid': external_user[3],
+                'external_user_details': external_user
             } if external_user else external_user
         except Exception as e:
             print(e)
