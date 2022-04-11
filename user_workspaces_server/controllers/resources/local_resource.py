@@ -3,7 +3,6 @@ import psutil
 import subprocess
 import os
 import time
-from django.forms.models import model_to_dict
 from django.core.files.base import ContentFile
 
 
@@ -13,16 +12,16 @@ class LocalResource(AbstractResource):
         script_name = f"{str(time.time())}.sh"
         script_path = os.path.join(workspace_full_path, script_name)
         # Get the script content
-        with open(script_path, 'w') as script:
-            script.write(job.get_script())
 
         self.resource_storage.create_file(workspace_full_path, ContentFile(bytes(job.get_script(), 'utf-8'), name=script_name))
 
-        self.resource_storage.set_ownership(script_path, workspace.user_id)
-        user_info = self.resource_storage.storage_user_authentication.get_external_user(model_to_dict(workspace.user_id))
+        user_info = self.resource_user_authentication.has_permission(workspace.user_id)
+
+        self.resource_storage.set_ownership(script_path, user_info)
+
         os.chmod(script_path, 0o744)
 
-        process = subprocess.Popen(['sudo', 'su', user_info['external_user_name'], '-s', '/bin/bash', script_path],
+        process = subprocess.Popen(['sudo', 'su', user_info.external_username, '-s', '/bin/bash', script_path],
                                    stdin=None, stdout=None, stderr=None, cwd=workspace_full_path,
                                    )
         return process.pid
