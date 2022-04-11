@@ -2,7 +2,7 @@ version: '3'
 services:
   web:
     build: .
-    command: uwsgi --socket :5050 -w user_workspaces_server_project.wsgi:application
+    command: daphne -p 5050 user_workspaces_server_project.asgi:application
     volumes:
       - .:/code
     ports:
