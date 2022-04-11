@@ -4,6 +4,7 @@ import subprocess
 import os
 import time
 from django.forms.models import model_to_dict
+from django.core.files.base import ContentFile
 
 
 class LocalResource(AbstractResource):
@@ -14,6 +15,8 @@ class LocalResource(AbstractResource):
         # Get the script content
         with open(script_path, 'w') as script:
             script.write(job.get_script())
+
+        self.resource_storage.create_file(workspace_full_path, ContentFile(bytes(job.get_script()), name=script_name))
 
         self.resource_storage.set_ownership(script_path, workspace.user_id)
         user_info = self.resource_storage.storage_user_authentication.get_external_user(model_to_dict(workspace.user_id))
