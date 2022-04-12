@@ -1,9 +1,23 @@
 version: '3'
 services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
   web:
     build: .
-    command: daphne -p 5050 user_workspaces_server_project.asgi:application
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python manage.py migrate
+        python manage.py qcluster&
+        daphne -b 0.0.0.0 -p 5050 user_workspaces_server_project.asgi:application
     volumes:
+#      - This line should be how the host machine's user information is synced into the container
       - .:/code
+      - /Users/jpuerto/user_workspaces_dir:/Users/jpuerto/user_workspaces_dir
     ports:
       - "5050:5050"
+    depends_on:
+      - redis
