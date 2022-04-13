@@ -1,7 +1,7 @@
 version: '3'
 services:
   postgres:
-    image: postgres
+    image: postgres:alpine
     restart: always
     environment:
       POSTGRES_PASSWORD: blank
@@ -14,13 +14,7 @@ services:
       - "6379:6379"
   web:
     build: .
-    command:
-      - /bin/bash
-      - -c
-      - |
-        python manage.py migrate
-        python manage.py qcluster&
-        daphne -b 0.0.0.0 -p 5050 user_workspaces_server_project.asgi:application
+    command: /bin/bash/ /docker/start.sh
     volumes:
 #      - This line should be how the host machine's user information is synced into the container
       - .:/code
