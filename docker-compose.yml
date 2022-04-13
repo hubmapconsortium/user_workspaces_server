@@ -1,7 +1,7 @@
 version: '3'
 services:
   postgres:
-    image: postgres:alpine
+    image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: blank
