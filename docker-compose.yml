@@ -10,11 +10,9 @@ services:
       - custom_db_dir:/var/lib/postgresql/data
   redis:
     image: redis:alpine
-    ports:
-      - "6379:6379"
   web:
     build: .
-    command: /bin/bash/ /docker/start.sh
+    command: bash -c "docker/start.sh"
     volumes:
 #      - This line should be how the host machine's user information is synced into the container
       - .:/code
