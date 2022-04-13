@@ -4,10 +4,10 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: test
-      POSTGRES_USER: test
+      POSTGRES_PASSWORD: blank
+      POSTGRES_USER: blank
     volumes:
-      - /Users/jpuerto/custom_db_dir:/var/lib/postgresql/data
+      - custom_db_dir:/var/lib/postgresql/data
   redis:
     image: redis:alpine
   web:
