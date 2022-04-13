@@ -8,4 +8,5 @@ RUN apt-get update && \
     apt-get install -y sudo && \
     apt-get install -y sssd && \
     apt-get install -y virtualenv && \
+    apt-get install -y postgresql-client && \
     rm -rf /var/lib/apt/lists/*
