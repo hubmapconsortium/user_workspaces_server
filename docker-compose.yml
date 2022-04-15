@@ -26,6 +26,9 @@ services:
 #      - This line should be how the host machine's user information is synced into the container
       - .:/code
       - /Users/jpuerto/user_workspaces_dir:/Users/jpuerto/user_workspaces_dir
+    environment:
+      - POSTGRES_PASSWORD=blank
+      - POSTGRES_USER=blank
     depends_on:
       - redis
       - postgres
