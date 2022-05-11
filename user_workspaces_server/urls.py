@@ -51,5 +51,6 @@ urlpatterns = [
 
 ws_urlpatterns = [
     path('passthrough/<str:hostname>/<int:job_id>/<path:remainder>', ws_consumers.PassthroughConsumer.as_asgi()),
+    path('jobs/', ws_consumers.JobStatusConsumer.as_asgi()),
     path('jobs/<int:job_id>/', ws_consumers.JobStatusConsumer.as_asgi()),
 ]

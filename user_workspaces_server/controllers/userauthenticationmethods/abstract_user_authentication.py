@@ -24,7 +24,9 @@ class AbstractUserAuthentication(ABC):
 
         return User.objects.create_user(
             user_info['username'],
-            email=user_info.get('email', None)
+            email=user_info.get('email', None),
+            **{"first_name": user_info.get('first_name', ''),
+               "last_name": user_info.get('last_name', '')}
         )
 
     @abstractmethod

@@ -94,7 +94,7 @@ class WorkspaceView(APIView):
         workspace.save()
 
         # file_path should be relative, not absolute
-        workspace.file_path = os.path.join(request.user.username, str(workspace.pk))
+        workspace.file_path = os.path.join(external_user_mapping.external_username, str(workspace.pk))
 
         main_storage.create_dir(workspace.file_path)
 
@@ -106,6 +106,7 @@ class WorkspaceView(APIView):
             content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
             main_storage.create_file(workspace.file_path, content_file)
 
+        main_storage.set_ownership(external_user_mapping.external_username, external_user_mapping)
         main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
         workspace.save()
@@ -166,6 +167,8 @@ class WorkspaceView(APIView):
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
             resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
+
+            # TODO: Check whether user has permission for this resource (and resource storage).
 
             job_data = {
                 "workspace_id": workspace,

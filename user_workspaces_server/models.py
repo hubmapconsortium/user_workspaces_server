@@ -47,3 +47,4 @@ class ExternalUserMapping(models.Model):
     external_user_id = models.CharField(max_length=128)
     external_username = models.CharField(max_length=64)
     user_authentication_name = models.CharField(max_length=64)
+    external_user_details = models.JSONField(blank=True, null=True)

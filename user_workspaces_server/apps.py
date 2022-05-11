@@ -14,7 +14,7 @@ class UserWorkspacesServerConfig(AppConfig):
 
     def ready(self):
         from user_workspaces_server.controllers.storagemethods import local_file_system_storage
-        from user_workspaces_server.controllers.userauthenticationmethods import globus_user_authentication, local_user_authentication
+        from user_workspaces_server.controllers.userauthenticationmethods import globus_user_authentication, local_user_authentication, psc_api_user_authentication
         from user_workspaces_server.controllers.resources import local_resource
         api_user_authentication_details = settings.CONFIG['available_user_authentication'][
             settings.CONFIG['api_user_authentication']
@@ -25,12 +25,12 @@ class UserWorkspacesServerConfig(AppConfig):
         ]
 
         # TODO: Assign this dynamically.
-        self.api_user_authentication = globus_user_authentication.GlobusUserAuthentication(
+        self.api_user_authentication = psc_api_user_authentication.PSCAPIUserAuthentication(
             api_user_authentication_details['connection_details']
         )
 
         self.main_storage = local_file_system_storage.LocalFileSystemStorage(
-            local_user_authentication.LocalUserAuthentication(
+            psc_api_user_authentication.PSCAPIUserAuthentication(
                 settings.CONFIG['available_user_authentication'][
                     main_storage_method_details['user_authentication']
                 ]['connection_details']
