@@ -55,8 +55,7 @@ class JupyterLabJob(AbstractJob):
             return {'message': 'Token undefined.'}
 
         urllib.parse.urlencode({'node': hostname, 'port': port, 'token': token})
-        connection_string = f'/passthrough/{hostname}/{job_model.id}' \
-                            f'/lab?token={token}'
+        connection_string = f'{url.path}?token={token}'
 
         return {'message': 'Webserver ready.',
                 'connection_details': {
