@@ -1,15 +1,13 @@
 # User Workspaces Server
-
 The User Workspaces Server is an HTTP/Websocket server which allows developers to create workspaces and launch interactive sessions on a variety of resources.
 
 ## Django App Configuration
-This application is written in Django and it includes an example_config.json file in the instance directory. Copy the file and rename it config.json and modify with the appropriate information.
+This application is written in Django and it includes an example_config.json file. Copy the file and rename it config.json and modify it with the appropriate information.
 
-## Local development
-This assumes you are developing the code with the Django development server
+## Development
 
-### Install dependencies
-Create a new Python 3(.8>=) environment:
+### Local development
+Create a new Python (3.8>=) environment:
 
 ```
 virtualenv -p 3.8 venv
@@ -43,6 +41,96 @@ Build/start the docker compose cluster
 ```
 docker compose build
 docker compose up -d
+```
+
+## REST API Common Workflows
+
+The most common workflows for this service are:
+- User authorization
+- Workspace creation
+- TODO: Job launching/monitoring
+
+### User authorization
+
+This workflow is highly dependent on the `api_user_authentication` that you have chosen in your config.json. In this section, we will describe the Globus **user token** based authentication.
+
+#### POST request to <base_url>/tokens/
+
+The body of this request should be structured as follows:
+```
+{
+	“auth_token”: “groups.api.globus.org token”
+}
+```
+
+This request will return the following
+```
+{
+	“token”: “user token”
+}
+```
+
+This token should be saved somewhere as it will be used on any subsequent requests, for this user.
+
+Regardless of the chosen `api_user_authentiation`, you will want to include this token in the **header** of any other requests, so that the user workspaces server can correctly identify the user.
+
+You will want to set a custom `UWS-Authorization` header, and include the token in the area marked as "xxx"
+
+```
+UWS-Authorization: Token xxxx
+```
+
+Curl example of a token, `abcd1234`
+```
+curl --header "UWS-Authorization: Token abcd1234" <base_url>/workspaces/
+```
+
+### Workspace creation
+
+In this section, we will describe how to create a new workspace.
+
+#### POST request to <base_url>/workspaces/
+
+The body of this request should be structured as follows:
+```
+{
+  "name": workspace_name,
+  "description": workspace_description,
+  "workspace_details": {
+    "symlinks": [
+      {
+        “name”: “Symlink Name”,
+        “path”: “full_path/to/directory”
+      }
+    ],
+    "files": [
+      {
+        “name”: “File Name”,
+        “content”: “file content”
+      }
+    ]
+  }
+}
+
+```
+
+This request will return the following
+```
+{
+  "message": response_message,
+  "success": success_boolean,
+  "data": {
+    "id": 0,
+    "description": "string",
+    "disk_space": 0,
+    "datetime_created": "string",
+    "workspace_details": {
+      "request_workspace_details": {},
+      "current_workspace_details": {}
+    }
+  }
+}
+
 ```
 
 ### Updating API Documentation
