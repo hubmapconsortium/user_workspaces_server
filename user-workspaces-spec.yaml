@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: The User Workspaces Server is an HTTP/Websocket server which allows developers to create workspaces and launch interactive sessions on a variety of resources.
-  version: 1.0.0
+  version: 1.0.1
   title: User Workspaces Server
   termsOfService: 'https://hubmapconsortium.org'
   contact:
@@ -9,9 +9,9 @@ info:
     email: help@hubmapconsortium.org
   license:
     name: MIT License
-    url: 'https://github.com/hubmapconsortium/entity-api/blob/master/license.txt'
+    url: 'https://github.com/hubmapconsortium/user_workspaces_server/blob/master/license.txt'
 servers:
-  - url: "https://workspaces-api.hubmapconsortium.org/"
+  - url: "https://workspaces.api.hubmapconsortium.org/"
 components:
   schemas:
     WorkspaceRequest:
@@ -189,7 +189,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspacePutResponse'
+                $ref: '#/components/schemas/WorkspaceResponse'
   '/workspaces/{workspace_id}/update/':
     put:
       tags:
