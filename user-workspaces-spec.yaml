@@ -1,0 +1,317 @@
+openapi: 3.0.0
+info:
+  description: The User Workspaces Server is an HTTP/Websocket server which allows developers to create workspaces and launch interactive sessions on a variety of resources.
+  version: 1.0.0
+  title: User Workspaces Server
+  termsOfService: 'https://hubmapconsortium.org'
+  contact:
+    name: HuBMAP Help Desk
+    email: help@hubmapconsortium.org
+  license:
+    name: MIT License
+    url: 'https://github.com/hubmapconsortium/entity-api/blob/master/license.txt'
+servers:
+  - url: "https://workspaces-api.hubmapconsortium.org/"
+components:
+  schemas:
+    WorkspaceRequest:
+      type: object
+      properties:
+        workspace_name:
+          type: string
+        description:
+          type: string
+        workspace_details:
+          type: object
+          properties:
+            symlinks:
+              type: array
+              items:
+                properties:
+                  name:
+                    type: string
+                  path:
+                    type: string
+                  dataset_uuid:
+                    type: string
+            files:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  content:
+                    type: string
+    WorkspaceDataResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+        disk_space:
+          type: integer
+        datetime_created:
+          type: string
+        workspace_details:
+          type: object
+          properties:
+            request_workspace_details:
+              type: object
+            current_workspace_details:
+              type: object
+    WorkspaceResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/WorkspaceDataResponse'
+    WorkspaceStartResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/JobDataResponse'
+    JobDataResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        resource_job_id:
+          type: integer
+        job_type:
+          type: string
+        status:
+          type: string
+        datetime_created:
+          type: string
+        datetime_start:
+          type: string
+        datetime_end:
+          type: string
+        core_hours:
+          type: integer
+        job_details:
+          type: object
+          properties:
+            request_job_details:
+              type: object
+            current_job_details:
+              type: object
+    JobResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/JobDataResponse'
+    JobTypeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+paths:
+  '/workspaces/':
+    get:
+      tags:
+        - Workspaces
+      summary: Get a list of workspaces associated with the user.
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkspaceResponse'
+    post:
+      tags:
+        - Workspaces
+      summary: Create a new workspace.
+      requestBody:
+        description: Workspace to create in the system.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/WorkspaceRequest'
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkspaceResponse'
+  '/workspaces/{workspace_id}/':
+    get:
+      tags:
+        - Workspaces
+      summary: Get a specific workspace.
+      parameters:
+        - name: workspace_id
+          in: path
+          description: Identifier for workspace.
+          required: true
+          schema:
+             type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+    put:
+      tags:
+        - Workspaces
+      summary: Update a workspace.
+      parameters:
+        - name: workspace_id
+          in: path
+          description: Identifier for workspace.
+          required: true
+          schema:
+             type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspacePutResponse'
+  '/workspaces/{workspace_id}/update/':
+    put:
+      tags:
+        - Workspaces
+      summary: Upload files to a workspace.
+      parameters:
+        - name: workspace_id
+          in: path
+          description: Identifier for workspace.
+          required: true
+          schema:
+             type: string
+      requestBody:
+        description: If using the upload PUT type, include the files you wish to upload here.
+        content:
+          'multipart/form-data':
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+  '/workspaces/{workspace_id}/start/':
+    put:
+      tags:
+        - Workspaces
+      summary: Start a job for a workspace.
+      parameters:
+        - name: workspace_id
+          in: path
+          description: Identifier for workspace.
+          required: true
+          schema:
+             type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceStartResponse'
+  '/jobs/':
+    get:
+      tags:
+        - Jobs
+      summary: Get a list of jobs associated with the user.
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobResponse'
+  '/jobs/{job_id}/':
+    get:
+      tags:
+        - Jobs
+      summary: Get a specific job.
+      parameters:
+        - name: job_id
+          in: path
+          description: Identifier for job.
+          required: true
+          schema:
+             type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+  '/jobs/{job_id}/{put_type}/':
+    put:
+      tags:
+        - Jobs
+      summary: Perform an action on a job.
+      parameters:
+        - name: job_id
+          in: path
+          description: Identifier for job.
+          required: true
+          schema:
+             type: string
+        - name: put_type
+          in: path
+          description: The type of operation that should be performed on the workspace.
+          required: true
+          schema:
+            type: string
+            enum: [stop]
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+  '/job_types/':
+    get:
+      tags:
+        - JobTypes
+      summary: Get a list of job types that can be run.
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobTypeResponse'
+tags:
+  - name: Workspaces
+  - name: Jobs
+  - name: JobTypes
