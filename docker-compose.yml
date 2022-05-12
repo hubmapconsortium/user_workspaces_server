@@ -1,0 +1,34 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/conf.d/user-workspaces.conf:/etc/nginx/conf.d/user-workspaces.conf
+# This can be file should be used in the case where the domain name between user-workspaces and proxying are different.
+#      - ./docker/nginx/conf.d/passthrough.conf:/etc/nginx/conf.d/passthrough.conf
+    ports:
+      - "80:80"
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: blank
+      POSTGRES_USER: blank
+    volumes:
+      - custom_db_dir:/var/lib/postgresql/data
+  redis:
+    image: redis:alpine
+  web:
+    build: .
+    command: bash -c "docker/start.sh"
+    volumes:
+#      - This line should be how the host machine's user information is synced into the container
+      - .:/code
+      - /Users/jpuerto/user_workspaces_dir:/Users/jpuerto/user_workspaces_dir
+    environment:
+      - POSTGRES_PASSWORD=blank
+      - POSTGRES_USER=blank
+    depends_on:
+      - redis
+      - postgres

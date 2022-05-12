@@ -1,0 +1,11 @@
+{
+  "api_user_authentication": "main",
+  "available_user_authentication": {
+    "main": {
+      "name": "main",
+      "user_authentication_type": "MainUserAuthentication",
+      "connection_details": {
+      }
+    }
+  }
+}
