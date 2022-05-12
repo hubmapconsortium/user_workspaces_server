@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
   description: The User Workspaces Server is an HTTP/Websocket server which allows developers to create workspaces and launch interactive sessions on a variety of resources.
-  version: 1.0.1
-  title: User Workspaces Server
+  version: 1.0.2
+  title: HuBMAP User Workspaces Server
   termsOfService: 'https://hubmapconsortium.org'
   contact:
     name: HuBMAP Help Desk
@@ -190,6 +190,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkspaceResponse'
+    delete:
+      tags:
+        - Workspaces
+      summary: Delete a specific workspace. NOT AVAILABLE YET.
+      parameters:
+        - name: workspace_id
+          in: path
+          description: Identifier for workspace.
+          required: true
+          schema:
+             type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
   '/workspaces/{workspace_id}/update/':
     put:
       tags:
@@ -273,11 +291,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobResponse'
-  '/jobs/{job_id}/{put_type}/':
+  '/jobs/{job_id}/stop/':
     put:
       tags:
         - Jobs
-      summary: Perform an action on a job.
+      summary: Stop a running job. NOT AVAILABLE YET.
       parameters:
         - name: job_id
           in: path
@@ -285,13 +303,6 @@ paths:
           required: true
           schema:
              type: string
-        - name: put_type
-          in: path
-          description: The type of operation that should be performed on the workspace.
-          required: true
-          schema:
-            type: string
-            enum: [stop]
       responses:
         "200":
           description: successful operation
@@ -303,7 +314,7 @@ paths:
     get:
       tags:
         - JobTypes
-      summary: Get a list of job types that can be run.
+      summary: Get a list of job types that can be run. NOT AVAILABLE YET.
       responses:
         "200":
           description: successful operation
