@@ -47,10 +47,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'channels'
+    'channels',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -146,3 +148,5 @@ Q_CLUSTER = CONFIG['Q_CLUSTER']
 ASGI_APPLICATION = "user_workspaces_server_project.asgi.application"
 
 CHANNEL_LAYERS = CONFIG['CHANNEL_LAYERS']
+
+CORS_ALLOW_ALL_ORIGINS = True
