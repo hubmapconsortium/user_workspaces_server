@@ -24,7 +24,10 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
         pass
 
     def api_authenticate(self, request):
-        body = json.loads(request.body)
+        try:
+            body = json.loads(request.body)
+        except Exception as e:
+            raise ParseError(repr(e))
 
         globus_user_info = self.globus_oauth_get_user_info(body) if self.authentication_type == 'oauth' \
             else (self.globus_token_get_user_info(body) if self.authentication_type == 'token' else False)
