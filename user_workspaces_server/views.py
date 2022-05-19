@@ -56,7 +56,16 @@ class WorkspaceView(APIView):
         return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'workspaces': workspaces}})
 
     def post(self, request):
-        body = json.loads(request.body)
+        try:
+            body = json.loads(request.body)
+        except Exception as e:
+            return JsonResponse(
+                {
+                    'message': repr(e),
+                    'success': False
+                },
+                status=400
+            )
 
         if 'name' not in body or 'description' not in body:
             raise ParseError('Missing required fields.')
@@ -133,7 +142,16 @@ class WorkspaceView(APIView):
             raise PermissionDenied('Workspace does not exist/is not owned by this user.')
 
         if not put_type:
-            body = json.loads(request.body)
+            try:
+                body = json.loads(request.body)
+            except Exception as e:
+                return JsonResponse(
+                    {
+                        'message': repr(e),
+                        'success': False
+                    },
+                    status=400
+                )
             workspace.name = body.get('name', workspace.name)
             workspace.description = body.get('description', workspace.description)
 
@@ -156,7 +174,16 @@ class WorkspaceView(APIView):
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
         if put_type.lower() == 'start':
-            body = json.loads(request.body)
+            try:
+                body = json.loads(request.body)
+            except Exception as e:
+                return JsonResponse(
+                    {
+                        'message': repr(e),
+                        'success': False
+                    },
+                    status=400
+                )
             if 'job_type' not in body:
                 raise ParseError('Missing job_type or job_details')
 
