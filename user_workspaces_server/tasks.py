@@ -50,4 +50,5 @@ def queue_job_update(task):
         raise e
 
     if job.status in ['pending', 'running', 'sleeping']:
-        async_task('user_workspaces_server.tasks.update_job_status', job_id, hook='user_workspaces_server.tasks.queue_job_update')
+        async_task('user_workspaces_server.tasks.update_job_status', job_id,
+                   hook='user_workspaces_server.tasks.queue_job_update')
