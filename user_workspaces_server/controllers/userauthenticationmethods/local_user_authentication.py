@@ -48,7 +48,10 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             return external_user_mapping
 
     def api_authenticate(self, request):
-        body = json.loads(request.body)
+        try:
+            body = json.loads(request.body)
+        except Exception as e:
+            raise ParseError(repr(e))
 
         if 'client_token' not in body:
             raise ParseError('Missing client_token. Please have admin generate a token for you.')
