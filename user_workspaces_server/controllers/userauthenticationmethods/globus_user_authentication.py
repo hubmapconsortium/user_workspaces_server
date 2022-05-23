@@ -10,9 +10,10 @@ from hubmap_commons.hm_auth import AuthHelper
 
 class GlobusUserAuthentication(AbstractUserAuthentication):
     def __init__(self, config):
-        client_id = config['client_id']
-        client_secret = config['client_secret']
-        self.authentication_type = config['authentication_type']
+        connection_details = config.get('connection_details', {})
+        client_id = connection_details['client_id']
+        client_secret = connection_details['client_secret']
+        self.authentication_type = connection_details['authentication_type']
         self.oauth = globus_sdk.ConfidentialAppAuthClient(
             client_id, client_secret)
         if not AuthHelper.isInitialized():
