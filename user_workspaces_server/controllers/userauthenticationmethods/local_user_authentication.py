@@ -9,8 +9,9 @@ from rest_framework.authtoken.models import Token
 
 class LocalUserAuthentication(AbstractUserAuthentication):
     def __init__(self, config):
-        self.create_external_users = config.get('create_external_users', False)
-        self.operating_system = config.get('operating_system', '').lower()
+        connection_details = config.get('connection_details', {})
+        self.create_external_users = connection_details.get('create_external_users', False)
+        self.operating_system = connection_details.get('operating_system', '').lower()
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping({
