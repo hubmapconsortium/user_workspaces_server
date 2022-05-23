@@ -67,9 +67,7 @@ class JobStatusConsumer(WebsocketConsumer):
 
     # Receive message from room group
     def job_status_update(self, event):
-        job_status = event['message']
+        job_details = event['message']
 
         # Send message to WebSocket
-        self.send(text_data=json.dumps({
-            'current_job_details': job_status
-        }))
+        self.send(text_data=json.dumps(job_details))
