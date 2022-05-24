@@ -12,8 +12,8 @@ class PassthroughConsumer(WebsocketConsumer):
         hostname = self.scope['url_route']['kwargs']['hostname']
         job_id = self.scope['url_route']['kwargs']['job_id']
         job_model = models.Job.objects.get(pk=job_id)
-        connection_details = job_model.job_details['current_job_details']['connection_details']
-        port = connection_details['port']
+        connection_details = job_model.job_details['current_job_details'].get('proxy_details', {})
+        port = connection_details.get('port', '')
         headers = {}
         for item in self.scope['headers']:
             headers[item[0].decode('UTF-8')] = item[1].decode('UTF-8')
