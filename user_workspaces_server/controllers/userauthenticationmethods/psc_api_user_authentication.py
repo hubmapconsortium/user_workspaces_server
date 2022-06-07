@@ -10,11 +10,12 @@ import requests as http_r
 class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
     def __init__(self, config):
-        self.create_external_users = config.get('create_external_users', False)
-        self.root_url = config.get('root_url', '')
-        self.jwt_token = config.get('jwt_token', '')
-        self.grant_number = config.get('grant_number', '')
-        self.resource_name = config.get('resource_name', '')
+        connection_details = config.get('connection_details', {})
+        self.create_external_users = connection_details.get('create_external_users', False)
+        self.root_url = connection_details.get('root_url', '')
+        self.jwt_token = connection_details.get('jwt_token', '')
+        self.grant_number = connection_details.get('grant_number', '')
+        self.resource_name = connection_details.get('resource_name', '')
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping({
@@ -52,7 +53,10 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             return external_user_mapping
 
     def api_authenticate(self, request):
-        body = json.loads(request.body)
+        try:
+            body = json.loads(request.body)
+        except Exception as e:
+            raise ParseError(repr(e))
 
         if 'client_token' not in body:
             raise ParseError('Missing client_token. Please have admin generate a token for you.')
