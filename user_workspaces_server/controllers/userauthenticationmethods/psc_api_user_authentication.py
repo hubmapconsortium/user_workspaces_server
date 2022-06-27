@@ -158,7 +158,9 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                     },
                     "allocations": [
                         {
-                            "allocationId": f"{allocation.get('id')}"
+                            "allocation": {
+                                "id": f"{allocation.get('id')}"
+                            }
                         }
                     ]
                 }
@@ -266,8 +268,8 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         body = {
             "operationName": "",
             "query": """
-                query GetAllocationAndAllocationUsers($grantNumber: String!, $resourceName: String!) {
-                    allocation(grantNumber: $grantNumber, resourceName: $resourceName) {
+                query GetAllocationAndAllocationUsers($components: AllocationComponentsInput!) {
+                    allocation(components: $components) {
                     id
                     startDate
                     endDate
@@ -292,8 +294,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                 }
             """,
             "variables": {
-              "grantNumber": f"{self.grant_number}",
-              "resourceName": f"{self.resource_name}"
+                "components": {
+                    "grant": {
+                        "number": f"{self.grant_number}",
+                    },
+                    "resource": {
+                        "name": f"{self.resource_name}",
+                    }
+                }
             }
         }
 
