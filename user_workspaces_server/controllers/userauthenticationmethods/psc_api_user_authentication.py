@@ -158,7 +158,9 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                     },
                     "allocations": [
                         {
-                            "allocationId": f"{allocation.get('id')}"
+                            "allocation": {
+                                "id": f"{allocation.get('id')}"
+                            }
                         }
                     ]
                 }
