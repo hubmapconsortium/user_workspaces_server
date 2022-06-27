@@ -266,7 +266,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         body = {
             "operationName": "",
             "query": """
-                query GetAllocationAndAllocationUsers($grantNumber: String!, $resourceName: String!) {
+                query GetAllocationAndAllocationUsers($components: AllocationComponentsInput!) {
                     allocation(components: $components) {
                     id
                     startDate
