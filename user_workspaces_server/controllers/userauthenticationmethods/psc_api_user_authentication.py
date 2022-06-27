@@ -267,7 +267,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             "operationName": "",
             "query": """
                 query GetAllocationAndAllocationUsers($grantNumber: String!, $resourceName: String!) {
-                    allocation(grantNumber: $grantNumber, resourceName: $resourceName) {
+                    allocation(components: $components) {
                     id
                     startDate
                     endDate
@@ -292,8 +292,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                 }
             """,
             "variables": {
-              "grantNumber": f"{self.grant_number}",
-              "resourceName": f"{self.resource_name}"
+                "components": {
+                    "grant": {
+                        "number": f"{self.grant_number}",
+                    },
+                    "resource": {
+                        "name": f"{self.resource_name}",
+                    }
+                }
             }
         }
 
