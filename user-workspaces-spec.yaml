@@ -43,6 +43,14 @@ components:
                     type: string
                   content:
                     type: string
+    WorkspaceJobStartRequest:
+      type: object
+      properties:
+        job_type:
+          type: string
+          example: 'JupyterLabJob'
+        job_details:
+          type: object
     WorkspaceDataResponse:
       type: object
       properties:
@@ -251,6 +259,12 @@ paths:
           required: true
           schema:
              type: string
+      requestBody:
+        description: Job details.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/WorkspaceJobStartRequest'
       responses:
         "200":
           description: successful operation
