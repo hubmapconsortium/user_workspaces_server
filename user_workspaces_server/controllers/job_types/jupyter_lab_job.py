@@ -49,18 +49,21 @@ class JupyterLabJob(AbstractJob):
         hostname = url.hostname
 
         try:
-            token = parse.parse_qs(url.query)['token'][0]
+            token = parse.parse_qs(url.query)['token'][0].strip()
         except Exception as e:
             print(repr(e))
             return {'message': 'Token undefined.'}
 
-        urllib.parse.urlencode({'node': hostname, 'port': port, 'token': token})
         connection_string = f'{url.path}?token={token}'
 
-        return {'message': 'Webserver ready.',
-                'connection_details': {
-                        'hostname': hostname,
-                        'port': port,
-                        'connection_string': connection_string
-                    }
-                }
+        return {
+            'message': 'Webserver ready.',
+            'proxy_details': {
+                'hostname': hostname,
+                'port': port,
+                'path': connection_string
+            },
+            'connection_details': {
+                'url_path': connection_string,
+            }
+        }

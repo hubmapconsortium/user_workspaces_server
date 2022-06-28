@@ -9,8 +9,9 @@ from rest_framework.authtoken.models import Token
 
 class LocalUserAuthentication(AbstractUserAuthentication):
     def __init__(self, config):
-        self.create_external_users = config.get('create_external_users', False)
-        self.operating_system = config.get('operating_system', '').lower()
+        connection_details = config.get('connection_details', {})
+        self.create_external_users = connection_details.get('create_external_users', False)
+        self.operating_system = connection_details.get('operating_system', '').lower()
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping({
@@ -48,7 +49,10 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             return external_user_mapping
 
     def api_authenticate(self, request):
-        body = json.loads(request.body)
+        try:
+            body = json.loads(request.body)
+        except Exception as e:
+            raise ParseError(repr(e))
 
         if 'client_token' not in body:
             raise ParseError('Missing client_token. Please have admin generate a token for you.')

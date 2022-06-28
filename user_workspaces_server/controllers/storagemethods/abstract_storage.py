@@ -2,9 +2,10 @@ from abc import ABC, abstractmethod
 
 
 class AbstractStorage(ABC):
-    def __init__(self, storage_user_authentication, root_dir):
+    def __init__(self, config, storage_user_authentication):
+        self.config = config
         self.storage_user_authentication = storage_user_authentication
-        self.root_dir = root_dir
+        self.root_dir = config['root_dir']
 
     @abstractmethod
     def create_dir(self, path):

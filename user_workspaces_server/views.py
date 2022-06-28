@@ -56,7 +56,16 @@ class WorkspaceView(APIView):
         return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'workspaces': workspaces}})
 
     def post(self, request):
-        body = json.loads(request.body)
+        try:
+            body = json.loads(request.body)
+        except Exception as e:
+            return JsonResponse(
+                {
+                    'message': repr(e),
+                    'success': False
+                },
+                status=400
+            )
 
         if 'name' not in body or 'description' not in body:
             raise ParseError('Missing required fields.')
@@ -133,7 +142,16 @@ class WorkspaceView(APIView):
             raise PermissionDenied('Workspace does not exist/is not owned by this user.')
 
         if not put_type:
-            body = json.loads(request.body)
+            try:
+                body = json.loads(request.body)
+            except Exception as e:
+                return JsonResponse(
+                    {
+                        'message': repr(e),
+                        'success': False
+                    },
+                    status=400
+                )
             workspace.name = body.get('name', workspace.name)
             workspace.description = body.get('description', workspace.description)
 
@@ -156,7 +174,16 @@ class WorkspaceView(APIView):
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
         if put_type.lower() == 'start':
-            body = json.loads(request.body)
+            try:
+                body = json.loads(request.body)
+            except Exception as e:
+                return JsonResponse(
+                    {
+                        'message': repr(e),
+                        'success': False
+                    },
+                    status=400
+                )
             if 'job_type' not in body:
                 raise ParseError('Missing job_type or job_details')
 
@@ -249,8 +276,8 @@ class PassthroughView(APIView):
     def get(self, request, hostname, job_id, remainder):
         try:
             job_model = models.Job.objects.get(pk=job_id)
-            connection_details = job_model.job_details['current_job_details']['connection_details']
-            port = connection_details['port']
+            proxy_details = job_model.job_details['current_job_details']['proxy_details']
+            port = proxy_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.get(url, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
@@ -261,8 +288,8 @@ class PassthroughView(APIView):
     def post(self, request, hostname, job_id, remainder):
         try:
             job_model = models.Job.objects.get(pk=job_id)
-            connection_details = job_model.job_details['current_job_details']['connection_details']
-            port = connection_details['port']
+            proxy_details = job_model.job_details['current_job_details']['proxy_details']
+            port = proxy_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.post(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
@@ -273,8 +300,8 @@ class PassthroughView(APIView):
     def patch(self, request, hostname, job_id, remainder):
         try:
             job_model = models.Job.objects.get(pk=job_id)
-            connection_details = job_model.job_details['current_job_details']['connection_details']
-            port = connection_details['port']
+            proxy_details = job_model.job_details['current_job_details']['proxy_details']
+            port = proxy_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.patch(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
@@ -285,8 +312,8 @@ class PassthroughView(APIView):
     def put(self, request, hostname, job_id, remainder):
         try:
             job_model = models.Job.objects.get(pk=job_id)
-            connection_details = job_model.job_details['current_job_details']['connection_details']
-            port = connection_details['port']
+            proxy_details = job_model.job_details['current_job_details']['proxy_details']
+            port = proxy_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.put(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
@@ -297,8 +324,8 @@ class PassthroughView(APIView):
     def delete(self, request, hostname, job_id, remainder):
         try:
             job_model = models.Job.objects.get(pk=job_id)
-            connection_details = job_model.job_details['current_job_details']['connection_details']
-            port = connection_details['port']
+            proxy_details = job_model.job_details['current_job_details']['proxy_details']
+            port = proxy_details['port']
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.delete(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)

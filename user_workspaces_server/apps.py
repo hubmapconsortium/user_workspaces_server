@@ -25,17 +25,17 @@ class UserWorkspacesServerConfig(AppConfig):
         ]
 
         # TODO: Assign this dynamically.
-        self.api_user_authentication = psc_api_user_authentication.PSCAPIUserAuthentication(
-            api_user_authentication_details['connection_details']
+        self.api_user_authentication = globus_user_authentication.GlobusUserAuthentication(
+            api_user_authentication_details
         )
 
         self.main_storage = local_file_system_storage.LocalFileSystemStorage(
-            psc_api_user_authentication.PSCAPIUserAuthentication(
+            main_storage_method_details,
+            local_user_authentication.LocalUserAuthentication(
                 settings.CONFIG['available_user_authentication'][
                     main_storage_method_details['user_authentication']
-                ]['connection_details']
-            ),
-            main_storage_method_details['root_dir']
+                ]
+            )
         )
 
         local_resource_storage_method = settings.CONFIG['available_storage'][settings.CONFIG['available_resources']['local_resource']['storage']]
@@ -43,16 +43,17 @@ class UserWorkspacesServerConfig(AppConfig):
 
         self.available_resources = {
             'local_resource': local_resource.LocalResource(
+                settings.CONFIG['available_resources']['local_resource'],
                 local_file_system_storage.LocalFileSystemStorage(
+                    local_resource_storage_method,
                     local_user_authentication.LocalUserAuthentication(
                         settings.CONFIG['available_user_authentication'][
                             local_resource_storage_method['user_authentication']
-                        ]['connection_details']
-                    ),
-                    local_resource_storage_method['root_dir']
+                        ]
+                    )
                 ),
                 local_user_authentication.LocalUserAuthentication(
-                    local_resource_user_auth_method['connection_details']
+                    local_resource_user_auth_method
                 )
             )
         }
