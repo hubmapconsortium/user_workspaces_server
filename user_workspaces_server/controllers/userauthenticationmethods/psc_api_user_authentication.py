@@ -212,8 +212,8 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         body = {
             "operationName": "GetUserAndAllocationUsers",
             "query": """
-                    query GetUserAndAllocationUsers($pscId: String, $username: String) {
-                        user(pscId: $pscId, username: $username) {
+                    query GetUserAndAllocationUsers($pscId: String, $username: String, $email: String) {
+                        user(pscId: $pscId, username: $username, email: $email) {
                             uid
                             pscId
                             username
