@@ -26,7 +26,10 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         if not external_user_mapping:
             # If the mapping does not exist, we have to try to "find" an external use
             # based on the info we have from the internal user
-            external_user = self.get_external_user({"username": internal_user.username})
+            for option in ['username', 'email']:
+                external_user = self.get_external_user({option: getattr(internal_user, option)})
+                if external_user:
+                    break
 
             if not external_user:
                 # No user found, return false
@@ -196,8 +199,15 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         } if external_user else external_user
 
     def get_external_user(self, external_user_info):
-        variables = {"username": external_user_info['username']} if 'username' in external_user_info \
-            else {"pscId": external_user_info['external_user_id']}
+        # Check username, then email, then pscId
+        variables = {}
+
+        if "external_user_id" in external_user_info:
+            variables['pscId'] = external_user_info['external_user_id']
+        elif "username" in external_user_info:
+            variables['username'] = external_user_info['username']
+        elif "email" in external_user_info:
+            variables['email'] = external_user_info['email']
 
         body = {
             "operationName": "GetUserAndAllocationUsers",
