@@ -28,7 +28,14 @@ class SlurmAPIResource(AbstractResource):
         # For pure testing, lets just set a var in the connection details.
         headers = {'X-SLURM-USER-TOKEN': self.config.get("connection_detail", {}).get("slurm_token", ""), 'X-SLURM-USER-NAME': f'{user_info.external_username}'}
 
-        job = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/job/submit', {'script': f'{script_path}', 'job': {}}, headers=headers)
+        body = {
+            'script': job.get_script()
+        }
+
+        print(headers)
+        print(body)
+
+        job = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/job/submit', body, headers=headers)
 
         print(job)
 
