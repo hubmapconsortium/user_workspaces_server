@@ -26,7 +26,7 @@ class SlurmAPIResource(AbstractResource):
         os.chmod(script_path, 0o744)
 
         # For pure testing, lets just set a var in the connection details.
-        headers = {'X-SLURM-USER-TOKEN': self.config.get("connection_detail", {}).get("slurm_token", ""), 'X-SLURM-USER-NAME': f'{user_info.external_username}'}
+        headers = {'X-SLURM-USER-TOKEN': self.config.get("connection_details", {}).get("slurm_token", ""), 'X-SLURM-USER-NAME': f'{user_info.external_username}'}
 
         body = {
             'script': job.get_script()
