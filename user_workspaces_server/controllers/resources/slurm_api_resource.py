@@ -1,6 +1,4 @@
 from user_workspaces_server.controllers.resources.abstract_resource import AbstractResource
-import psutil
-import subprocess
 import os
 import time
 from django.core.files.base import ContentFile
@@ -29,17 +27,26 @@ class SlurmAPIResource(AbstractResource):
         headers = {'X-SLURM-USER-TOKEN': self.config.get("connection_details", {}).get("slurm_token", ""), 'X-SLURM-USER-NAME': f'{user_info.external_username}'}
 
         body = {
-            'script': job.get_script()
+            'script': job.get_script(),
+            'job': {
+                'name': f'{workspace.name} {job.job_details["id"]}',
+                'current_working_directory': workspace_full_path,
+                'nodes': 1,
+                'environment': {
+                    'PATH': '/bin/:/usr/bin/:/usr/local/bin/',
+                    'LD_LIBRARY_PATH': '/lib/:/lib64/:/usr/local/lib'
+                }
+            }
         }
 
-        print(headers)
-        print(body)
+        slurm_response = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/job/submit', json=body, headers=headers).json()
 
-        job = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/job/submit', body, headers=headers)
+        if len(slurm_response['errors']):
+            raise Exception(slurm_response['errors'])
 
-        print(job)
+        print(slurm_response)
 
-        return job.json()['job_id']
+        return slurm_response.json()['job_id']
 
     def get_job(self, resource_job_id):
         try:
