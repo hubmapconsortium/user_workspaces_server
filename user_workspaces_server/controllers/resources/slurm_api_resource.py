@@ -46,7 +46,7 @@ class SlurmAPIResource(AbstractResource):
 
         print(slurm_response)
 
-        return slurm_response.json()['job_id']
+        return slurm_response['job_id']
 
     def get_job(self, resource_job_id):
         try:
