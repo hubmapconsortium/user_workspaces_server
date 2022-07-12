@@ -26,10 +26,11 @@ class LocalResource(AbstractResource):
                                    )
         return process.pid
 
-    def get_job(self, resource_job_id):
+    def get_resource_job(self, job):
+        resource_job_id = job.resource_job_id
         try:
-            job = psutil.Process(resource_job_id)
-            return job.as_dict()
+            resource_job = psutil.Process(resource_job_id)
+            return resource_job.as_dict()
         except Exception as e:
             print(repr(e))
             return {'status': 'complete'}
