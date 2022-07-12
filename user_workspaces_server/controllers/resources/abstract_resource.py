@@ -14,6 +14,6 @@ class AbstractResource(ABC):
         pass
 
     @abstractmethod
-    def get_job(self, resource_job_id):
+    def get_resource_job(self, job):
         # Should get the resource's job information
         pass
