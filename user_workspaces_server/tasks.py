@@ -19,15 +19,18 @@ def update_job_status(job_id):
     resource_job_info = resource.get_resource_job(job)
     job.status = resource_job_info['status']
 
+    # Status should only ever be one of the following:
+    # pending, running, complete, failed
     if job.status == 'running' and job.datetime_start is None:
         job.datetime_start = datetime.datetime.now()
-    elif job.status in ['zombie', 'complete']:
+    elif job.status in ['complete', 'failed']:
         job.datetime_end = datetime.datetime.now()
 
     # TODO: Initialize appropriate JobType
     job_type = JupyterLabJob(
         settings.CONFIG['available_job_types']['jupyter_lab']['environment_details']['local_resource'], job)
 
+    # TODO: Make sure that we're using the resource to do this type of status check
     job.job_details['current_job_details'].update(job_type.status_check(job))
 
     if job.job_details['current_job_details'].get('connection_details', {}):
