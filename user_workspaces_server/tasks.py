@@ -16,7 +16,7 @@ def update_job_status(job_id):
         raise e
 
     resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
-    resource_job_info = resource.get_job(job.resource_job_id)
+    resource_job_info = resource.get_resource_job(job)
     job.status = resource_job_info['status']
 
     if job.status == 'running' and job.datetime_start is None:
