@@ -6,6 +6,18 @@ import requests as http_r
 
 
 class SlurmAPIResource(AbstractResource):
+    def translate_status(self, status):
+        status_list = {
+            'PENDING': 'pending',
+            'RUNNING': 'running',
+            'SUSPENDED': 'pending',
+            'COMPLETING': 'running',
+            'COMPLETED': 'complete',
+            'FAILED': 'failed'
+        }
+
+        return status_list[status]
+
     def launch_job(self, job, workspace):
         # Need to generate a SLURM token (as a user) to launch a job
         workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
@@ -53,9 +65,13 @@ class SlurmAPIResource(AbstractResource):
                    'X-SLURM-USER-NAME': f'{user_info.external_username}'}
 
         try:
-            job = http_r.get(f'{self.config.get("connection_details", {}).get("root_url")}/job/{job.resource_job_id}', headers=headers)
-            print(job)
-            return job.json()
+            resource_job = http_r.get(f'{self.config.get("connection_details", {}).get("root_url")}/job/{job.resource_job_id}', headers=headers).json()
+            if len(resource_job['errors']):
+                raise Exception(resource_job['errors'])
+
+            resource_job = resource_job['jobs'][0]
+            resource_job['status'] = self.translate_status(resource_job['job_state'])
+            return resource_job
         except Exception as e:
             print(repr(e))
             return {'status': 'complete'}

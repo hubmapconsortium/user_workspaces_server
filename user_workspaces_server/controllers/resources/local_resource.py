@@ -7,6 +7,17 @@ from django.core.files.base import ContentFile
 
 
 class LocalResource(AbstractResource):
+    def translate_status(self, status):
+        status_list = {
+            'sleeping': 'running',
+            'running': 'running',
+            'zombie': 'complete',
+            'complete': 'complete',
+            'dead': 'failed'
+        }
+
+        return status_list[status]
+
     def launch_job(self, job, workspace):
         workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
         script_name = f"{str(time.time())}.sh"
@@ -29,8 +40,9 @@ class LocalResource(AbstractResource):
     def get_resource_job(self, job):
         resource_job_id = job.resource_job_id
         try:
-            resource_job = psutil.Process(resource_job_id)
-            return resource_job.as_dict()
+            resource_job = psutil.Process(resource_job_id).as_dict()
+            resource_job['status'] = self.translate_status(resource_job['status'])
+            return resource_job
         except Exception as e:
             print(repr(e))
             return {'status': 'complete'}
