@@ -44,13 +44,16 @@ class SlurmAPIResource(AbstractResource):
         if len(slurm_response['errors']):
             raise Exception(slurm_response['errors'])
 
-        print(slurm_response)
-
         return slurm_response['job_id']
 
-    def get_job(self, resource_job_id):
+    def get_resource_job(self, job):
+        workspace = job.workspace_id
+        user_info = self.resource_user_authentication.has_permission(workspace.user_id)
+        headers = {'X-SLURM-USER-TOKEN': self.config.get("connection_details", {}).get("slurm_token", ""),
+                   'X-SLURM-USER-NAME': f'{user_info.external_username}'}
+
         try:
-            job = http_r.get(f'{self.config.get("connection_details", {}).get("root_url")}/job/{resource_job_id}')
+            job = http_r.get(f'{self.config.get("connection_details", {}).get("root_url")}/job/{job.resource_job_id}', headers=headers)
             print(job)
             return job.json()
         except Exception as e:
