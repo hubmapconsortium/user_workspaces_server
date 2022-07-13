@@ -3,7 +3,6 @@
 # Let's assume that the module/virtualenv set-up can be moved else-where
 
 ### BRIDGES2 BLOCK ###
-source /etc/profile
 module load anaconda3
 ### END BRIDGES2 BLOCK ###
 
