@@ -22,12 +22,18 @@ CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 (
 umask 077
 cat > "${CONFIG_FILE}" << EOL
-c.ServerApp.ip = '*'
-c.ServerApp.open_browser = False
-c.ServerApp.allow_origin = '*'
-c.ServerApp.root_dir = "$(pwd)"
-c.ServerApp.disable_check_xsrf = True
-c.ServerApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
+c.NotebookApp.ip = '*'
+c.NotebookApp.open_browser = False
+c.NotebookApp.allow_origin = '*'
+c.NotebookApp.root_dir = "$(pwd)"
+c.NotebookApp.disable_check_xsrf = True
+c.NotebookApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
+#c.ServerApp.ip = '*'
+#c.ServerApp.open_browser = False
+#c.ServerApp.allow_origin = '*'
+#c.ServerApp.root_dir = "$(pwd)"
+#c.ServerApp.disable_check_xsrf = True
+#c.ServerApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
 EOL
 )
 
