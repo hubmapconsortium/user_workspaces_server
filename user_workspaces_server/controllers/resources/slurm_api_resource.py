@@ -37,6 +37,7 @@ class SlurmAPIResource(AbstractResource):
                 'nodes': 1,
                 'standard_output': f'{workspace_full_path}/slurm_{job.job_details["id"]}.out',
                 'standard_error': f'{workspace_full_path}/slurm_{job.job_details["id"]}_error.out',
+                'get_user_environment': 1,
                 'environment': {
                     'PATH': '/bin/:/usr/bin/:/usr/local/bin/',
                     'LD_LIBRARY_PATH': '/lib/:/lib64/:/usr/local/lib'
