@@ -273,7 +273,7 @@ class JobTypeView(APIView):
 
 
 class PassthroughView(APIView):
-    def get(self, request, hostname, job_id, remainder):
+    def get(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
@@ -285,7 +285,7 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def post(self, request, hostname, job_id, remainder):
+    def post(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
@@ -297,7 +297,7 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def patch(self, request, hostname, job_id, remainder):
+    def patch(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
@@ -309,7 +309,7 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def put(self, request, hostname, job_id, remainder):
+    def put(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
@@ -321,7 +321,7 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def delete(self, request, hostname, job_id, remainder):
+    def delete(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
