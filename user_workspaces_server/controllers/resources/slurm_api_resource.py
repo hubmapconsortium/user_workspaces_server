@@ -13,7 +13,8 @@ class SlurmAPIResource(AbstractResource):
             'SUSPENDED': 'pending',
             'COMPLETING': 'running',
             'COMPLETED': 'complete',
-            'FAILED': 'failed'
+            'FAILED': 'failed',
+            'CANCELLED': 'complete'
         }
 
         return status_list[status]
