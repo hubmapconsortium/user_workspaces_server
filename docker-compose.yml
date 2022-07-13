@@ -9,6 +9,8 @@ services:
 #      - ./docker/nginx/conf.d/passthrough.conf:/etc/nginx/conf.d/passthrough.conf
     ports:
       - "80:80"
+    depends_on:
+      - web
   postgres:
     image: postgres
     restart: always
