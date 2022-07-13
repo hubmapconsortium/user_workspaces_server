@@ -1,9 +1,18 @@
 #!/bin/bash
+# TODO: Need to make this work with Slurm.
 # Let's assume that the module/virtualenv set-up can be moved else-where
+
+### BRIDGES2 BLOCK ###
+module load anaconda3
+### END BRIDGES2 BLOCK ###
+
+
 # TODO: Make this configurable
-virtualenv -p python3.8 "JupyterLabJob_{{ job_id }}_venv"
-source "JupyterLabJob_{{ job_id }}_venv/bin/activate"
-pip install jupyterlab
+### LOCAL BLOCK ###
+#virtualenv -p python3.8 "JupyterLabJob_{{ job_id }}_venv"
+#source "JupyterLabJob_{{ job_id }}_venv/bin/activate"
+#pip install jupyterlab
+### END LOCAL BLOCK ###
 
 # All we really need is this part
 
