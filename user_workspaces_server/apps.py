@@ -2,61 +2,112 @@ from django.apps import AppConfig
 from django.conf import settings
 
 
+def translate_class_to_module(class_name):
+    translation = {
+        'SlurmAPIResource': 'slurm_api_resource',
+        'LocalResource': 'local_resource',
+        'LocalFileSystemStorage': 'local_file_system_storage',
+        'GlobusUserAuthentication': 'globus_user_authentication',
+        'LocalUserAuthentication': 'local_user_authentication',
+        'PSCAPIUserAuthentication': 'psc_api_user_authentication'
+    }
+
+    try:
+        return translation.get(class_name)
+    except Exception as e:
+        raise e
+
+
+def generate_object(class_name, type, params):
+    try:
+        o = getattr(
+            __import__(
+                f'user_workspaces_server.controllers.{type}.{translate_class_to_module(class_name)}', fromlist=[class_name]
+            ),
+            class_name
+        )(**params)
+        return o
+    except Exception as e:
+        raise e
+
+
+
 class UserWorkspacesServerConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'user_workspaces_server'
     api_user_authentication = None
     main_storage = None
-    available_resources = None
-    available_storage = None
-    available_user_authentication = None
-    available_job_types = None
+    available_resources = {}
+    available_storage_methods = {}
+    available_user_authentication_methods = {}
+    available_job_types = {}
 
     def ready(self):
-        from user_workspaces_server.controllers.storagemethods import local_file_system_storage
-        from user_workspaces_server.controllers.userauthenticationmethods import globus_user_authentication, local_user_authentication, psc_api_user_authentication
-        from user_workspaces_server.controllers.resources import local_resource
-        api_user_authentication_details = settings.CONFIG['available_user_authentication'][
-            settings.CONFIG['api_user_authentication']
-        ]
+        config_user_authentication = settings.CONFIG['available_user_authentication']
+        config_storage = settings.CONFIG['available_storage']
+        config_resource = settings.CONFIG['available_resources']
 
-        main_storage_method_details = settings.CONFIG['available_storage'][
-            settings.CONFIG['main_storage']
-        ]
-
-        # TODO: Assign this dynamically.
-        self.api_user_authentication = globus_user_authentication.GlobusUserAuthentication(
-            api_user_authentication_details
-        )
-
-        self.main_storage = local_file_system_storage.LocalFileSystemStorage(
-            main_storage_method_details,
-            local_user_authentication.LocalUserAuthentication(
-                settings.CONFIG['available_user_authentication'][
-                    main_storage_method_details['user_authentication']
-                ]
+        for user_authentication_name, user_authentication_dict in config_user_authentication.items():
+            self.available_user_authentication_methods[user_authentication_name] = generate_object(
+                user_authentication_dict["user_authentication_type"],
+                "userauthenticationmethods",
+                {
+                    "config": user_authentication_dict
+                }
             )
-        )
 
-        local_resource_storage_method = settings.CONFIG['available_storage'][settings.CONFIG['available_resources']['local_resource']['storage']]
-        local_resource_user_auth_method = settings.CONFIG['available_user_authentication'][settings.CONFIG['available_resources']['local_resource']['user_authentication']]
+        for storage_name, storage_dict in config_storage.items():
+            user_auth_dict = config_user_authentication[storage_dict['user_authentication']]
 
-        self.available_resources = {
-            'local_resource': local_resource.LocalResource(
-                settings.CONFIG['available_resources']['local_resource'],
-                local_file_system_storage.LocalFileSystemStorage(
-                    local_resource_storage_method,
-                    local_user_authentication.LocalUserAuthentication(
-                        settings.CONFIG['available_user_authentication'][
-                            local_resource_storage_method['user_authentication']
-                        ]
+            self.available_storage_methods[storage_name] = generate_object(
+                storage_dict["storage_type"],
+                "storagemethods",
+                {
+                    "config": storage_dict,
+                    "storage_user_authentication": generate_object(
+                        user_auth_dict['user_authentication_type'],
+                        'userauthenticationmethods',
+                        {
+                            "config": user_auth_dict
+                        }
                     )
-                ),
-                local_user_authentication.LocalUserAuthentication(
-                    local_resource_user_auth_method
-                )
+                }
             )
-        }
 
-        # for resource_index, resource_options in settings.CONFIG['available_resources'].items():
-        #     print(resource_index)
+        for resource_name, resource_dict in config_resource.items():
+            user_auth_dict = config_user_authentication[resource_dict['user_authentication']]
+            storage_dict = config_storage[resource_dict['storage']]
+            storage_user_auth_dict = config_user_authentication[storage_dict['user_authentication']]
+
+            self.available_resources[resource_name] = generate_object(
+                resource_dict["resource_type"],
+                "resources",
+                {
+                    "config": resource_dict,
+                    "resource_storage": generate_object(
+                        storage_dict['storage_type'],
+                        "storagemethods",
+                        {
+                            "config": storage_dict,
+                            "storage_user_authentication": generate_object(
+                                storage_user_auth_dict['user_authentication_type'],
+                                "userauthenticationmethods",
+                                {
+                                    "config": storage_user_auth_dict
+                                }
+                            )
+                        },
+                    ),
+                    "resource_user_authentication": generate_object(
+                        user_auth_dict['user_authentication_type'],
+                        'userauthenticationmethods',
+                        {
+                            "config": user_auth_dict
+                        }
+                    )
+                }
+            )
+
+        self.api_user_authentication = self.available_user_authentication_methods[settings.CONFIG['api_user_authentication']]
+
+        self.main_storage = self.available_storage_methods[settings.CONFIG['main_storage']]
