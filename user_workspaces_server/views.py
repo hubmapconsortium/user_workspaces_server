@@ -217,7 +217,7 @@ class WorkspaceView(APIView):
             # TODO: Grab the correct job type based on the request
             #
             job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob(
-                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details']['local_resource'], model_to_dict(job))
+                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details'][settings.CONFIG['main_resource']], model_to_dict(job))
 
             resource_job_id = resource.launch_job(job_to_launch, workspace)
 
