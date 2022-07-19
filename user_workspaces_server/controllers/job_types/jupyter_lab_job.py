@@ -21,7 +21,7 @@ class JupyterLabJob(AbstractJob):
 
     def status_check(self, job_model):
         output_file_name = f"JupyterLabJob_{job_model.id}_output.log"
-        resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
+        resource = apps.get_app_config('user_workspaces_server').main_resource
 
         # Check to see if we already have a connection url in place.
         if 'connection_params' in job_model.job_details['current_job_details']:
