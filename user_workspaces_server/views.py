@@ -193,7 +193,7 @@ class WorkspaceView(APIView):
                 raise ParseError('Job details not JSON.')
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
-            resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
+            resource = apps.get_app_config('user_workspaces_server').main_resource
 
             # TODO: Check whether user has permission for this resource (and resource storage).
 
