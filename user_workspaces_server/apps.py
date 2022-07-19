@@ -57,20 +57,12 @@ class UserWorkspacesServerConfig(AppConfig):
             )
 
         for storage_name, storage_dict in config_storage.items():
-            user_auth_dict = config_user_authentication[storage_dict['user_authentication']]
-
             self.available_storage_methods[storage_name] = generate_object(
                 storage_dict["storage_type"],
                 "storagemethods",
                 {
                     "config": storage_dict,
-                    "storage_user_authentication": generate_object(
-                        user_auth_dict['user_authentication_type'],
-                        'userauthenticationmethods',
-                        {
-                            "config": user_auth_dict
-                        }
-                    )
+                    "storage_user_authentication": self.available_user_authentication_methods[storage_dict['user_authentication']]
                 }
             )
 
@@ -84,27 +76,8 @@ class UserWorkspacesServerConfig(AppConfig):
                 "resources",
                 {
                     "config": resource_dict,
-                    "resource_storage": generate_object(
-                        storage_dict['storage_type'],
-                        "storagemethods",
-                        {
-                            "config": storage_dict,
-                            "storage_user_authentication": generate_object(
-                                storage_user_auth_dict['user_authentication_type'],
-                                "userauthenticationmethods",
-                                {
-                                    "config": storage_user_auth_dict
-                                }
-                            )
-                        },
-                    ),
-                    "resource_user_authentication": generate_object(
-                        user_auth_dict['user_authentication_type'],
-                        'userauthenticationmethods',
-                        {
-                            "config": user_auth_dict
-                        }
-                    )
+                    "resource_storage": self.available_storage_methods[resource_dict['storage']],
+                    "resource_user_authentication": self.available_user_authentication_methods[resource_dict['user_authentication']]
                 }
             )
 
