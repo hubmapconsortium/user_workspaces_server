@@ -15,7 +15,7 @@ def update_job_status(job_id):
         print(repr(e))
         raise e
 
-    resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
+    resource = apps.get_app_config('user_workspaces_server').main_resource
     resource_job_info = resource.get_resource_job(job)
     job.status = resource_job_info['status']
 
