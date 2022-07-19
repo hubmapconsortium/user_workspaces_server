@@ -37,6 +37,7 @@ class UserWorkspacesServerConfig(AppConfig):
     name = 'user_workspaces_server'
     api_user_authentication = None
     main_storage = None
+    main_resource = None
     available_resources = {}
     available_storage_methods = {}
     available_user_authentication_methods = {}
@@ -84,3 +85,5 @@ class UserWorkspacesServerConfig(AppConfig):
         self.api_user_authentication = self.available_user_authentication_methods[settings.CONFIG['api_user_authentication']]
 
         self.main_storage = self.available_storage_methods[settings.CONFIG['main_storage']]
+
+        self.main_resource = self.available_resources[settings.CONFIG['main_resource']]
