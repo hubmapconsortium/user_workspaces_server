@@ -21,21 +21,20 @@ VERSION=$(jupyter lab --version)
 (
 umask 077
 cat > "${CONFIG_FILE}" << EOL
-if (( ${VERSION:0:1} < 3)); then
-c.NotebookApp.ip = '*'
-c.NotebookApp.open_browser = False
-c.NotebookApp.allow_origin = '*'
-c.NotebookApp.notebook_dir = "$(pwd)"
-c.NotebookApp.disable_check_xsrf = True
-c.NotebookApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
-else
-c.ServerApp.ip = '*'
-c.ServerApp.open_browser = False
-c.ServerApp.allow_origin = '*'
-c.ServerApp.root_dir = "$(pwd)"
-c.ServerApp.disable_check_xsrf = True
-c.ServerApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
-fi
+if ${VERSION:0:1} < 3:
+  c.NotebookApp.ip = '*'
+  c.NotebookApp.open_browser = False
+  c.NotebookApp.allow_origin = '*'
+  c.NotebookApp.notebook_dir = "$(pwd)"
+  c.NotebookApp.disable_check_xsrf = True
+  c.NotebookApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
+else:
+  c.ServerApp.ip = '*'
+  c.ServerApp.open_browser = False
+  c.ServerApp.allow_origin = '*'
+  c.ServerApp.root_dir = "$(pwd)"
+  c.ServerApp.disable_check_xsrf = True
+  c.ServerApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
 EOL
 )
 
