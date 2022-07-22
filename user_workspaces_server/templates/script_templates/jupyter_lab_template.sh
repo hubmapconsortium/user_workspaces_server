@@ -8,7 +8,7 @@ module load {{ modules|join:" " }}
 {% elif module_manager == "virtualenv" %}
 virtualenv -p {{ python_version }} "JupyterLabJob_{{ job_id }}_venv"
 source "JupyterLabJob_{{ job_id }}_venv"
-pip install {{ pip_packages|join:" " }}
+pip install {{ modules|join:" " }}
 {% endif %}
 
 # All we really need is this part
