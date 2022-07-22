@@ -3,9 +3,9 @@
 
 ### Environment initialization
 
-{% if module_manager=="lmod" %}
+{% if module_manager == "lmod" %}
 module load {{ modules|join:" " }}
-{% elif module_manager=="virtualenv" %}
+{% elif module_manager == "virtualenv" %}
 virtualenv -p {{ python_version }} "JupyterLabJob__{{ job_id }}_venv"
 source "JupyterLabJob_{{ job_id }}_venv"
 pip install {{ pip_packages|join:" " }}
