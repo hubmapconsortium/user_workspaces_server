@@ -14,8 +14,12 @@ class JupyterLabJob(AbstractJob):
 
     # TODO: Modify the script that gets generated based on passed parameters.
     def get_script(self):
+        template_config = {"job_id": self.job_details["id"]}
+        template_config.update(self.config)
+
+        print(template_config)
         template = loader.get_template(f'script_templates/{self.script_template_name}')
-        script = template.render({"job_id": self.job_details["id"]})
+        script = template.render(template_config)
 
         return script
 
