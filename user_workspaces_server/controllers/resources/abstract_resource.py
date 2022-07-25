@@ -9,11 +9,16 @@ class AbstractResource(ABC):
         self.passthrough_domain = config.get('passthrough_domain', '')
 
     @abstractmethod
+    def translate_status(self, status):
+        # Should take a string and translate it into local terminology.
+        pass
+
+    @abstractmethod
     def launch_job(self, job, workspace):
         # Should return resource_job_id
         pass
 
     @abstractmethod
-    def get_job(self, resource_job_id):
+    def get_resource_job(self, job):
         # Should get the resource's job information
         pass
