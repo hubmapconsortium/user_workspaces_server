@@ -14,14 +14,18 @@ class JupyterLabJob(AbstractJob):
 
     # TODO: Modify the script that gets generated based on passed parameters.
     def get_script(self):
+        template_config = {"job_id": self.job_details["id"]}
+        template_config.update(self.config)
+
+        print(template_config)
         template = loader.get_template(f'script_templates/{self.script_template_name}')
-        script = template.render({"job_id": self.job_details["id"]})
+        script = template.render(template_config)
 
         return script
 
     def status_check(self, job_model):
         output_file_name = f"JupyterLabJob_{job_model.id}_output.log"
-        resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
+        resource = apps.get_app_config('user_workspaces_server').main_resource
 
         # Check to see if we already have a connection url in place.
         if 'connection_params' in job_model.job_details['current_job_details']:

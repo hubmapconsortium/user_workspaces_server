@@ -193,7 +193,7 @@ class WorkspaceView(APIView):
                 raise ParseError('Job details not JSON.')
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
-            resource = apps.get_app_config('user_workspaces_server').available_resources['local_resource']
+            resource = apps.get_app_config('user_workspaces_server').main_resource
 
             # TODO: Check whether user has permission for this resource (and resource storage).
 
@@ -217,7 +217,7 @@ class WorkspaceView(APIView):
             # TODO: Grab the correct job type based on the request
             #
             job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob(
-                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details']['local_resource'], model_to_dict(job))
+                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details'][settings.CONFIG['main_resource']], model_to_dict(job))
 
             resource_job_id = resource.launch_job(job_to_launch, workspace)
 
@@ -273,7 +273,7 @@ class JobTypeView(APIView):
 
 
 class PassthroughView(APIView):
-    def get(self, request, hostname, job_id, remainder):
+    def get(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
@@ -285,7 +285,7 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def post(self, request, hostname, job_id, remainder):
+    def post(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
@@ -297,7 +297,7 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def patch(self, request, hostname, job_id, remainder):
+    def patch(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
@@ -309,7 +309,7 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def put(self, request, hostname, job_id, remainder):
+    def put(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']
@@ -321,7 +321,7 @@ class PassthroughView(APIView):
             print(repr(e))
             return HttpResponse(status=500)
 
-    def delete(self, request, hostname, job_id, remainder):
+    def delete(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
             proxy_details = job_model.job_details['current_job_details']['proxy_details']

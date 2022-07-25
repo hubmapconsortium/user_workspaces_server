@@ -1,5 +1,5 @@
 # User Workspaces Server
-The User Workspaces Server is an HTTP/Websocket server which allows developers to create workspaces and launch interactive sessions on a variety of resources.
+The User Workspaces Server is an HTTP/Websocket server which allows developers to create workspaces and launch interactive sessions on a variety of resources. API documentation is on [SmartAPI](https://smart-api.info/ui/bf965a56ce398f8b37de68c05b4ef125#).
 
 ## Django App Configuration
 This application is written in Django and it includes an example_config.json file. Copy the file and rename it config.json and modify it with the appropriate information.
@@ -49,6 +49,8 @@ The most common workflows for this service are:
 - User authorization
 - Workspace creation
 - TODO: Job launching/monitoring
+
+Complete API documentation is on [SmartAPI](https://smart-api.info/ui/bf965a56ce398f8b37de68c05b4ef125#).
 
 ### User authorization
 
@@ -135,4 +137,4 @@ This request will return the following
 
 ### Updating API Documentation
 
-The documentation for the REST API calls is hosted on SmartAPI.  Modifying the `user-workspaces-spec.yaml` file and committing the changes to GitHub should update the API shown on SmartAPI. SmartAPI allows users to register API documents. The documentation is associated with this GitHub account: api-developers@hubmapconsortium.org.
+The documentation for the REST API calls is hosted on [SmartAPI](https://smart-api.info/ui/bf965a56ce398f8b37de68c05b4ef125#).  Modifying the `user-workspaces-spec.yaml` file and committing the changes to GitHub should update the API shown on SmartAPI. SmartAPI allows users to register API documents. The documentation is associated with this GitHub account: api-developers@hubmapconsortium.org.
