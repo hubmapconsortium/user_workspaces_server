@@ -30,7 +30,7 @@ class Job(models.Model):
 
     @staticmethod
     def get_dict_fields():
-        return ["id", "resource_job_id", "job_type", "status", "datetime_created",
+        return ["id", "workspace_id", "resource_job_id", "job_type", "status", "datetime_created",
                            "datetime_start", "datetime_end", "core_hours", "job_details"]
 
 
