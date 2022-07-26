@@ -18,8 +18,8 @@ import os
 from django_q.tasks import async_task
 import requests as http_r
 
-# TODO: Add more robust query param support. Filter types, filtering by date.
 
+# TODO: Add more robust query param support. Filter types, filtering by date.
 class UserWorkspacesServerTokenView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         # grab the main auth method, just force globus auth for now
