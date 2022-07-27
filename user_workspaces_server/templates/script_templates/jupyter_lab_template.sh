@@ -6,8 +6,8 @@
 {% if module_manager == "lmod" %}
 module load {{ modules|join:" " }}
 {% elif module_manager == "virtualenv" %}
-virtualenv -p {{ python_version }} "JupyterLabJob_{{ job_id }}_venv"
-source "JupyterLabJob_{{ job_id }}_venv/bin/activate"
+virtualenv -p {{ python_version }} "$(pwd)/JupyterLabJob_{{ job_id }}_venv"
+source "$(pwd)/JupyterLabJob_{{ job_id }}_venv/bin/activate"
 pip install {{ modules|join:" " }}
 {% endif %}
 
@@ -25,14 +25,14 @@ if ${VERSION:0:1} < 3:
   c.NotebookApp.ip = '*'
   c.NotebookApp.open_browser = False
   c.NotebookApp.allow_origin = '*'
-  c.NotebookApp.notebook_dir = "$(pwd)"
+  c.NotebookApp.notebook_dir = "{{ workspace_full_path }}"
   c.NotebookApp.disable_check_xsrf = True
   c.NotebookApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
 else:
   c.ServerApp.ip = '*'
   c.ServerApp.open_browser = False
   c.ServerApp.allow_origin = '*'
-  c.ServerApp.root_dir = "$(pwd)"
+  c.ServerApp.root_dir = "{{ workspace_full_path }}"
   c.ServerApp.disable_check_xsrf = True
   c.ServerApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
 EOL
@@ -40,4 +40,4 @@ EOL
 
 # Launch the Jupyter Notebook Server
 set -x
-jupyter lab --config="${CONFIG_FILE}" &> "JupyterLabJob_{{ job_id }}_output.log"
+jupyter lab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
