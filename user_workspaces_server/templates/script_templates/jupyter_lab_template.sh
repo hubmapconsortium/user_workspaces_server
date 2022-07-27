@@ -1,8 +1,6 @@
 #!/bin/bash
-# Let's assume that the module/virtualenv set-up can be moved else-where
 
 ### Environment initialization
-
 {% if module_manager == "lmod" %}
 module load {{ modules|join:" " }}
 {% elif module_manager == "virtualenv" %}
@@ -11,13 +9,12 @@ source "$(pwd)/JupyterLabJob_{{ job_id }}_venv/bin/activate"
 pip install {{ modules|join:" " }}
 {% endif %}
 
-# All we really need is this part
-
+### Jupyter configuration
 CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
 VERSION=$(jupyter lab --version)
 
-# Generate Jupyter configuration file with secure file permissions
+# Generate Jupyter configuration file with secure file permissions based on JupyterLab version
 (
 umask 077
 cat > "${CONFIG_FILE}" << EOL
