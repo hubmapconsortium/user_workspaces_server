@@ -133,6 +133,17 @@ paths:
       tags:
         - Workspaces
       summary: Get a list of workspaces associated with the user.
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Name of workspace
+        - in: query
+          name: description
+          schema:
+            type: string
+          description: Description of workspace
       responses:
         "200":
           description: successful operation
@@ -277,6 +288,27 @@ paths:
       tags:
         - Jobs
       summary: Get a list of jobs associated with the user.
+      parameters:
+        - in: query
+          name: workspace_id
+          schema:
+            type: integer
+          description: ID of parent workspace.
+        - in: query
+          name: resource_job_id
+          schema:
+            type: integer
+          description: Resource's ID for this job.
+        - in: query
+          name: job_type
+          schema:
+            type: string
+          description: Type of job.
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Status of job.
       responses:
         "200":
           description: successful operation
