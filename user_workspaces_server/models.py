@@ -12,6 +12,10 @@ class Workspace(models.Model):
     workspace_details = models.JSONField()
 
     @staticmethod
+    def get_query_param_fields():
+        return ["name", "description"]
+
+    @staticmethod
     def get_dict_fields():
         return ["id", "name", "description", "disk_space", "datetime_created", "workspace_details"]
 
@@ -29,9 +33,13 @@ class Job(models.Model):
     job_details = models.JSONField()
 
     @staticmethod
+    def get_query_param_fields():
+        return ["workspace_id", "resource_job_id", "job_type", "status"]
+
+    @staticmethod
     def get_dict_fields():
-        return ["id", "resource_job_id", "job_type", "status", "datetime_created",
-                           "datetime_start", "datetime_end", "core_hours", "job_details"]
+        return ["id", "workspace_id", "resource_job_id", "job_type", "status", "datetime_created",
+                "datetime_start", "datetime_end", "core_hours", "job_details"]
 
 
 class UserQuota(models.Model):

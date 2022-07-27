@@ -19,6 +19,7 @@ from django_q.tasks import async_task
 import requests as http_r
 
 
+# TODO: Add more robust query param support. Filter types, filtering by date.
 class UserWorkspacesServerTokenView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         # grab the main auth method, just force globus auth for now
@@ -47,8 +48,9 @@ class WorkspaceView(APIView):
 
         if workspace_id:
             workspace = workspace.filter(id=workspace_id)
-
-        # TODO: Add url parameter searching functionality
+        elif params := request.GET:
+            for key in set(params.keys()).intersection(set(models.Workspace.get_query_param_fields())):
+                workspace = workspace.filter(**{key: params[key]})
 
         workspaces = list(workspace.all()
                          .values(*models.Workspace.get_dict_fields()))
@@ -248,8 +250,9 @@ class JobView(APIView):
 
         if job_id:
             job = job.filter(id=job_id)
-
-        # TODO: Add url parameter searching functionality
+        elif params := request.GET:
+            for key in set(params.keys()).intersection(set(models.Job.get_query_param_fields())):
+                job = job.filter(**{key: params[key]})
 
         job = list(job.all()
                    .values(*models.Job.get_dict_fields()))
