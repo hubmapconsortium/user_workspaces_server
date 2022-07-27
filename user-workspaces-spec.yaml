@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: The User Workspaces Server is an HTTP/Websocket server which allows developers to create workspaces and launch interactive sessions on a variety of resources.
-  version: 1.0.2
+  version: 1.0.3
   title: HuBMAP User Workspaces Server
   termsOfService: 'https://hubmapconsortium.org'
   contact:
