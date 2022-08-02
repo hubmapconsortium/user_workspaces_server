@@ -23,23 +23,20 @@ class PassthroughConsumer(WebsocketConsumer):
             self.send(message)
 
         # Start a new thread for the WebSocket interface
-        self.ws = websocket.WebSocketApp(f'ws://{hostname}:{port}{self.scope["path"]}', cookie=headers['cookie'],
+        self.ws = websocket.WebSocketApp(f'ws://{hostname}:{port}{self.scope["path"]}?{self.scope["query_string"].decode("UTF-8")}', cookie=headers['cookie'],
                                          on_message=ws_message)
         self.response_ws_thread = threading.Thread(target=self.ws.run_forever)
         self.response_ws_thread.start()
-        self.request_ws_client = websocket.create_connection(f'ws://{hostname}:{port}{self.scope["path"]}',
-                                                             cookie=headers['cookie'])
 
         self.accept()
 
     def disconnect(self, close_code):
         self.ws.close()
-        self.request_ws_client.close()
         self.response_ws_thread.join(1)
 
     # Receive message from WebSocket
     def receive(self, text_data=None, bytes_data=None):
-        self.request_ws_client.send(text_data)
+        self.ws.send(text_data)
 
 
 class JobStatusConsumer(WebsocketConsumer):
