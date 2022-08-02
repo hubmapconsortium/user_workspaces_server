@@ -6,7 +6,7 @@ class LocalTestJob(AbstractJob):
         super().__init__(config, job_details)
         self.script_template_name = 'local_test_template.sh'
 
-    def get_script(self):
+    def get_script(self, template_params=None):
         template = loader.get_template(f'script_templates/{self.script_template_name}')
         script = template.render({"job_id": self.job_details["id"]})
 

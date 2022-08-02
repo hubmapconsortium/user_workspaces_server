@@ -8,7 +8,7 @@ class AbstractJob(ABC):
         self.script_template_name = None
 
     @abstractmethod
-    def get_script(self):
+    def get_script(self, template_params=None):
         pass
 
     @abstractmethod

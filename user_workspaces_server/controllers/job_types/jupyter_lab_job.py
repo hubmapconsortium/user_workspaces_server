@@ -13,9 +13,10 @@ class JupyterLabJob(AbstractJob):
         self.script_template_name = 'jupyter_lab_template.sh'
 
     # TODO: Modify the script that gets generated based on passed parameters.
-    def get_script(self):
+    def get_script(self, template_params=None):
         template_config = {"job_id": self.job_details["id"]}
         template_config.update(self.config)
+        template_config.update(template_params)
 
         print(template_config)
         template = loader.get_template(f'script_templates/{self.script_template_name}')
@@ -33,7 +34,9 @@ class JupyterLabJob(AbstractJob):
 
         try:
             with open(os.path.join(resource.resource_storage.root_dir,
-                                   job_model.workspace_id.file_path, output_file_name)) as f:
+                                   job_model.workspace_id.file_path,
+                                   f'.{job_model.id}',
+                                   output_file_name)) as f:
                 log_file = f.readlines()
         except Exception as e:
             print(repr(e))

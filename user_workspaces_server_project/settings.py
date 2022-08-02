@@ -141,7 +141,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'user_workspaces_server.auth.UserWorkspacesTokenAuthentication'
-    ]
+    ],
+    'URL_FORMAT_OVERRIDE': None
 }
 
 Q_CLUSTER = CONFIG['Q_CLUSTER']
