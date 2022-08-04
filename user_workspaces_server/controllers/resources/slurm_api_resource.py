@@ -1,8 +1,7 @@
 from user_workspaces_server.controllers.resources.abstract_resource import AbstractResource
 import os
-import time
-from django.core.files.base import ContentFile
 import requests as http_r
+from rest_framework.exceptions import APIException
 
 
 class SlurmAPIResource(AbstractResource):
@@ -49,7 +48,7 @@ class SlurmAPIResource(AbstractResource):
         slurm_response = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/job/submit', json=body, headers=headers).json()
 
         if len(slurm_response['errors']):
-            raise Exception(slurm_response['errors'])
+            raise APIException(slurm_response['errors'], code=500)
 
         return slurm_response['job_id']
 
