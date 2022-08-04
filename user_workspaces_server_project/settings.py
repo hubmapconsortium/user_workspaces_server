@@ -142,7 +142,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'user_workspaces_server.auth.UserWorkspacesTokenAuthentication'
     ],
-    'URL_FORMAT_OVERRIDE': None
+    'URL_FORMAT_OVERRIDE': None,
+    'EXCEPTION_HANDLER': 'user_workspaces_server.exceptions.workspaces_exception_handler'
 }
 
 Q_CLUSTER = CONFIG['Q_CLUSTER']
