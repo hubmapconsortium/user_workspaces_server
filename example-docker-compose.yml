@@ -18,7 +18,7 @@ services:
       POSTGRES_PASSWORD: blank
       POSTGRES_USER: blank
     volumes:
-      - ./custom_db_dir:/var/lib/postgresql/data
+      - ./db_dir:/var/lib/postgresql/data
   redis:
     image: redis:alpine
     volumes:
@@ -28,9 +28,9 @@ services:
     build: .
     command: bash -c "docker/start.sh"
     volumes:
-#      - This line should be how the host machine's user information is synced into the container
+#     - This line should mount the host machine's user information into the container
       - .:/code
-      - /Users/jpuerto/user_workspaces_dir:/Users/jpuerto/user_workspaces_dir
+#     - This line should mount root_dir of main_storage onto docker container
     environment:
       - POSTGRES_PASSWORD=blank
       - POSTGRES_USER=blank
