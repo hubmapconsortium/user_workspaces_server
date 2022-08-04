@@ -1,6 +1,7 @@
 from user_workspaces_server.controllers.storagemethods.local_file_system_storage import LocalFileSystemStorage
 import os
 import requests as http_r
+from rest_framework.exceptions import ParseError, PermissionDenied, NotFound, APIException
 
 
 class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
@@ -19,10 +20,10 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
             globus_groups_token = None if (not external_user_mapping or not external_user_mapping.external_user_details) \
                 else external_user_mapping.external_user_details.get('tokens', {}).get('groups.api.globus.org', None)
 
-        # Let's check here to see if there are any failure states, IE if there is a uuid but no token
+        # Let's check here to see if there are any failure states, IE if there is an uuid but no token
         for symlink in workspace_details.get('symlinks', []):
             if 'dataset_uuid' in symlink and not globus_groups_token:
-                raise Exception('dataset_uuid passed, but no globus groups token.')
+                raise ParseError('No globus_groups_token passed when trying to use dataset_uuid.')
 
         for symlink in workspace_details.get('symlinks', []):
             self.create_symlink(workspace.file_path, symlink, globus_groups_token)
@@ -43,8 +44,14 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
 
             # {base_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path
             abs_path_response = http_r.get(f'{self.base_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path', headers={'Authorization': f'Bearer {globus_groups_token}'})
-            if abs_path_response.status_code != 200:
-                raise Exception(f'Error when attempting to get dataset path: {abs_path_response.text}')
+            if abs_path_response.status_code == 401:
+                raise PermissionDenied(f'User does not have authorization for dataset {symlink_dataset_uuid} based on token {globus_groups_token}')
+            elif abs_path_response.status_code == 400:
+                raise ParseError(f'Error when attempting to get dataset path: {abs_path_response.text}')
+            elif abs_path_response.status_code == 404:
+                raise NotFound(f'Dataset {symlink_dataset_uuid} could not be found.')
+            if abs_path_response.status_code == 500:
+                raise APIException(f'Server side error: {abs_path_response.text}', code=500)
 
             abs_path_response = abs_path_response.json()
             symlink_source_path = abs_path_response.get('path')
@@ -55,4 +62,4 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
                     os.remove(os.path.join(symlink_full_dest_path, symlink_name))
                 os.symlink(symlink_source_path, os.path.join(symlink_full_dest_path, symlink_name))
             else:
-                raise NotADirectoryError
+                raise APIException(f'Symlink path not found: {symlink_source_path}')
