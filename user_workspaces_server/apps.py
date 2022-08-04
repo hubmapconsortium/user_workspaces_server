@@ -7,6 +7,7 @@ def translate_class_to_module(class_name):
         'SlurmAPIResource': 'slurm_api_resource',
         'LocalResource': 'local_resource',
         'LocalFileSystemStorage': 'local_file_system_storage',
+        'HubmapLocalFileSystemStorage': 'hubmap_local_file_system_storage',
         'GlobusUserAuthentication': 'globus_user_authentication',
         'LocalUserAuthentication': 'local_user_authentication',
         'PSCAPIUserAuthentication': 'psc_api_user_authentication'
