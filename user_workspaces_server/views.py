@@ -59,13 +59,7 @@ class WorkspaceView(APIView):
         try:
             body = json.loads(request.body)
         except Exception as e:
-            return JsonResponse(
-                {
-                    'message': repr(e),
-                    'success': False
-                },
-                status=400
-            )
+            raise ParseError(f'Invalid JSON: {str(e)}')
 
         if 'name' not in body or 'description' not in body:
             raise ParseError('Missing required fields.')
@@ -109,6 +103,7 @@ class WorkspaceView(APIView):
 
         # TODO: Make sure that exceptions get passed up to return a 500
         #  (or more appropriate status code) with appropriate error message structure.
+
         main_storage.create_symlinks(workspace, workspace_details)
         main_storage.create_files(workspace, workspace_details)
 
@@ -142,13 +137,8 @@ class WorkspaceView(APIView):
             try:
                 body = json.loads(request.body)
             except Exception as e:
-                return JsonResponse(
-                    {
-                        'message': repr(e),
-                        'success': False
-                    },
-                    status=400
-                )
+                raise ParseError(f'Invalid JSON: {str(e)}')
+
             workspace.name = body.get('name', workspace.name)
             workspace.description = body.get('description', workspace.description)
 
@@ -171,13 +161,8 @@ class WorkspaceView(APIView):
             try:
                 body = json.loads(request.body)
             except Exception as e:
-                return JsonResponse(
-                    {
-                        'message': repr(e),
-                        'success': False
-                    },
-                    status=400
-                )
+                raise ParseError(f'Invalid JSON: {str(e)}')
+
             if 'job_type' not in body:
                 raise ParseError('Missing job_type or job_details')
 
