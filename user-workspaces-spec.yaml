@@ -24,6 +24,9 @@ components:
         workspace_details:
           type: object
           properties:
+            globus_groups_token:
+              type: string
+              description: Only used when specifying HubmapLocalFileSystemStorage
             symlinks:
               type: array
               items:
@@ -34,6 +37,7 @@ components:
                     type: string
                   dataset_uuid:
                     type: string
+                    description: Only used when specifying HubmapLocalFileSystemStorage
             files:
               type: array
               items:

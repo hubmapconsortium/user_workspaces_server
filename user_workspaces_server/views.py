@@ -22,8 +22,6 @@ import requests as http_r
 # TODO: Add more robust query param support. Filter types, filtering by date.
 class UserWorkspacesServerTokenView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        # grab the main auth method, just force globus auth for now
-
         api_user_authentication = apps.get_app_config('user_workspaces_server').api_user_authentication
 
         # hit the api_authenticate method
@@ -61,13 +59,7 @@ class WorkspaceView(APIView):
         try:
             body = json.loads(request.body)
         except Exception as e:
-            return JsonResponse(
-                {
-                    'message': repr(e),
-                    'success': False
-                },
-                status=400
-            )
+            raise ParseError(f'Invalid JSON: {str(e)}')
 
         if 'name' not in body or 'description' not in body:
             raise ParseError('Missing required fields.')
@@ -109,13 +101,11 @@ class WorkspaceView(APIView):
 
         main_storage.create_dir(workspace.file_path)
 
-        for symlink in workspace_details.get('symlinks', []):
-            main_storage.create_symlink(workspace.file_path, symlink)
+        # TODO: Make sure that exceptions get passed up to return a 500
+        #  (or more appropriate status code) with appropriate error message structure.
 
-        for file in workspace_details.get('files', []):
-            # Create a file object here
-            content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
-            main_storage.create_file(workspace.file_path, content_file)
+        main_storage.create_symlinks(workspace, workspace_details)
+        main_storage.create_files(workspace, workspace_details)
 
         main_storage.set_ownership(external_user_mapping.external_username, external_user_mapping)
         main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
@@ -147,13 +137,8 @@ class WorkspaceView(APIView):
             try:
                 body = json.loads(request.body)
             except Exception as e:
-                return JsonResponse(
-                    {
-                        'message': repr(e),
-                        'success': False
-                    },
-                    status=400
-                )
+                raise ParseError(f'Invalid JSON: {str(e)}')
+
             workspace.name = body.get('name', workspace.name)
             workspace.description = body.get('description', workspace.description)
 
@@ -164,13 +149,10 @@ class WorkspaceView(APIView):
             if type(workspace_details) != dict:
                 raise ParseError('Workspace details not JSON')
 
-            for symlink in workspace_details.get('symlinks', []):
-                main_storage.create_symlink(workspace.file_path, symlink)
-
-            for file in workspace_details.get('files', []):
-                content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
-                main_storage.create_file(workspace.file_path, content_file)
-
+            # TODO: Make sure that exceptions get passed up to return a 500
+            #  (or more appropriate status code) with appropriate error message structure.
+            main_storage.create_symlinks(workspace, workspace_details)
+            main_storage.create_files(workspace, workspace_details)
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             return JsonResponse({'message': 'Update successful.', 'success': True})
@@ -179,13 +161,8 @@ class WorkspaceView(APIView):
             try:
                 body = json.loads(request.body)
             except Exception as e:
-                return JsonResponse(
-                    {
-                        'message': repr(e),
-                        'success': False
-                    },
-                    status=400
-                )
+                raise ParseError(f'Invalid JSON: {str(e)}')
+
             if 'job_type' not in body:
                 raise ParseError('Missing job_type or job_details')
 

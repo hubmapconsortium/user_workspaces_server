@@ -25,14 +25,14 @@ CONFIG = json.load(open(
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-
+django_settings = CONFIG['django_settings']
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(i#=9anfm$li#6@kz0@%u*o$od$8@9s#0-klh4#*0uc4pseg8d'
+SECRET_KEY = django_settings['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = django_settings['DEBUG']
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = django_settings['ALLOWED_HOSTS']
 
 
 # Application definition
@@ -87,12 +87,7 @@ WSGI_APPLICATION = 'user_workspaces_server_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DATABASES = django_settings['DATABASES']
 
 
 # Password validation
@@ -142,17 +137,20 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'user_workspaces_server.auth.UserWorkspacesTokenAuthentication'
     ],
-    'URL_FORMAT_OVERRIDE': None
+    'URL_FORMAT_OVERRIDE': None,
+    'EXCEPTION_HANDLER': 'user_workspaces_server.exceptions.workspaces_exception_handler'
 }
 
-Q_CLUSTER = CONFIG['Q_CLUSTER']
+Q_CLUSTER = django_settings['Q_CLUSTER']
 
 ASGI_APPLICATION = "user_workspaces_server_project.asgi.application"
 
-CHANNEL_LAYERS = CONFIG['CHANNEL_LAYERS']
+CHANNEL_LAYERS = django_settings['CHANNEL_LAYERS']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "UWS-Authorization",
 ]
+
+CSRF_TRUSTED_ORIGINS = django_settings['CSRF_TRUSTED_ORIGINS']

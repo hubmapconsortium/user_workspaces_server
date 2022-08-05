@@ -1,10 +1,90 @@
 {
-  "api_user_authentication": "main",
+  "api_user_authentication": "main_auth",
+  "main_storage": "main_storage",
+  "main_resource": "main_resource",
   "available_user_authentication": {
-    "main": {
-      "name": "main",
-      "user_authentication_type": "MainUserAuthentication",
+    "main_auth": {
+      "name": "Globus Token Auth",
+      "user_authentication_type": "GlobusUserAuthentication",
       "connection_details": {
+        "client_id": "",
+        "client_secret": "",
+        "authentication_type": "token"
+      }
+    }
+  },
+  "available_storage": {
+    "main_storage": {
+      "name": "Local File Storage",
+      "storage_type": "LocalFileSystemStorage",
+      "user_authentication": "main_auth",
+      "root_dir": ".",
+      "connection_details": {}
+    }
+  },
+  "available_resources": {
+    "main_resource": {
+      "name": "Local Resource",
+      "resource_type": "LocalResource",
+      "storage": "main_storage",
+      "user_authentication": "main_auth",
+      "passthrough_domain": "127.0.0.1:8000",
+      "connection_details": {}
+    }
+  },
+  "available_job_types": {
+    "jupyter_lab": {
+      "name": "Jupyter Lab",
+      "job_type": "JupyterLabJob",
+      "environment_details": {
+        "main_resource": {
+          "python_version": "python3.8",
+          "module_manager": "virtualenv",
+          "modules": ["jupyterlab"]
+        }
+      }
+    },
+    "local_test_job": {
+      "name": "Local Test Job",
+      "job_type": "LocalTestJob",
+      "environment_details": {
+        "main_resource": {
+        }
+      }
+    }
+  },
+  "django_settings": {
+    "SECRET_KEY": "",
+    "DEBUG": false,
+    "ALLOWED_HOSTS": [],
+    "DATABASES": {
+      "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "./db.sqlite3"
+      }
+    },
+    "CSRF_TRUSTED_ORIGINS": [],
+    "Q_CLUSTER": {
+      "name": "myproject",
+      "workers": 8,
+      "recycle": 500,
+      "timeout": 60,
+      "compress": true,
+      "save_limit": 250,
+      "queue_limit": 500,
+      "cpu_affinity": 1,
+      "label": "Django Q",
+      "redis": {
+        "host": "127.0.0.1",
+        "port": 6379
+      }
+    },
+    "CHANNEL_LAYERS": {
+      "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+          "hosts": ["redis://127.0.0.1:6379/0?"]
+        }
       }
     }
   }
