@@ -47,7 +47,8 @@ urlpatterns = [
     path('workspaces/', include(workspace_view_patterns)),
     path('jobs/', include(job_view_patterns)),
     path('job_types/', include(job_type_view_patterns)),
-    path('passthrough/', include(passthrough_view_patterns))
+    path('passthrough/', include(passthrough_view_patterns)),
+    path('status/', views.StatusView.as_view())
 ]
 
 ws_urlpatterns = [
