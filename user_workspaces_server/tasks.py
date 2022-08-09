@@ -28,7 +28,8 @@ def update_job_status(job_id):
 
     # TODO: Initialize appropriate JobType
     job_type = JupyterLabJob(
-        settings.CONFIG['available_job_types']['jupyter_lab']['environment_details'][settings.CONFIG['main_resource']], job)
+        settings.CONFIG['available_job_types']['jupyter_lab']['environment_details'][settings.CONFIG['main_resource']],
+        job)
 
     # TODO: Make sure that we're using the resource to do this type of status check
     job.job_details['current_job_details'].update(job_type.status_check(job))
@@ -59,6 +60,6 @@ def queue_job_update(task):
         print(repr(e))
         raise e
 
-    if job.status in ['pending', 'running', 'sleeping']:
+    if job.status in ['pending', 'running']:
         async_task('user_workspaces_server.tasks.update_job_status', job_id,
                    hook='user_workspaces_server.tasks.queue_job_update')

@@ -95,5 +95,3 @@ class LocalFileSystemStorage(AbstractStorage):
             for chunk in file.chunks():
                 new_file.write(chunk)
         return
-
-
