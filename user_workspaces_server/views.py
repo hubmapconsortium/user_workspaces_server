@@ -4,7 +4,7 @@ import user_workspaces_server.controllers.job_types.jupyter_lab_job
 from . import models
 from django.conf import settings
 from django.apps import apps
-from django.core.files.base import ContentFile
+from pathlib import Path
 from django.forms.models import model_to_dict
 import json
 from datetime import datetime
@@ -13,7 +13,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError, APIException
 import os
 from django_q.tasks import async_task
 import requests as http_r
@@ -315,3 +315,26 @@ class PassthroughView(APIView):
         except Exception as e:
             print(repr(e))
             return HttpResponse(status=500)
+
+
+class StatusView(APIView):
+    def get(self):
+        base_dir = Path(__file__).resolve().parent.parent
+        version_file_path = os.path.join(base_dir, 'VERSION')
+        build_file_path = os.path.join(base_dir, 'BUILD')
+
+        try:
+            with open(version_file_path, 'r') as version_file:
+                version = version_file.readlines()
+            with open(build_file_path, 'r') as build_file:
+                build = build_file.readlines()
+        except Exception as e:
+            print(repr(e))
+            raise APIException()
+
+        response_data = {
+            'version': version,
+            'build': build
+        }
+
+        return JsonResponse(response_data)
