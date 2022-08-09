@@ -43,9 +43,11 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
             os.makedirs(symlink_full_dest_path, exist_ok=True)
 
             # {base_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path
-            abs_path_response = http_r.get(f'{self.base_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path', headers={'Authorization': f'Bearer {globus_groups_token}'})
+            abs_path_response = http_r.get(f'{self.base_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path',
+                                           headers={'Authorization': f'Bearer {globus_groups_token}'})
             if abs_path_response.status_code == 401:
-                raise PermissionDenied(f'User does not have authorization for dataset {symlink_dataset_uuid} based on token {globus_groups_token}')
+                raise PermissionDenied(
+                    f'User does not have authorization for dataset {symlink_dataset_uuid} based on token {globus_groups_token}')
             elif abs_path_response.status_code == 400:
                 raise ParseError(f'Error when attempting to get dataset path: {abs_path_response.text}')
             elif abs_path_response.status_code == 404:

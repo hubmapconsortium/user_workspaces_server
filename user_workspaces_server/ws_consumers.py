@@ -23,8 +23,10 @@ class PassthroughConsumer(WebsocketConsumer):
             self.send(message)
 
         # Start a new thread for the WebSocket interface
-        self.ws = websocket.WebSocketApp(f'ws://{hostname}:{port}{self.scope["path"]}?{self.scope["query_string"].decode("UTF-8")}', cookie=headers['cookie'],
-                                         on_message=ws_message)
+        self.ws = websocket.WebSocketApp(
+            f'ws://{hostname}:{port}{self.scope["path"]}?{self.scope["query_string"].decode("UTF-8")}',
+            cookie=headers['cookie'],
+            on_message=ws_message)
         self.response_ws_thread = threading.Thread(target=self.ws.run_forever)
         self.response_ws_thread.start()
 

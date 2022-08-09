@@ -51,7 +51,7 @@ class WorkspaceView(APIView):
                 workspace = workspace.filter(**{key: params[key]})
 
         workspaces = list(workspace.all()
-                         .values(*models.Workspace.get_dict_fields()))
+                          .values(*models.Workspace.get_dict_fields()))
 
         return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'workspaces': workspaces}})
 
@@ -112,7 +112,8 @@ class WorkspaceView(APIView):
 
         workspace.save()
 
-        return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
+        return JsonResponse({'message': 'Successful.', 'success': True,
+                             'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
 
     def put(self, request, workspace_id, put_type=None):
         main_storage = apps.get_app_config('user_workspaces_server').main_storage
@@ -196,7 +197,8 @@ class WorkspaceView(APIView):
             # TODO: Grab the correct job type based on the request
             #
             job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob(
-                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details'][settings.CONFIG['main_resource']], model_to_dict(job))
+                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details'][
+                    settings.CONFIG['main_resource']], model_to_dict(job))
 
             resource_job_id = resource.launch_job(job_to_launch, workspace)
 
@@ -207,7 +209,8 @@ class WorkspaceView(APIView):
             async_task('user_workspaces_server.tasks.update_job_status', job.pk,
                        hook='user_workspaces_server.tasks.queue_job_update')
 
-            return JsonResponse({'message': 'Successful start.', 'success': True, 'data': {'job': model_to_dict(job, models.Job.get_dict_fields())}})
+            return JsonResponse({'message': 'Successful start.', 'success': True,
+                                 'data': {'job': model_to_dict(job, models.Job.get_dict_fields())}})
         elif put_type.lower() == 'upload':
             for file_index, file in request.FILES.items():
                 main_storage.create_file(workspace.file_path, file)
@@ -312,4 +315,3 @@ class PassthroughView(APIView):
         except Exception as e:
             print(repr(e))
             return HttpResponse(status=500)
-

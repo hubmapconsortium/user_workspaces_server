@@ -27,7 +27,8 @@ class SlurmAPIResource(AbstractResource):
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
 
         # For pure testing, lets just set a var in the connection details.
-        headers = {'X-SLURM-USER-TOKEN': self.config.get("connection_details", {}).get("slurm_token", ""), 'X-SLURM-USER-NAME': f'{user_info.external_username}'}
+        headers = {'X-SLURM-USER-TOKEN': self.config.get("connection_details", {}).get("slurm_token", ""),
+                   'X-SLURM-USER-NAME': f'{user_info.external_username}'}
 
         body = {
             'script': job.get_script(),
@@ -45,7 +46,8 @@ class SlurmAPIResource(AbstractResource):
             }
         }
 
-        slurm_response = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/job/submit', json=body, headers=headers).json()
+        slurm_response = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/job/submit',
+                                     json=body, headers=headers).json()
 
         if len(slurm_response['errors']):
             raise APIException(slurm_response['errors'], code=500)
@@ -59,7 +61,9 @@ class SlurmAPIResource(AbstractResource):
                    'X-SLURM-USER-NAME': f'{user_info.external_username}'}
 
         try:
-            resource_job = http_r.get(f'{self.config.get("connection_details", {}).get("root_url")}/job/{job.resource_job_id}', headers=headers).json()
+            resource_job = http_r.get(
+                f'{self.config.get("connection_details", {}).get("root_url")}/job/{job.resource_job_id}',
+                headers=headers).json()
             if len(resource_job['errors']):
                 raise Exception(resource_job['errors'])
 
