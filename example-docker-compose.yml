@@ -37,3 +37,14 @@ services:
     depends_on:
       - redis
       - postgres
+  django-q:
+    build: .
+    command: python manage.py qcluster
+    volumes:
+#     - This line should mount the host machine's user information into the container
+      - .:/code
+    environment:
+      - POSTGRES_PASSWORD=blank
+      - POSTGRES_USER=blank
+    depends_on:
+      - web
