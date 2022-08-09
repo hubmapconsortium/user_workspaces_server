@@ -19,18 +19,18 @@ def translate_class_to_module(class_name):
         raise e
 
 
-def generate_object(class_name, type, params):
+def generate_object(class_name, module_type, params):
     try:
         o = getattr(
             __import__(
-                f'user_workspaces_server.controllers.{type}.{translate_class_to_module(class_name)}', fromlist=[class_name]
+                f'user_workspaces_server.controllers.{module_type}.{translate_class_to_module(class_name)}',
+                fromlist=[class_name]
             ),
             class_name
         )(**params)
         return o
     except Exception as e:
         raise e
-
 
 
 class UserWorkspacesServerConfig(AppConfig):
@@ -64,26 +64,28 @@ class UserWorkspacesServerConfig(AppConfig):
                 "storagemethods",
                 {
                     "config": storage_dict,
-                    "storage_user_authentication": self.available_user_authentication_methods[storage_dict['user_authentication']]
+                    "storage_user_authentication": self.available_user_authentication_methods[
+                        storage_dict['user_authentication']
+                    ]
                 }
             )
 
         for resource_name, resource_dict in config_resource.items():
-            user_auth_dict = config_user_authentication[resource_dict['user_authentication']]
-            storage_dict = config_storage[resource_dict['storage']]
-            storage_user_auth_dict = config_user_authentication[storage_dict['user_authentication']]
-
             self.available_resources[resource_name] = generate_object(
                 resource_dict["resource_type"],
                 "resources",
                 {
                     "config": resource_dict,
                     "resource_storage": self.available_storage_methods[resource_dict['storage']],
-                    "resource_user_authentication": self.available_user_authentication_methods[resource_dict['user_authentication']]
+                    "resource_user_authentication": self.available_user_authentication_methods[
+                        resource_dict['user_authentication']
+                    ]
                 }
             )
 
-        self.api_user_authentication = self.available_user_authentication_methods[settings.CONFIG['api_user_authentication']]
+        self.api_user_authentication = self.available_user_authentication_methods[
+            settings.CONFIG['api_user_authentication']
+        ]
 
         self.main_storage = self.available_storage_methods[settings.CONFIG['main_storage']]
 
