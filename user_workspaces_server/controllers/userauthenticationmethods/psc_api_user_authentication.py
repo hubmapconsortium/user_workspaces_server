@@ -320,6 +320,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         allocation = response.json().get('data', {}).get('allocation', None)
 
         if not allocation:
-            raise PermissionDenied(f'No valid allocation found for grant number {self.grant_number} and resource {self.resource_name}')
+            raise PermissionDenied(
+                f'No valid allocation found for grant number {self.grant_number} and resource {self.resource_name}')
 
         return allocation
