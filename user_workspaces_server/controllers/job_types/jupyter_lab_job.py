@@ -1,5 +1,3 @@
-import urllib.parse
-
 from user_workspaces_server.controllers.job_types.abstract_job import AbstractJob
 import os
 from django.apps import apps
