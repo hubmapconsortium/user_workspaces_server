@@ -318,19 +318,13 @@ class PassthroughView(APIView):
 
 
 class StatusView(APIView):
-    def get(self):
+    def get(self, request):
         base_dir = Path(__file__).resolve().parent.parent
         version_file_path = os.path.join(base_dir, 'VERSION')
         build_file_path = os.path.join(base_dir, 'BUILD')
 
-        try:
-            with open(version_file_path, 'r') as version_file:
-                version = version_file.readlines()
-            with open(build_file_path, 'r') as build_file:
-                build = build_file.readlines()
-        except Exception as e:
-            print(repr(e))
-            raise APIException()
+        version = open(version_file_path).read().strip() if os.path.exists(version_file_path) else 'invalid_version'
+        build = open(build_file_path).read().strip() if os.path.exists(build_file_path) else 'invalid_build'
 
         response_data = {
             'version': version,
