@@ -14,7 +14,7 @@ class UserWorkspacesTokenAuthentication(authentication.TokenAuthentication):
 
         try:
             valid_token = Token.objects.get(key=token)
-        except Exception as e:
+        except Exception:
             raise AuthenticationFailed('Invalid token provided.')
 
         return valid_token.user, None

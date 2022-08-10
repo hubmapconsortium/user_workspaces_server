@@ -4,7 +4,7 @@ import user_workspaces_server.controllers.job_types.jupyter_lab_job
 from . import models
 from django.conf import settings
 from django.apps import apps
-from django.core.files.base import ContentFile
+from pathlib import Path
 from django.forms.models import model_to_dict
 import json
 from datetime import datetime
@@ -241,7 +241,7 @@ class JobView(APIView):
 
     def put(self, request, job_id, put_type):
         if put_type.lower() == 'stop':
-            job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
+            # job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
 
             return JsonResponse({'message': 'Successful stop.', 'success': True})
         else:
@@ -315,3 +315,20 @@ class PassthroughView(APIView):
         except Exception as e:
             print(repr(e))
             return HttpResponse(status=500)
+
+
+class StatusView(APIView):
+    def get(self, request):
+        base_dir = Path(__file__).resolve().parent.parent
+        version_file_path = os.path.join(base_dir, 'VERSION')
+        build_file_path = os.path.join(base_dir, 'BUILD')
+
+        version = open(version_file_path).read().strip() if os.path.exists(version_file_path) else 'invalid_version'
+        build = open(build_file_path).read().strip() if os.path.exists(build_file_path) else 'invalid_build'
+
+        response_data = {
+            'version': version,
+            'build': build
+        }
+
+        return JsonResponse(response_data)

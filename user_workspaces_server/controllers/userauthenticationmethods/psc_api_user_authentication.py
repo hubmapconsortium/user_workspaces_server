@@ -117,7 +117,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             "operationName": "AddUserWithAllocations",
             "query": """
                     mutation AddUserWithAllocations($input: AddUserInput!) {
-                        addUser(input: $input) {   
+                        addUser(input: $input) {
                             user {
                                 uid
                                 pscId
