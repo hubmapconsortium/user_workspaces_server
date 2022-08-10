@@ -13,7 +13,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError, APIException
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError
 import os
 from django_q.tasks import async_task
 import requests as http_r
@@ -241,7 +241,7 @@ class JobView(APIView):
 
     def put(self, request, job_id, put_type):
         if put_type.lower() == 'stop':
-            job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
+            # job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
 
             return JsonResponse({'message': 'Successful stop.', 'success': True})
         else:
