@@ -104,4 +104,3 @@ class UserWorkspacesServerConfig(AppConfig):
         for active_job in active_jobs:
             async_task('user_workspaces_server.tasks.update_job_status', active_job.id,
                        hook='user_workspaces_server.tasks.queue_job_update')
-
