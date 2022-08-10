@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.conf import settings
+import os
 
 
 def translate_class_to_module(class_name):
@@ -90,3 +91,17 @@ class UserWorkspacesServerConfig(AppConfig):
         self.main_storage = self.available_storage_methods[settings.CONFIG['main_storage']]
 
         self.main_resource = self.available_resources[settings.CONFIG['main_resource']]
+
+        if os.environ.get('SUBCOMMAND', None) != 'qcluster':
+            return
+
+        from . import models
+        from django_q.tasks import async_task
+        from django_q import brokers
+        broker = brokers.get_broker()
+        broker.purge_queue()
+        active_jobs = models.Job.objects.filter(status__in=['pending', 'running']).all()
+        for active_job in active_jobs:
+            async_task('user_workspaces_server.tasks.update_job_status', active_job.id,
+                       hook='user_workspaces_server.tasks.queue_job_update')
+
