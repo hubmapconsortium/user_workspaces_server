@@ -3,11 +3,15 @@ import pwd
 from user_workspaces_server.controllers.storagemethods.abstract_storage import AbstractStorage
 from django.forms import model_to_dict
 import os
+import shutil
 
 
 class LocalFileSystemStorage(AbstractStorage):
     def create_dir(self, path):
         os.makedirs(os.path.join(self.root_dir, path), exist_ok=True)
+
+    def delete_dir(self, path):
+        shutil.rmtree(os.path.join(self.root_dir, path), ignore_errors=True)
 
     def get_dir_size(self, path):
         total = 0
