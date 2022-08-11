@@ -236,13 +236,9 @@ class WorkspaceView(APIView):
         if not external_user_mapping:
             raise APIException('User could not be found/created on main storage system.')
 
-        # Might want to make this a background task since it might be a massive directory.
-        main_storage.delete_dir(workspace.file_path)
+        async_task('user_workspaces_server.tasks.delete_workspace', workspace.pk)
 
-        workspace.delete()
-
-        # TODO: Update the user quota, this can be done in the background
-        return JsonResponse({'message': f'Workspace {workspace_id} successfully deleted.', 'success': True})
+        return JsonResponse({'message': f'Workspace {workspace_id} queued for deletion.', 'success': True})
 
 
 class JobView(APIView):
