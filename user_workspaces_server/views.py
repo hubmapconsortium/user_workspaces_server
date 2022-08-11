@@ -13,7 +13,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError, NotFound, APIException
 import os
 from django_q.tasks import async_task
 import requests as http_r
@@ -220,6 +220,25 @@ class WorkspaceView(APIView):
             return JsonResponse({'message': 'Successful upload.', 'success': True})
         else:
             return JsonResponse({'message': 'Invalid type passed.', 'success': False})
+
+    def delete(self, request, workspace_id):
+        try:
+            workspace = models.Workspace.objects.get(user_id=request.user, id=workspace_id)
+        except Exception:
+            raise NotFound(f'Workspace {workspace_id} not found for user.')
+
+        if models.Job.objects.filter(workspace_id=workspace, status__in=['pending', 'running']).exists():
+            raise APIException('Cannot delete workspace, jobs are running for this workspace.')
+
+        main_storage = apps.get_app_config('user_workspaces_server').main_storage
+        external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
+
+        if not external_user_mapping:
+            raise APIException('User could not be found/created on main storage system.')
+
+        async_task('user_workspaces_server.tasks.delete_workspace', workspace.pk)
+
+        return JsonResponse({'message': f'Workspace {workspace_id} queued for deletion.', 'success': True})
 
 
 class JobView(APIView):

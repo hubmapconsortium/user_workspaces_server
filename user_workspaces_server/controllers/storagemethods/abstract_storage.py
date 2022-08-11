@@ -23,6 +23,10 @@ class AbstractStorage(ABC):
         pass
 
     @abstractmethod
+    def delete_dir(self, path):
+        pass
+
+    @abstractmethod
     def get_dir_size(self, path):
         pass
 
