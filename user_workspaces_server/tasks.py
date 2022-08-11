@@ -63,3 +63,19 @@ def queue_job_update(task):
     if job.status in ['pending', 'running']:
         async_task('user_workspaces_server.tasks.update_job_status', job_id,
                    hook='user_workspaces_server.tasks.queue_job_update')
+
+
+def delete_workspace(workspace_id):
+    # Might want to make this a background task since it might be a massive directory.
+    try:
+        workspace = models.Workspace.objects.get(pk=workspace_id)
+    except Exception as e:
+        print(repr(e))
+        raise e
+
+    main_storage = apps.get_app_config('user_workspaces_server').main_storage
+    main_storage.delete_dir(workspace.file_path)
+
+    workspace.delete()
+
+    # TODO: Update the user quota, this can be done in the background
