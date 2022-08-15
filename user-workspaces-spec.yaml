@@ -73,16 +73,27 @@ components:
               type: object
             current_workspace_details:
               type: object
-    WorkspaceResponse:
+    GetWorkspacesResponse:
       type: object
       properties:
         message:
           type: string
         success:
           type: boolean
-        data:
+        workspaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceDataResponse'
+    PostWorkspaceResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+        workspace:
           $ref: '#/components/schemas/WorkspaceDataResponse'
-    WorkspaceStartResponse:
+    StartWorkspaceResponse:
       type: object
       properties:
         message:
@@ -90,7 +101,10 @@ components:
         success:
           type: boolean
         data:
-          $ref: '#/components/schemas/JobDataResponse'
+          type: object
+          properties:
+            job:
+              $ref: '#/components/schemas/JobDataResponse'
     JobDataResponse:
       type: object
       properties:
@@ -119,7 +133,7 @@ components:
               type: object
             current_job_details:
               type: object
-    JobResponse:
+    GetJobResponse:
       type: object
       properties:
         message:
@@ -127,12 +141,24 @@ components:
         success:
           type: boolean
         data:
-          $ref: '#/components/schemas/JobDataResponse'
+          type: object
+          properties:
+            jobs:
+              type: array
+              items:
+                $ref: '#/components/schemas/JobDataResponse'
     JobTypeResponse:
       type: object
       properties:
         id:
           type: string
+    GeneralResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
 paths:
   '/workspaces/':
     get:
@@ -156,9 +182,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WorkspaceResponse'
+                $ref: '#/components/schemas/GetWorkspacesResponse'
     post:
       tags:
         - Workspaces
@@ -177,7 +201,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/WorkspaceResponse'
+                  $ref: '#/components/schemas/PostWorkspaceResponse'
   '/workspaces/{workspace_id}/':
     get:
       tags:
@@ -196,7 +220,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceResponse'
+                $ref: '#/components/schemas/GetWorkspacesResponse'
     put:
       tags:
         - Workspaces
@@ -214,7 +238,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceResponse'
+                $ref: '#/components/schemas/GeneralResponse'
     delete:
       tags:
         - Workspaces
@@ -232,7 +256,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceResponse'
+                $ref: '#/components/schemas/GeneralResponse'
   '/workspaces/{workspace_id}/update/':
     put:
       tags:
@@ -263,7 +287,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceResponse'
+                $ref: '#/components/schemas/GeneralResponse'
   '/workspaces/{workspace_id}/start/':
     put:
       tags:
@@ -288,7 +312,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceStartResponse'
+                $ref: '#/components/schemas/StartWorkspaceResponse'
   '/jobs/':
     get:
       tags:
@@ -321,9 +345,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/JobResponse'
+                $ref: '#/components/schemas/GetJobResponse'
   '/jobs/{job_id}/':
     get:
       tags:
@@ -342,12 +364,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JobResponse'
+                $ref: '#/components/schemas/GetJobResponse'
   '/jobs/{job_id}/stop/':
     put:
       tags:
         - Jobs
-      summary: Stop a running job. NOT AVAILABLE YET.
+      summary: Stop a running job.
       parameters:
         - name: job_id
           in: path
@@ -361,7 +383,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JobResponse'
+                $ref: '#/components/schemas/GeneralResponse'
   '/job_types/':
     get:
       tags:
