@@ -22,3 +22,7 @@ class AbstractResource(ABC):
     def get_resource_job(self, job):
         # Should get the resource's job information
         pass
+
+    @abstractmethod
+    def stop_job(self, job):
+        pass
