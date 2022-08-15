@@ -347,7 +347,7 @@ paths:
     put:
       tags:
         - Jobs
-      summary: Stop a running job. NOT AVAILABLE YET.
+      summary: Stop a running job.
       parameters:
         - name: job_id
           in: path
