@@ -73,3 +73,20 @@ class SlurmAPIResource(AbstractResource):
         except Exception as e:
             print(repr(e))
             return {'status': 'complete'}
+
+    def stop_job(self, job):
+        user_info = self.resource_user_authentication.has_permission(job.workspace_id.user_id)
+        headers = {'X-SLURM-USER-TOKEN': self.config.get("connection_details", {}).get("slurm_token", ""),
+                   'X-SLURM-USER-NAME': f'{user_info.external_username}'}
+
+        try:
+            resource_job = http_r.delete(
+                f'{self.config.get("connection_details", {}).get("root_url")}/job/{job.resource_job_id}',
+                headers=headers).json()
+            if len(resource_job['errors']):
+                raise Exception(resource_job['errors'])
+
+            return True
+        except Exception as e:
+            print(repr(e))
+            return False
