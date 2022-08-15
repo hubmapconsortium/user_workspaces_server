@@ -1,4 +1,5 @@
 from user_workspaces_server.controllers.resources.abstract_resource import AbstractResource
+import signal
 import psutil
 import subprocess
 import os
@@ -49,3 +50,16 @@ class LocalResource(AbstractResource):
         except Exception as e:
             print(repr(e))
             return {'status': 'complete'}
+
+    def stop_job(self, job):
+        resource_job_id = job.resource_job_id
+        try:
+            resource_job = psutil.Process(resource_job_id)
+            for child in resource_job.children(recursive=True):
+                child.send_signal(signal.SIGKILL)
+
+            resource_job.send_signal(signal.SIGKILL)
+            return True
+        except Exception as e:
+            print(repr(e))
+            return False
