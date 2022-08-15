@@ -260,9 +260,17 @@ class JobView(APIView):
 
     def put(self, request, job_id, put_type):
         if put_type.lower() == 'stop':
-            # job = models.Job.objects.filter(id=job_id, user_id=request.user).first()
+            try:
+                job = models.Job.objects.get(workspace_id__user_id=request.user, id=job_id)
+            except Exception:
+                raise NotFound(f'Job {job_id} not found for user.')
 
-            return JsonResponse({'message': 'Successful stop.', 'success': True})
+            resource = apps.get_app_config('user_workspaces_server').main_resource
+
+            if resource.stop_job(job):
+                return JsonResponse({'message': 'Successful stop.', 'success': True})
+            else:
+                return JsonResponse({'message': 'Failed to stop job.', 'success': False})
         else:
             return JsonResponse({'message': 'Invalid type passed.', 'success': False})
 
