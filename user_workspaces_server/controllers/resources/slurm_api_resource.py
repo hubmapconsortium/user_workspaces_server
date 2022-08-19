@@ -129,5 +129,9 @@ class SlurmAPIResource(AbstractResource):
         response = http_r.get(f'{self.connection_details.get("root_url")}/getSlurmToken/',
                               headers=headers,
                               verify=False)
+
+        if response.status_code != 200:
+            raise APIException(response.text)
+
         token = response.json()['slurm_token']
         return token
