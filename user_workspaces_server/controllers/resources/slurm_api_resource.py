@@ -38,7 +38,7 @@ class SlurmAPIResource(AbstractResource):
         }
 
         body = {
-            'script': job.get_script(),
+            'script': job.get_script({"workspace_full_path": workspace_full_path}),
             'job': {
                 'name': f'{workspace.name} {job.job_details["id"]}',
                 'current_working_directory': workspace_full_path,
