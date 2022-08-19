@@ -54,7 +54,8 @@ class SlurmAPIResource(AbstractResource):
         }
 
         slurm_response = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/',
-                                     json=body, headers=headers).json()
+                                     json=body, headers=headers,
+                                     verify=False).json()
 
         if len(slurm_response['errors']):
             raise APIException(slurm_response['errors'], code=500)
@@ -77,7 +78,8 @@ class SlurmAPIResource(AbstractResource):
         try:
             resource_job = http_r.get(
                 f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}/',
-                headers=headers).json()
+                headers=headers,
+                verify=False).json()
             if len(resource_job['errors']):
                 raise Exception(resource_job['errors'])
 
@@ -103,7 +105,8 @@ class SlurmAPIResource(AbstractResource):
         try:
             resource_job = http_r.delete(
                 f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}/',
-                headers=headers).json()
+                headers=headers,
+                verify=False).json()
             if len(resource_job['errors']):
                 raise Exception(resource_job['errors'])
 
@@ -119,6 +122,7 @@ class SlurmAPIResource(AbstractResource):
             'Slurm-Lifespan': self.connection_details.get('token_lifespan')
         }
         response = http_r.get(f'{self.connection_details.get("root_url")}/getSlurmToken/',
-                              headers=headers)
+                              headers=headers,
+                              verify=False)
         token = response.json()['slurm_token']
         return token
