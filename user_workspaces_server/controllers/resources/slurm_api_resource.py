@@ -115,7 +115,7 @@ class SlurmAPIResource(AbstractResource):
     def get_user_token(self, external_user):
         headers = {
             'Authorization': f'Token {self.connection_details.get("api_token")}',
-            'Slurm-User': external_user['external_username'],
+            'Slurm-User': external_user.external_username,
             'Slurm-Lifespan': self.connection_details.get('token_lifespan')
         }
         response = http_r.get(f'{self.connection_details.get("root_url")}/getSlurmToken/',
