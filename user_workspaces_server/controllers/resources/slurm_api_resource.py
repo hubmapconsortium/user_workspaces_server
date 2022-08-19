@@ -55,7 +55,12 @@ class SlurmAPIResource(AbstractResource):
 
         slurm_response = http_r.post(f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/',
                                      json=body, headers=headers,
-                                     verify=False).json()
+                                     verify=False)
+
+        if slurm_response.status_code != 200:
+            raise APIException(slurm_response.text)
+
+        slurm_response = slurm_response.json()
 
         if len(slurm_response['errors']):
             raise APIException(slurm_response['errors'], code=500)
