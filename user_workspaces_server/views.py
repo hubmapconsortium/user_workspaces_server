@@ -211,6 +211,7 @@ class WorkspaceView(APIView):
                        hook='user_workspaces_server.tasks.queue_job_update')
 
             workspace.status = 'active'
+            workspace.save()
 
             return JsonResponse({'message': 'Successful start.', 'success': True,
                                  'data': {'job': model_to_dict(job, models.Job.get_dict_fields())}})
