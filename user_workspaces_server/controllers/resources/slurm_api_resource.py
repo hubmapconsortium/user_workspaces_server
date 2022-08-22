@@ -72,7 +72,6 @@ class SlurmAPIResource(AbstractResource):
 
         token = self.get_user_token(user_info)
 
-        # For pure testing, lets just set a var in the connection details.
         headers = {
             'Authorization': f'Token {self.connection_details.get("api_token")}',
             'Slurm-Token': token,
@@ -81,7 +80,7 @@ class SlurmAPIResource(AbstractResource):
 
         try:
             resource_job = http_r.get(
-                f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}/',
+                f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}',
                 headers=headers).json()
             if len(resource_job['errors']):
                 raise Exception(resource_job['errors'])
@@ -107,7 +106,7 @@ class SlurmAPIResource(AbstractResource):
 
         try:
             resource_job = http_r.delete(
-                f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}/',
+                f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}',
                 headers=headers).json()
             if len(resource_job['errors']):
                 raise Exception(resource_job['errors'])
