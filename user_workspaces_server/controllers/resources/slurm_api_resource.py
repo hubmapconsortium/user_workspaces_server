@@ -25,8 +25,12 @@ class SlurmAPIResource(AbstractResource):
     def launch_job(self, job, workspace):
         # Need to generate a SLURM token (as a user) to launch a job
         workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
+        job_full_path = os.path.join(workspace_full_path, f'.{job.job_details["id"]}')
 
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
+
+        self.resource_storage.create_dir(job_full_path)
+        self.resource_storage.set_ownership(job_full_path, user_info)
 
         token = self.get_user_token(user_info)
 
@@ -41,10 +45,10 @@ class SlurmAPIResource(AbstractResource):
             'script': job.get_script({"workspace_full_path": workspace_full_path}),
             'job': {
                 'name': f'{workspace.name} {job.job_details["id"]}',
-                'current_working_directory': f'{workspace_full_path}/.{job.job_details["id"]}',
+                'current_working_directory': job_full_path,
                 'nodes': 1,
-                'standard_output': f'{workspace_full_path}/.{job.job_details["id"]}/slurm_{job.job_details["id"]}.out',
-                'standard_error': f'{workspace_full_path}/.{job.job_details["id"]}/slurm_{job.job_details["id"]}_error.out',
+                'standard_output': os.path.join(job_full_path, f'slurm_{job.job_details["id"]}.out'),
+                'standard_error': os.path.join(job_full_path, f'slurm_{job.job_details["id"]}_error.out'),
                 'get_user_environment': 1,
                 'environment': {
                     'PATH': '/bin/:/usr/bin/:/usr/local/bin/',
