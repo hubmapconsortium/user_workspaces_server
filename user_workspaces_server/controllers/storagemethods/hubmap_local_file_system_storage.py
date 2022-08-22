@@ -7,7 +7,7 @@ from rest_framework.exceptions import ParseError, PermissionDenied, NotFound, AP
 class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
     def __init__(self, config, storage_user_authentication):
         super().__init__(config, storage_user_authentication)
-        self.base_url = config['connection_details']['base_url']
+        self.root_url = config['connection_details']['root_url']
 
     def create_symlinks(self, workspace, workspace_details):
         # Attempt to get a globus_groups_token
@@ -42,8 +42,8 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
             symlink_full_dest_path = os.path.join(self.root_dir, path, '/'.join(symlink_dest_path))
             os.makedirs(symlink_full_dest_path, exist_ok=True)
 
-            # {base_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path
-            abs_path_response = http_r.get(f'{self.base_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path',
+            # {root_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path
+            abs_path_response = http_r.get(f'{self.root_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path',
                                            headers={'Authorization': f'Bearer {globus_groups_token}'})
             if abs_path_response.status_code == 401:
                 raise PermissionDenied(
