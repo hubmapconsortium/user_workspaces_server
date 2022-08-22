@@ -38,7 +38,7 @@ job_type_view_patterns = [
 ]
 
 passthrough_view_patterns = [
-    path('<str:hostname>/<int:job_id>', views.PassthroughView.as_view()),
+    path('<str:hostname>/<int:job_id>/', views.PassthroughView.as_view()),
     path('<str:hostname>/<int:job_id>/<path:remainder>', views.PassthroughView.as_view())
 ]
 
