@@ -78,7 +78,8 @@ class WorkspaceView(APIView):
             "workspace_details": {
                 "request_workspace_details": workspace_details,
                 "current_workspace_details": {}
-            }
+            },
+            "status": "idle"
         }
 
         main_storage = apps.get_app_config('user_workspaces_server').main_storage
@@ -208,6 +209,8 @@ class WorkspaceView(APIView):
             # This function should also spin up a loop for the job to be updated.
             async_task('user_workspaces_server.tasks.update_job_status', job.pk,
                        hook='user_workspaces_server.tasks.queue_job_update')
+
+            workspace.status = 'active'
 
             return JsonResponse({'message': 'Successful start.', 'success': True,
                                  'data': {'job': model_to_dict(job, models.Job.get_dict_fields())}})
