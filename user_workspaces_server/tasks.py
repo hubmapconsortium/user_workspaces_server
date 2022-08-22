@@ -63,7 +63,7 @@ def queue_job_update(task):
     if job.status in ['pending', 'running']:
         async_task('user_workspaces_server.tasks.update_job_status', job_id,
                    hook='user_workspaces_server.tasks.queue_job_update')
-    elif job.status in ['completed', 'failed']:
+    elif job.status in ['complete', 'failed']:
         workspace = job.workspace_id
         if not models.Job.objects.filter(workspace_id=job.workspace_id, status__in=['pending', 'running']).exists():
             workspace.status = 'idle'
