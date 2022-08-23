@@ -10,14 +10,15 @@ class Workspace(models.Model):
     disk_space = models.IntegerField(default=0)
     datetime_created = models.DateTimeField()
     workspace_details = models.JSONField()
+    status = models.CharField(max_length=64, default="")
 
     @staticmethod
     def get_query_param_fields():
-        return ["name", "description"]
+        return ["name", "description", "status"]
 
     @staticmethod
     def get_dict_fields():
-        return ["id", "name", "description", "disk_space", "datetime_created", "workspace_details"]
+        return ["id", "name", "description", "disk_space", "datetime_created", "workspace_details", "status"]
 
 
 class Job(models.Model):
