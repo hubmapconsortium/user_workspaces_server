@@ -51,6 +51,10 @@ class LocalResource(AbstractResource):
             print(repr(e))
             return {'status': 'complete'}
 
+    def get_job_core_hours(self, job):
+        datetime_running = job.datetime_end - job.datetime_start
+        return datetime_running.total_seconds()/3600 if datetime_running.total_seconds != 0 else 0
+
     def stop_job(self, job):
         resource_job_id = job.resource_job_id
         try:
