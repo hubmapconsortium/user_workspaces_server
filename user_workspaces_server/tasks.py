@@ -6,6 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.db.models import Sum
 
 
 def update_job_status(job_id):
@@ -68,6 +69,25 @@ def queue_job_update(task):
         if not models.Job.objects.filter(workspace_id=job.workspace_id, status__in=['pending', 'running']).exists():
             workspace.status = 'idle'
             workspace.save()
+            async_task('user_workspaces_server.tasks.update_workspace_disk_space', workspace.id)
+            async_task('user_workspaces_server.tasks.update_job_core_hours', job_id)
+
+
+def update_job_core_hours(job_id):
+    try:
+        job = models.Job.objects.get(pk=job_id)
+    except Exception as e:
+        print(repr(e))
+        raise e
+
+    resource = apps.get_app_config('user_workspaces_server').main_resource
+    job.core_hours = resource.get_job_core_hours(job)
+    job.save()
+    user_quota = models.UserQuota.objects.filter(user_id=job.workspace_id.user_id).first()
+
+    # If this user has a quota spawn a routine to update the core hours.
+    if user_quota:
+        async_task('user_workspaces_server.tasks.update_user_quota_core_hours', user_quota.id)
 
 
 def delete_workspace(workspace_id):
@@ -83,4 +103,49 @@ def delete_workspace(workspace_id):
 
     workspace.delete()
 
-    # TODO: Update the user quota, this can be done in the background
+    user_quota = models.UserQuota.objects.filter(user_id=workspace.user_id).first()
+    # If this user has a quota spawn a routine to update the disk space.
+    if user_quota:
+        async_task('user_workspaces_server.tasks.update_user_quota_disk_space', user_quota.id)
+
+
+def update_workspace_disk_space(workspace_id):
+    try:
+        workspace = models.Workspace.objects.get(pk=workspace_id)
+    except Exception as e:
+        print(repr(e))
+        raise e
+
+    main_storage = apps.get_app_config('user_workspaces_server').main_storage
+    dir_size = main_storage.get_dir_size(workspace.file_path)
+    workspace.disk_space = dir_size
+    workspace.save()
+
+    user_quota = models.UserQuota.objects.filter(user_id=workspace.user_id).first()
+    # If this user has a quota spawn a routine to update the disk space.
+    if user_quota:
+        async_task('user_workspaces_server.tasks.update_user_quota_disk_space', user_quota.id)
+
+
+def update_user_quota_disk_space(user_quota_id):
+    try:
+        user_quota = models.UserQuota.objects.get(pk=user_quota_id)
+    except Exception as e:
+        print(repr(e))
+        raise e
+
+    user_quota.used_disk_space = models.Workspace.objects.filter(user_id=user_quota.user_id) \
+        .aggregate(Sum('disk_space'))['disk_space__sum']
+    user_quota.save()
+
+
+def update_user_quota_core_hours(user_quota_id):
+    try:
+        user_quota = models.UserQuota.objects.get(pk=user_quota_id)
+    except Exception as e:
+        print(repr(e))
+        raise e
+
+    user_quota.used_core_hours = models.Job.objects.filter(workspace_id__user_id=user_quota.user_id) \
+        .aggregate(Sum('core_hours'))['core_hours__sum']
+    user_quota.save()
