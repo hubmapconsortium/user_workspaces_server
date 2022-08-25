@@ -96,6 +96,35 @@ class SlurmAPIResource(AbstractResource):
             print(repr(e))
             return {'status': 'complete'}
 
+    def get_job_core_hours(self, job):
+        workspace = job.workspace_id
+        user_info = self.resource_user_authentication.has_permission(workspace.user_id)
+
+        token = self.get_user_token(user_info)
+
+        headers = {
+            'Authorization': f'Token {self.connection_details.get("api_token")}',
+            'Slurm-Token': token,
+            'Slurm-User': user_info.external_username
+        }
+
+        try:
+            resource_job = http_r.get(
+                f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}',
+                headers=headers).json()
+            if len(resource_job['errors']):
+                raise Exception(resource_job['errors'])
+
+            time_running = resource_job.get('end_time') - resource_job.get('start_time')
+            num_cores = resource_job.get('job_resources', {}).get('allocated_cpus', 0)
+            core_seconds = time_running*num_cores
+
+            # We use (end time - start time) * allocated cores which is the same as the wall time * cores.
+            return core_seconds / 3600 if core_seconds != 0 else 0
+        except Exception as e:
+            print(repr(e))
+            return 0
+
     def stop_job(self, job):
         user_info = self.resource_user_authentication.has_permission(job.workspace_id.user_id)
 
