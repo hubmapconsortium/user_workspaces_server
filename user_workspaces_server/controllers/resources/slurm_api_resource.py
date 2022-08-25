@@ -1,5 +1,3 @@
-import json
-
 from user_workspaces_server.controllers.resources.abstract_resource import AbstractResource
 import os
 import requests as http_r
@@ -120,7 +118,7 @@ class SlurmAPIResource(AbstractResource):
             resource_job = resource_job['jobs'][0]
             time_running = resource_job.get('end_time') - resource_job.get('start_time')
             num_cores = resource_job.get('job_resources', {}).get('allocated_cpus', 0)
-            core_seconds = time_running*num_cores
+            core_seconds = time_running * num_cores
 
             # We use (end time - start time) * allocated cores which is the same as the wall time * cores.
             return core_seconds / 3600 if core_seconds != 0 else 0
