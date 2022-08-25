@@ -1,3 +1,5 @@
+import json
+
 from user_workspaces_server.controllers.resources.abstract_resource import AbstractResource
 import os
 import requests as http_r
@@ -115,6 +117,7 @@ class SlurmAPIResource(AbstractResource):
             if len(resource_job['errors']):
                 raise Exception(resource_job['errors'])
 
+            resource_job = resource_job['jobs'][0]
             time_running = resource_job.get('end_time') - resource_job.get('start_time')
             num_cores = resource_job.get('job_resources', {}).get('allocated_cpus', 0)
             core_seconds = time_running*num_cores
