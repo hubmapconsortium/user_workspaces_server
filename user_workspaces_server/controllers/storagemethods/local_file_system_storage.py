@@ -18,7 +18,9 @@ class LocalFileSystemStorage(AbstractStorage):
         full_path = os.path.join(self.root_dir, path)
         try:
             for entry in os.scandir(full_path):
-                if entry.is_file():
+                if entry.is_symlink():
+                    pass
+                elif entry.is_file():
                     # if it's a file, use stat() function
                     total += entry.stat().st_size
                 elif entry.is_dir():

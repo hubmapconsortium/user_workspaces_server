@@ -24,5 +24,10 @@ class AbstractResource(ABC):
         pass
 
     @abstractmethod
+    def get_job_core_hours(self, job):
+        # Should return time in hours
+        pass
+
+    @abstractmethod
     def stop_job(self, job):
         pass

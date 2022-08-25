@@ -30,7 +30,7 @@ class Job(models.Model):
     datetime_created = models.DateTimeField()
     datetime_start = models.DateTimeField(null=True)
     datetime_end = models.DateTimeField(null=True)
-    core_hours = models.IntegerField(default=0)
+    core_hours = models.DecimalField(max_digits=10, decimal_places=5)
     job_details = models.JSONField()
 
     @staticmethod
@@ -46,9 +46,9 @@ class Job(models.Model):
 class UserQuota(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     max_disk_space = models.IntegerField()
-    max_core_hours = models.IntegerField()
+    max_core_hours = models.DecimalField(max_digits=15, decimal_places=5)
     used_disk_space = models.IntegerField()
-    used_core_hours = models.IntegerField()
+    used_core_hours = models.DecimalField(max_digits=15, decimal_places=5)
 
 
 class ExternalUserMapping(models.Model):

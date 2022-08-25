@@ -188,7 +188,8 @@ class WorkspaceView(APIView):
                 },
                 "resource_name": type(resource).__name__,
                 "status": "Pending",
-                "resource_job_id": -1
+                "resource_job_id": -1,
+                "core_hours": 0
             }
 
             job = models.Job(**job_data)
