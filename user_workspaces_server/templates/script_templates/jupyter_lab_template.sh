@@ -17,7 +17,7 @@ pip install {{ python_packages|join:" " }}
 ### Jupyter configuration
 CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
-VERSION=$(jupyter lab --version)
+VERSION=$(python -m jupyter lab --version)
 
 # Generate Jupyter configuration file with secure file permissions based on JupyterLab version
 (
