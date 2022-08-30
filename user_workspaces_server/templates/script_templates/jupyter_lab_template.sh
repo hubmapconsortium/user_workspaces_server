@@ -4,8 +4,8 @@
 {% if module_manager == "lmod" %}
 module load {{ modules|join:" " }}
 {% if environment_name is not none %}
-conda create --prefix $(pwd) -n JupyterLabJob__{{ job_id }}__venv python={{ python_version }}
-conda activate $(pwd)/JupyterLabJob__{{ job_id }}__venv
+conda create --prefix $(pwd)/JupyterLabJob__{{ job_id }}__venv python={{ python_version }}
+source activate $(pwd)/JupyterLabJob__{{ job_id }}__venv
 pip install {{ python_packages|join:" " }}
 {% endif %}
 {% elif module_manager == "virtualenv" %}
