@@ -3,16 +3,22 @@
 ### Environment initialization
 {% if module_manager == "lmod" %}
 module load {{ modules|join:" " }}
+{% if environment_name is not none %}
+export PYTHONNOUSERSITE=True
+conda create --prefix "$(pwd)/JupyterLabJob_{{ job_id }}_venv" python={{ python_version }} -y
+source activate "$(pwd)/JupyterLabJob_{{ job_id }}_venv"
+pip install {{ python_packages|join:" " }}
+{% endif %}
 {% elif module_manager == "virtualenv" %}
 virtualenv -p {{ python_version }} "$(pwd)/JupyterLabJob_{{ job_id }}_venv"
 source "$(pwd)/JupyterLabJob_{{ job_id }}_venv/bin/activate"
-pip install {{ modules|join:" " }}
+pip install {{ python_packages|join:" " }}
 {% endif %}
 
 ### Jupyter configuration
 CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
-VERSION=$(jupyter lab --version)
+VERSION=$(python -m jupyterlab --version)
 
 # Generate Jupyter configuration file with secure file permissions based on JupyterLab version
 (
@@ -37,4 +43,4 @@ EOL
 
 # Launch the Jupyter Notebook Server
 set -x
-jupyter lab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
+python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
