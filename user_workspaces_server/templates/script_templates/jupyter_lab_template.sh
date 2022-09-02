@@ -12,7 +12,7 @@ pip install {{ python_packages|join:" " }}
 {% elif module_manager == "virtualenv" %}
 virtualenv -p {{ python_version }} "$(pwd)/JupyterLabJob_{{ job_id }}_venv"
 source "$(pwd)/JupyterLabJob_{{ job_id }}_venv/bin/activate"
-pip install --ignore-installed {{ python_packages|join:" " }}
+pip install {{ python_packages|join:" " }}
 {% endif %}
 
 ### Jupyter configuration
