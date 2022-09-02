@@ -4,9 +4,10 @@
 {% if module_manager == "lmod" %}
 module load {{ modules|join:" " }}
 {% if environment_name is not none %}
+export PYTHONNOUSERSITE=True
 conda create --prefix "$(pwd)/JupyterLabJob_{{ job_id }}_venv" python={{ python_version }} -y
 source activate "$(pwd)/JupyterLabJob_{{ job_id }}_venv"
-pip install --ignore-installed {{ python_packages|join:" " }}
+pip install {{ python_packages|join:" " }}
 {% endif %}
 {% elif module_manager == "virtualenv" %}
 virtualenv -p {{ python_version }} "$(pwd)/JupyterLabJob_{{ job_id }}_venv"
