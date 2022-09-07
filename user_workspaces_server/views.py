@@ -98,6 +98,16 @@ class WorkspaceView(APIView):
         workspace.save()
 
         # file_path should be relative, not absolute
+        if external_user_mapping.external_username == '' or str(workspace.pk) == '':
+            print(f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
+            return JsonResponse(
+                {
+                    'message': 'external username or workspace id blank',
+                    'success': False
+                },
+                status=500
+            )
+
         workspace.file_path = os.path.join(external_user_mapping.external_username, str(workspace.pk))
 
         main_storage.create_dir(workspace.file_path)
