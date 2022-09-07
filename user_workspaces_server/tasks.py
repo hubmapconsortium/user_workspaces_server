@@ -7,6 +7,7 @@ from django.conf import settings
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Sum
+import os
 
 
 def update_job_status(job_id):
@@ -69,7 +70,7 @@ def queue_job_update(task):
         if not models.Job.objects.filter(workspace_id=job.workspace_id, status__in=['pending', 'running']).exists():
             workspace.status = 'idle'
             workspace.save()
-            async_task('user_workspaces_server.tasks.update_workspace_disk_space', workspace.id)
+            async_task('user_workspaces_server.tasks.update_workspace', workspace.id)
             async_task('user_workspaces_server.tasks.update_job_core_hours', job_id)
 
 
@@ -109,7 +110,7 @@ def delete_workspace(workspace_id):
         async_task('user_workspaces_server.tasks.update_user_quota_disk_space', user_quota.id)
 
 
-def update_workspace_disk_space(workspace_id):
+def update_workspace(workspace_id):
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except Exception as e:
@@ -117,6 +118,29 @@ def update_workspace_disk_space(workspace_id):
         raise e
 
     main_storage = apps.get_app_config('user_workspaces_server').main_storage
+    current_details = {
+        "files": [],
+        "symlinks": []
+    }
+
+    # This will IGNORE dot directories and files
+    for dirpath, dirnames, filenames, dirfd in main_storage.get_dir_tree(workspace.file_path):
+        dirnames[:] = [dirname for dirname in dirnames if not dirname[0] == '.']
+        filenames = [f for f in filenames if not f[0] == '.']
+
+        for symlink in dirnames:
+            symlink_path = os.path.join(dirpath, symlink)
+            if os.path.islink(symlink_path):
+                relative_path = symlink_path.replace(os.path.join(main_storage.root_dir, workspace.file_path), "")
+                current_details["symlinks"].append(relative_path)
+
+        for filename in filenames:
+            file_path = os.path.join(dirpath, filename)
+            relative_path = file_path.replace(os.path.join(main_storage.root_dir, workspace.file_path), "")
+            current_details["symlinks" if os.path.islink(file_path) else "files"].append(relative_path)
+
+    workspace.workspace_details["current_workspace_details"] = current_details
+
     dir_size = main_storage.get_dir_size(workspace.file_path)
     workspace.disk_space = dir_size
     workspace.save()
