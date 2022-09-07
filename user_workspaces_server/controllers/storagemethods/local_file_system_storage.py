@@ -11,6 +11,11 @@ class LocalFileSystemStorage(AbstractStorage):
         os.makedirs(os.path.join(self.root_dir, path), exist_ok=True)
 
     def delete_dir(self, path):
+        path_to_delete = os.path.join(self.root_dir, path)
+        if path_to_delete == self.root_dir:
+            raise Exception(f'Attempting to delete the root directory.'
+                            f'path {path} path_to_delete {path_to_delete} root_dir {self.root_dir}')
+
         shutil.rmtree(os.path.join(self.root_dir, path), ignore_errors=True)
 
     def get_dir_size(self, path):
