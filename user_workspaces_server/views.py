@@ -100,13 +100,8 @@ class WorkspaceView(APIView):
         # file_path should be relative, not absolute
         if external_user_mapping.external_username == '' or str(workspace.pk) == '':
             print(f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
-            return JsonResponse(
-                {
-                    'message': 'external username or workspace id blank',
-                    'success': False
-                },
-                status=500
-            )
+            workspace.delete()
+            return APIException("Please report this error to your system administrator and try again.")
 
         workspace.file_path = os.path.join(external_user_mapping.external_username, str(workspace.pk))
 
@@ -123,7 +118,7 @@ class WorkspaceView(APIView):
         except Exception as e:
             # If there was a failure here, then we need to delete this workspace
             workspace.delete()
-            raise APIException(repr(e))
+            raise APIException(e)
 
         return JsonResponse({'message': 'Successful.', 'success': True,
                              'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
