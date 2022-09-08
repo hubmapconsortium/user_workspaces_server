@@ -132,12 +132,16 @@ def update_workspace(workspace_id):
             symlink_path = os.path.join(dirpath, symlink)
             if os.path.islink(symlink_path):
                 relative_path = symlink_path.replace(os.path.join(main_storage.root_dir, workspace.file_path), "")
-                current_details["symlinks"].append(relative_path)
+                current_details["symlinks"].append({
+                    "name": relative_path
+                })
 
         for filename in filenames:
             file_path = os.path.join(dirpath, filename)
             relative_path = file_path.replace(os.path.join(main_storage.root_dir, workspace.file_path), "")
-            current_details["symlinks" if os.path.islink(file_path) else "files"].append(relative_path)
+            current_details["symlinks" if os.path.islink(file_path) else "files"].append({
+                "name": relative_path
+            })
 
     workspace.workspace_details["current_workspace_details"] = current_details
 
