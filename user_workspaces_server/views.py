@@ -110,18 +110,20 @@ class WorkspaceView(APIView):
 
         workspace.file_path = os.path.join(external_user_mapping.external_username, str(workspace.pk))
 
-        main_storage.create_dir(workspace.file_path)
+        try:
+            main_storage.create_dir(workspace.file_path)
 
-        # TODO: Make sure that exceptions get passed up to return a 500
-        #  (or more appropriate status code) with appropriate error message structure.
+            main_storage.create_symlinks(workspace, workspace_details)
+            main_storage.create_files(workspace, workspace_details)
 
-        main_storage.create_symlinks(workspace, workspace_details)
-        main_storage.create_files(workspace, workspace_details)
+            main_storage.set_ownership(external_user_mapping.external_username, external_user_mapping)
+            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
-        main_storage.set_ownership(external_user_mapping.external_username, external_user_mapping)
-        main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
-
-        workspace.save()
+            workspace.save()
+        except Exception as e:
+            # If there was a failure here, then we need to delete this workspace
+            workspace.delete()
+            raise APIException(repr(e))
 
         return JsonResponse({'message': 'Successful.', 'success': True,
                              'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
