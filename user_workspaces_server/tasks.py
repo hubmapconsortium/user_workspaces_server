@@ -92,7 +92,6 @@ def update_job_core_hours(job_id):
 
 
 def delete_workspace(workspace_id):
-    # Might want to make this a background task since it might be a massive directory.
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except Exception as e:
@@ -100,7 +99,13 @@ def delete_workspace(workspace_id):
         raise e
 
     main_storage = apps.get_app_config('user_workspaces_server').main_storage
-    main_storage.delete_dir(workspace.file_path)
+    try:
+        main_storage.delete_dir(workspace.file_path)
+    except Exception as e:
+        workspace.status = 'error'
+        workspace.save()
+        print(repr(e))
+        return
 
     workspace.delete()
 
