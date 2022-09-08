@@ -251,6 +251,10 @@ class WorkspaceView(APIView):
         if not external_user_mapping:
             raise APIException('User could not be found/created on main storage system.')
 
+        if not main_storage.can_delete_dir(workspace.file_path):
+            raise APIException('Please contact a system administrator there is a failure with '
+                               'the workspace directory that will not allow for this workspace to be deleted.')
+
         workspace.status = 'deleting'
         workspace.save()
 
