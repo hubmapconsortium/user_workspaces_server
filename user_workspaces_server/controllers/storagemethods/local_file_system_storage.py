@@ -15,10 +15,10 @@ class LocalFileSystemStorage(AbstractStorage):
         abs_root_dir = os.path.abspath(self.root_dir)
         path_to_delete = os.path.abspath(os.path.join(abs_root_dir, path))
         if not os.path.commonpath([abs_root_dir]) == os.path.commonpath([abs_root_dir, path_to_delete]):
-            print(f'Path to delete is not a child of the root_dir')
+            print('Path to delete is not a child of the root_dir')
             return False
         elif path_to_delete == abs_root_dir:
-            print(f'Path to delete is equal to root_dir')
+            print('Path to delete is equal to root_dir')
             return False
         else:
             return True
