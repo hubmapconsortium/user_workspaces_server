@@ -3,7 +3,7 @@
 ### Environment initialization
 {% if module_manager == "lmod" %}
 module load {{ modules|join:" " }}
-{% if environment_name is not none %}
+{% if use_local_environment %}
 export PYTHONNOUSERSITE=True
 conda create --prefix "$(pwd)/JupyterLabJob_{{ job_id }}_venv" python={{ python_version }} -y
 source activate "$(pwd)/JupyterLabJob_{{ job_id }}_venv"

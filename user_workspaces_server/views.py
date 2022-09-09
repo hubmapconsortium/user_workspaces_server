@@ -98,20 +98,27 @@ class WorkspaceView(APIView):
         workspace.save()
 
         # file_path should be relative, not absolute
+        if external_user_mapping.external_username == '' or str(workspace.pk) == '':
+            print(f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
+            workspace.delete()
+            return APIException("Please report this error to your system administrator and try again.")
+
         workspace.file_path = os.path.join(external_user_mapping.external_username, str(workspace.pk))
 
-        main_storage.create_dir(workspace.file_path)
+        try:
+            main_storage.create_dir(workspace.file_path)
 
-        # TODO: Make sure that exceptions get passed up to return a 500
-        #  (or more appropriate status code) with appropriate error message structure.
+            main_storage.create_symlinks(workspace, workspace_details)
+            main_storage.create_files(workspace, workspace_details)
 
-        main_storage.create_symlinks(workspace, workspace_details)
-        main_storage.create_files(workspace, workspace_details)
+            main_storage.set_ownership(external_user_mapping.external_username, external_user_mapping)
+            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
-        main_storage.set_ownership(external_user_mapping.external_username, external_user_mapping)
-        main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
-
-        workspace.save()
+            workspace.save()
+        except Exception as e:
+            # If there was a failure here, then we need to delete this workspace
+            workspace.delete()
+            raise APIException(e)
 
         return JsonResponse({'message': 'Successful.', 'success': True,
                              'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
@@ -160,6 +167,10 @@ class WorkspaceView(APIView):
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
         if put_type.lower() == 'start':
+            if not main_storage.is_valid_workspace_path(workspace.file_path):
+                raise APIException('Please contact a system administrator there is a failure with '
+                                   'the workspace directory that will not allow for jobs to be created.')
+
             try:
                 body = json.loads(request.body)
             except Exception as e:
@@ -240,6 +251,10 @@ class WorkspaceView(APIView):
 
         if not external_user_mapping:
             raise APIException('User could not be found/created on main storage system.')
+
+        if not main_storage.is_valid_workspace_path(workspace.file_path):
+            raise APIException('Please contact a system administrator there is a failure with '
+                               'the workspace directory that will not allow for this workspace to be deleted.')
 
         workspace.status = 'deleting'
         workspace.save()

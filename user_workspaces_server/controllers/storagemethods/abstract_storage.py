@@ -19,6 +19,10 @@ class AbstractStorage(ABC):
             self.create_file(workspace.file_path, content_file)
 
     @abstractmethod
+    def is_valid_workspace_path(self, path):
+        pass
+
+    @abstractmethod
     def create_dir(self, path):
         pass
 
