@@ -254,7 +254,7 @@ class WorkspaceView(APIView):
 
 #        if not main_storage.is_valid_workspace_path(workspace.file_path):
 #            raise APIException('Please contact a system administrator there is a failure with '
-                               'the workspace directory that will not allow for this workspace to be deleted.')
+#                               'the workspace directory that will not allow for this workspace to be deleted.')
 
 #        workspace.status = 'deleting'
 #        workspace.save()
