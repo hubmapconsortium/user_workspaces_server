@@ -198,7 +198,7 @@ class WorkspaceView(APIView):
                     'current_job_details': {}
                 },
                 "resource_name": type(resource).__name__,
-                "status": "Pending",
+                "status": "pending",
                 "resource_job_id": -1,
                 "core_hours": 0
             }
