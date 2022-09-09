@@ -7,7 +7,7 @@ import shutil
 
 
 class LocalFileSystemStorage(AbstractStorage):
-    def is_valid_workspace_dir(self, path):
+    def is_valid_workspace_path(self, path):
         # TODO: Add permission checking here
         # The correct way to do this is to make sure that path_to_delete is a child of self.root_dir
         # IE, path_to_delete should not be a parent of root_dir (as is the case for if path is /)
