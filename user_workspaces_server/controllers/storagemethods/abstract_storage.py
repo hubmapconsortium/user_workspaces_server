@@ -19,7 +19,7 @@ class AbstractStorage(ABC):
             self.create_file(workspace.file_path, content_file)
 
     @abstractmethod
-    def can_delete_dir(self, path):
+    def is_valid_workspace_dir(self, path):
         pass
 
     @abstractmethod
