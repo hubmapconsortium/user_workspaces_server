@@ -7,11 +7,30 @@ import shutil
 
 
 class LocalFileSystemStorage(AbstractStorage):
+    def is_valid_workspace_path(self, path):
+        # TODO: Add permission checking here
+        # The correct way to do this is to make sure that path_to_delete is a child of self.root_dir
+        # IE, path_to_delete should not be a parent of root_dir (as is the case for if path is /)
+        # it should not be a sibling of root_dir, nor should it be equal to root_dir
+        abs_root_dir = os.path.abspath(self.root_dir)
+        workspace_path = os.path.abspath(os.path.join(abs_root_dir, path))
+        if not os.path.commonpath([abs_root_dir]) == os.path.commonpath([abs_root_dir, workspace_path]):
+            print('Workspace path is not a child of the root_dir')
+            return False
+        elif workspace_path == abs_root_dir:
+            print('Workspace path is equal to root_dir')
+            return False
+        else:
+            return True
+
     def create_dir(self, path):
         os.makedirs(os.path.join(self.root_dir, path), exist_ok=True)
 
     def delete_dir(self, path):
-        shutil.rmtree(os.path.join(self.root_dir, path), ignore_errors=True)
+        if not self.is_valid_workspace_dir(path):
+            raise Exception('Cannot delete this workspace')
+        else:
+            shutil.rmtree(os.path.join(self.root_dir, path), ignore_errors=True)
 
     def get_dir_size(self, path):
         total = 0
@@ -35,7 +54,7 @@ class LocalFileSystemStorage(AbstractStorage):
         return total
 
     def get_dir_tree(self, path):
-        return os.fwalk(os.path.join(path))
+        return os.fwalk(os.path.join(self.root_dir, path))
 
     def set_ownership(self, path, owner_mapping, recursive=False):
         external_user = self.storage_user_authentication.get_external_user(model_to_dict(owner_mapping))
@@ -52,7 +71,7 @@ class LocalFileSystemStorage(AbstractStorage):
         )
 
         if recursive:
-            for dirpath, dirnames, filenames, dirfd in self.get_dir_tree(os.path.join(self.root_dir, path)):
+            for dirpath, dirnames, filenames, dirfd in self.get_dir_tree(path):
                 os.chown(
                     dirpath,
                     uid,
