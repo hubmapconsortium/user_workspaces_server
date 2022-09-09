@@ -7,18 +7,18 @@ import shutil
 
 
 class LocalFileSystemStorage(AbstractStorage):
-    def can_delete_dir(self, path):
+    def is_valid_workspace_dir(self, path):
         # TODO: Add permission checking here
         # The correct way to do this is to make sure that path_to_delete is a child of self.root_dir
         # IE, path_to_delete should not be a parent of root_dir (as is the case for if path is /)
         # it should not be a sibling of root_dir, nor should it be equal to root_dir
         abs_root_dir = os.path.abspath(self.root_dir)
-        path_to_delete = os.path.abspath(os.path.join(abs_root_dir, path))
-        if not os.path.commonpath([abs_root_dir]) == os.path.commonpath([abs_root_dir, path_to_delete]):
-            print('Path to delete is not a child of the root_dir')
+        workspace_path = os.path.abspath(os.path.join(abs_root_dir, path))
+        if not os.path.commonpath([abs_root_dir]) == os.path.commonpath([abs_root_dir, workspace_path]):
+            print('Workspace path is not a child of the root_dir')
             return False
-        elif path_to_delete == abs_root_dir:
-            print('Path to delete is equal to root_dir')
+        elif workspace_path == abs_root_dir:
+            print('Workspace path is equal to root_dir')
             return False
         else:
             return True
@@ -27,7 +27,7 @@ class LocalFileSystemStorage(AbstractStorage):
         os.makedirs(os.path.join(self.root_dir, path), exist_ok=True)
 
     def delete_dir(self, path):
-        if not self.can_delete_dir(path):
+        if not self.is_valid_workspace_dir(path):
             raise Exception('Cannot delete this workspace')
         else:
             shutil.rmtree(os.path.join(self.root_dir, path), ignore_errors=True)
