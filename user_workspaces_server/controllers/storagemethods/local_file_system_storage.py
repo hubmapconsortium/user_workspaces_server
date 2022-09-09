@@ -27,7 +27,7 @@ class LocalFileSystemStorage(AbstractStorage):
         os.makedirs(os.path.join(self.root_dir, path), exist_ok=True)
 
     def delete_dir(self, path):
-        if not self.is_valid_workspace_dir(path):
+        if not self.is_valid_workspace_path(path):
             raise Exception('Cannot delete this workspace')
         else:
             shutil.rmtree(os.path.join(self.root_dir, path), ignore_errors=True)
