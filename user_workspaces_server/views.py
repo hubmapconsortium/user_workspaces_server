@@ -77,7 +77,7 @@ class WorkspaceView(APIView):
             "datetime_created": datetime.now(),
             "workspace_details": {
                 "request_workspace_details": workspace_details,
-                "current_workspace_details": {}
+                "current_workspace_details": {'files': [], 'symlinks': []}
             },
             "status": "idle"
         }
@@ -167,7 +167,7 @@ class WorkspaceView(APIView):
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
         if put_type.lower() == 'start':
-            if not main_storage.is_valid_workspace_path(workspace.file_path):
+            if not main_storage.is_valid_path(workspace.file_path):
                 raise APIException('Please contact a system administrator there is a failure with '
                                    'the workspace directory that will not allow for jobs to be created.')
 
@@ -252,7 +252,7 @@ class WorkspaceView(APIView):
         if not external_user_mapping:
             raise APIException('User could not be found/created on main storage system.')
 
-        if not main_storage.is_valid_workspace_path(workspace.file_path):
+        if not main_storage.is_valid_path(workspace.file_path):
             raise APIException('Please contact a system administrator there is a failure with '
                               'the workspace directory that will not allow for this workspace to be deleted.')
 
