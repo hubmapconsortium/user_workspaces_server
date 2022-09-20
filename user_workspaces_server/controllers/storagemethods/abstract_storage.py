@@ -19,7 +19,7 @@ class AbstractStorage(ABC):
             self.create_file(workspace.file_path, content_file)
 
     @abstractmethod
-    def is_valid_workspace_path(self, path):
+    def is_valid_path(self, path):
         pass
 
     @abstractmethod
@@ -27,7 +27,7 @@ class AbstractStorage(ABC):
         pass
 
     @abstractmethod
-    def delete_dir(self, path):
+    def delete_dir(self, path, owner_mapping):
         pass
 
     @abstractmethod
@@ -36,6 +36,10 @@ class AbstractStorage(ABC):
 
     @abstractmethod
     def get_dir_tree(self, path):
+        pass
+
+    @abstractmethod
+    def check_is_owner(self, path, owner_mapping):
         pass
 
     @abstractmethod
