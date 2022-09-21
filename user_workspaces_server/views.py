@@ -223,7 +223,7 @@ class WorkspaceView(APIView):
             async_task('user_workspaces_server.tasks.update_job_status', job.pk,
                        hook='user_workspaces_server.tasks.queue_job_update')
 
-            workspace.status = 'active'
+            workspace.status = models.Workspace.Status.ACTIVE
             workspace.save()
 
             return JsonResponse({'message': 'Successful start.', 'success': True,
@@ -257,7 +257,7 @@ class WorkspaceView(APIView):
             raise APIException('Please contact a system administrator there is a failure with '
                                'the workspace directory that will not allow for this workspace to be deleted.')
 
-        workspace.status = 'deleting'
+        workspace.status = models.Workspace.Status.DELETING
         workspace.save()
 
         async_task('user_workspaces_server.tasks.delete_workspace', workspace.pk)
