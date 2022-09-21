@@ -100,7 +100,7 @@ def delete_workspace(workspace_id):
 
     main_storage = apps.get_app_config('user_workspaces_server').main_storage
     try:
-        main_storage.delete_dir(workspace.file_path)
+        main_storage.delete_dir(workspace.file_path, workspace.user_id)
     except Exception as e:
         workspace.status = 'error'
         workspace.save()
