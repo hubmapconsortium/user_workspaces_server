@@ -24,6 +24,8 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
         for symlink in workspace_details.get('symlinks', []):
             if 'dataset_uuid' in symlink and not globus_groups_token:
                 raise ParseError('No globus_groups_token passed when trying to use dataset_uuid.')
+            if '..' in symlink.get('name', ''):
+                raise ParseError('Symlink name cannot contain double dots.')
 
         for symlink in workspace_details.get('symlinks', []):
             self.create_symlink(workspace.file_path, symlink, globus_groups_token)
