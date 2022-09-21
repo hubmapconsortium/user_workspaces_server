@@ -1,4 +1,5 @@
 from rest_framework.views import exception_handler
+from rest_framework.exceptions import APIException
 
 
 def workspaces_exception_handler(exc, context):
@@ -14,3 +15,9 @@ def workspaces_exception_handler(exc, context):
         }
 
     return response
+
+
+class WorkspaceClientException(APIException):
+    status_code = 400
+    default_detail = 'Error with client request.'
+    default_code = 'client_request_error'
