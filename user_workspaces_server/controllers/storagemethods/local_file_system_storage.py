@@ -1,6 +1,7 @@
 import grp
 import pwd
 from user_workspaces_server.controllers.storagemethods.abstract_storage import AbstractStorage
+from user_workspaces_server.exceptions import WorkspaceClientException
 from django.forms import model_to_dict
 import os
 import shutil
@@ -104,6 +105,10 @@ class LocalFileSystemStorage(AbstractStorage):
 
         symlink_full_dest_path = os.path.join(self.root_dir, path, '/'.join(symlink_dest_path))
 
+        if not self.is_valid_path(os.path.join(path, symlink_name)):
+            print(f'Symlink {symlink_name} cannot be created in {path}.')
+            raise WorkspaceClientException(f'Invalid symlink destination path specified {symlink_name}')
+
         os.makedirs(symlink_full_dest_path, exist_ok=True)
 
         if os.path.exists(symlink_source_path):
@@ -118,6 +123,10 @@ class LocalFileSystemStorage(AbstractStorage):
         file_name = file_path_list[-1]
         file_dest_path = file_path_list[:-1]
 
+        if not self.is_valid_path(os.path.join(path, file.name)):
+            print(f'File {file.name} cannot be created in {path}')
+            raise WorkspaceClientException(f'Invalid file path specified {file.name}')
+
         file_full_dest_path = os.path.join(self.root_dir, path, '/'.join(file_dest_path))
 
         os.makedirs(file_full_dest_path, exist_ok=True)
@@ -128,4 +137,3 @@ class LocalFileSystemStorage(AbstractStorage):
         with open(os.path.join(file_full_dest_path, file_name), 'wb') as new_file:
             for chunk in file.chunks():
                 new_file.write(chunk)
-        return
