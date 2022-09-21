@@ -41,6 +41,10 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
             symlink_name = symlink_path_list[-1]
             symlink_dest_path = symlink_path_list[:-1]
 
+            if not self.is_valid_path(os.path.join(path, symlink_name)):
+                print(f'Symlink {symlink_name} cannot be created in {path}.')
+                raise ParseError(f'Invalid symlink destination path specified {symlink_name}')
+
             symlink_full_dest_path = os.path.join(self.root_dir, path, '/'.join(symlink_dest_path))
             os.makedirs(symlink_full_dest_path, exist_ok=True)
 
