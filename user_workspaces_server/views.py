@@ -77,7 +77,7 @@ class WorkspaceView(APIView):
             "datetime_created": datetime.now(),
             "workspace_details": {
                 "request_workspace_details": workspace_details,
-                "current_workspace_details": {}
+                "current_workspace_details": {'files': [], 'symlinks': []}
             },
             "status": "idle"
         }
@@ -99,7 +99,8 @@ class WorkspaceView(APIView):
 
         # file_path should be relative, not absolute
         if external_user_mapping.external_username == '' or str(workspace.pk) == '':
-            print(f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
+            print(
+                f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
             workspace.delete()
             return APIException("Please report this error to your system administrator and try again.")
 
@@ -167,7 +168,7 @@ class WorkspaceView(APIView):
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
         if put_type.lower() == 'start':
-            if not main_storage.is_valid_workspace_path(workspace.file_path):
+            if not main_storage.is_valid_path(workspace.file_path):
                 raise APIException('Please contact a system administrator there is a failure with '
                                    'the workspace directory that will not allow for jobs to be created.')
 
@@ -198,7 +199,7 @@ class WorkspaceView(APIView):
                     'current_job_details': {}
                 },
                 "resource_name": type(resource).__name__,
-                "status": "Pending",
+                "status": "pending",
                 "resource_job_id": -1,
                 "core_hours": 0
             }
@@ -237,31 +238,31 @@ class WorkspaceView(APIView):
         else:
             return JsonResponse({'message': 'Invalid type passed.', 'success': False})
 
-#   def delete(self, request, workspace_id):
-#       try:
-#           workspace = models.Workspace.objects.get(user_id=request.user, id=workspace_id)
-#       except Exception:
-#           raise NotFound(f'Workspace {workspace_id} not found for user.')
+    def delete(self, request, workspace_id):
+        try:
+            workspace = models.Workspace.objects.get(user_id=request.user, id=workspace_id)
+        except Exception:
+            raise NotFound(f'Workspace {workspace_id} not found for user.')
 
-#        if models.Job.objects.filter(workspace_id=workspace, status__in=['pending', 'running']).exists():
-#            raise APIException('Cannot delete workspace, jobs are running for this workspace.')
+        if models.Job.objects.filter(workspace_id=workspace, status__in=['pending', 'running']).exists():
+            raise APIException('Cannot delete workspace, jobs are running for this workspace.')
 
-#        main_storage = apps.get_app_config('user_workspaces_server').main_storage
-#        external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
+        main_storage = apps.get_app_config('user_workspaces_server').main_storage
+        external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
 
-#        if not external_user_mapping:
-#            raise APIException('User could not be found/created on main storage system.')
+        if not external_user_mapping:
+            raise APIException('User could not be found/created on main storage system.')
 
-#        if not main_storage.is_valid_workspace_path(workspace.file_path):
-#            raise APIException('Please contact a system administrator there is a failure with '
-#                               'the workspace directory that will not allow for this workspace to be deleted.')
+        if not main_storage.is_valid_path(workspace.file_path):
+            raise APIException('Please contact a system administrator there is a failure with '
+                               'the workspace directory that will not allow for this workspace to be deleted.')
 
-#        workspace.status = 'deleting'
-#        workspace.save()
+        workspace.status = 'deleting'
+        workspace.save()
 
-#        async_task('user_workspaces_server.tasks.delete_workspace', workspace.pk)
+        async_task('user_workspaces_server.tasks.delete_workspace', workspace.pk)
 
-#        return JsonResponse({'message': f'Workspace {workspace_id} queued for deletion.', 'success': True})
+        return JsonResponse({'message': f'Workspace {workspace_id} queued for deletion.', 'success': True})
 
 
 class JobView(APIView):
@@ -290,6 +291,7 @@ class JobView(APIView):
 
             resource = apps.get_app_config('user_workspaces_server').main_resource
 
+            # This needs to be done asynchronously.
             if resource.stop_job(job):
                 return JsonResponse({'message': 'Successful stop.', 'success': True})
             else:

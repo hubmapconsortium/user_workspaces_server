@@ -7,8 +7,7 @@ import shutil
 
 
 class LocalFileSystemStorage(AbstractStorage):
-    def is_valid_workspace_path(self, path):
-        # TODO: Add permission checking here
+    def is_valid_path(self, path):
         # The correct way to do this is to make sure that path_to_delete is a child of self.root_dir
         # IE, path_to_delete should not be a parent of root_dir (as is the case for if path is /)
         # it should not be a sibling of root_dir, nor should it be equal to root_dir
@@ -26,11 +25,14 @@ class LocalFileSystemStorage(AbstractStorage):
     def create_dir(self, path):
         os.makedirs(os.path.join(self.root_dir, path), exist_ok=True)
 
-    def delete_dir(self, path):
-        if not self.is_valid_workspace_dir(path):
+    def delete_dir(self, path, owner_mapping):
+        if not self.is_valid_path(path):
             raise Exception('Cannot delete this workspace')
         else:
-            shutil.rmtree(os.path.join(self.root_dir, path), ignore_errors=True)
+            if self.check_is_owner(path, owner_mapping):
+                shutil.rmtree(os.path.join(self.root_dir, path), ignore_errors=True)
+            else:
+                raise Exception(f'User {owner_mapping} does not own {path}')
 
     def get_dir_size(self, path):
         total = 0
@@ -55,6 +57,13 @@ class LocalFileSystemStorage(AbstractStorage):
 
     def get_dir_tree(self, path):
         return os.fwalk(os.path.join(self.root_dir, path))
+
+    def check_is_owner(self, path, owner_mapping):
+        external_user = self.storage_user_authentication.get_external_user(model_to_dict(owner_mapping))
+        uid = pwd.getpwnam(external_user['external_username'])[2] \
+            if type(external_user['external_user_uid']) == str else external_user['external_user_uid']
+        owner_uid = os.stat(os.path.join(self.root_dir, path)).st_uid
+        return uid == owner_uid
 
     def set_ownership(self, path, owner_mapping, recursive=False):
         external_user = self.storage_user_authentication.get_external_user(model_to_dict(owner_mapping))
