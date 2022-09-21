@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from django.core.files.base import ContentFile
+from rest_framework.exceptions import ParseError
 
 
 class AbstractStorage(ABC):
@@ -10,12 +11,17 @@ class AbstractStorage(ABC):
 
     def create_symlinks(self, workspace, workspace_details):
         for symlink in workspace_details.get('symlinks', []):
+            if '..' in symlink.get('name', ''):
+                raise ParseError('Symlink name cannot contain double dots.')
             self.create_symlink(workspace.file_path, symlink)
 
     def create_files(self, workspace, workspace_details):
         for file in workspace_details.get('files', []):
             # Create a file object here
             content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
+            if '..' in content_file.name:
+                raise ParseError('File name cannot contain double dots.')
+
             self.create_file(workspace.file_path, content_file)
 
     @abstractmethod
