@@ -99,7 +99,8 @@ class WorkspaceView(APIView):
 
         # file_path should be relative, not absolute
         if external_user_mapping.external_username == '' or str(workspace.pk) == '':
-            print(f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
+            print(
+                f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
             workspace.delete()
             return APIException("Please report this error to your system administrator and try again.")
 
@@ -254,7 +255,7 @@ class WorkspaceView(APIView):
 
         if not main_storage.is_valid_path(workspace.file_path):
             raise APIException('Please contact a system administrator there is a failure with '
-                              'the workspace directory that will not allow for this workspace to be deleted.')
+                               'the workspace directory that will not allow for this workspace to be deleted.')
 
         workspace.status = 'deleting'
         workspace.save()
