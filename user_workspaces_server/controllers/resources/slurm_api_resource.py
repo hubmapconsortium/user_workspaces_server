@@ -87,7 +87,7 @@ class SlurmAPIResource(AbstractResource):
                 f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}',
                 headers=headers).json()
             if len(resource_job['errors']):
-                raise Exception(resource_job['errors'])
+                raise APIException(resource_job['errors'])
 
             resource_job = resource_job['jobs'][0]
             resource_job['status'] = self.translate_status(resource_job['job_state'])
@@ -113,7 +113,7 @@ class SlurmAPIResource(AbstractResource):
                 f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}',
                 headers=headers).json()
             if len(resource_job['errors']):
-                raise Exception(resource_job['errors'])
+                raise APIException(resource_job['errors'])
 
             resource_job = resource_job['jobs'][0]
             time_running = resource_job.get('end_time') - resource_job.get('start_time')
@@ -143,7 +143,7 @@ class SlurmAPIResource(AbstractResource):
                 f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}',
                 headers=headers).json()
             if len(resource_job['errors']):
-                raise Exception(resource_job['errors'])
+                raise APIException(resource_job['errors'])
 
             return True
         except Exception as e:

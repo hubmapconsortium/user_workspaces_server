@@ -2,6 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
 import user_workspaces_server.controllers.job_types.jupyter_lab_job
 from . import models
+from user_workspaces_server.exceptions import WorkspaceClientException
 from django.conf import settings
 from django.apps import apps
 from pathlib import Path
@@ -86,13 +87,7 @@ class WorkspaceView(APIView):
         external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
 
         if not external_user_mapping:
-            return JsonResponse(
-                {
-                    'message': 'User could not be found/created on main storage system.',
-                    'success': False
-                },
-                status=500
-            )
+            raise WorkspaceClientException('User could not be found/created on main storage system.')
 
         workspace = models.Workspace(**workspace_data)
         workspace.save()
@@ -119,7 +114,7 @@ class WorkspaceView(APIView):
         except Exception as e:
             # If there was a failure here, then we need to delete this workspace
             workspace.delete()
-            raise APIException(e)
+            raise e
 
         return JsonResponse({'message': 'Successful.', 'success': True,
                              'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
@@ -130,13 +125,7 @@ class WorkspaceView(APIView):
         external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
 
         if not external_user_mapping:
-            return JsonResponse(
-                {
-                    'message': 'User could not be found/created on main storage system.',
-                    'success': False
-                },
-                status=500
-            )
+            raise WorkspaceClientException('User could not be found/created on main storage system.')
 
         try:
             workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
@@ -159,11 +148,13 @@ class WorkspaceView(APIView):
             if type(workspace_details) != dict:
                 raise ParseError('Workspace details not JSON')
 
-            # TODO: Make sure that exceptions get passed up to return a 500
-            #  (or more appropriate status code) with appropriate error message structure.
-            main_storage.create_symlinks(workspace, workspace_details)
-            main_storage.create_files(workspace, workspace_details)
-            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
+            try:
+                main_storage.create_symlinks(workspace, workspace_details)
+                main_storage.create_files(workspace, workspace_details)
+                main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
+            except Exception as e:
+                print(repr(e))
+                raise e
 
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
@@ -209,7 +200,6 @@ class WorkspaceView(APIView):
 
             # I think that instantiating the job here and passing that through to the resource makes the most sense
             # TODO: Grab the correct job type based on the request
-            #
             job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob(
                 settings.CONFIG['available_job_types']['jupyter_lab']['environment_details'][
                     settings.CONFIG['main_resource']], model_to_dict(job))
@@ -223,7 +213,7 @@ class WorkspaceView(APIView):
             async_task('user_workspaces_server.tasks.update_job_status', job.pk,
                        hook='user_workspaces_server.tasks.queue_job_update')
 
-            workspace.status = 'active'
+            workspace.status = models.Workspace.Status.ACTIVE
             workspace.save()
 
             return JsonResponse({'message': 'Successful start.', 'success': True,
@@ -236,7 +226,7 @@ class WorkspaceView(APIView):
 
             return JsonResponse({'message': 'Successful upload.', 'success': True})
         else:
-            return JsonResponse({'message': 'Invalid type passed.', 'success': False})
+            raise WorkspaceClientException('Invalid PUT type passed.')
 
     def delete(self, request, workspace_id):
         try:
@@ -245,19 +235,19 @@ class WorkspaceView(APIView):
             raise NotFound(f'Workspace {workspace_id} not found for user.')
 
         if models.Job.objects.filter(workspace_id=workspace, status__in=['pending', 'running']).exists():
-            raise APIException('Cannot delete workspace, jobs are running for this workspace.')
+            raise WorkspaceClientException('Cannot delete workspace, jobs are running for this workspace.')
 
         main_storage = apps.get_app_config('user_workspaces_server').main_storage
         external_user_mapping = main_storage.storage_user_authentication.has_permission(request.user)
 
         if not external_user_mapping:
-            raise APIException('User could not be found/created on main storage system.')
+            raise WorkspaceClientException('User could not be found/created on main storage system.')
 
         if not main_storage.is_valid_path(workspace.file_path):
             raise APIException('Please contact a system administrator there is a failure with '
                                'the workspace directory that will not allow for this workspace to be deleted.')
 
-        workspace.status = 'deleting'
+        workspace.status = models.Workspace.Status.DELETING
         workspace.save()
 
         async_task('user_workspaces_server.tasks.delete_workspace', workspace.pk)
@@ -295,9 +285,9 @@ class JobView(APIView):
             if resource.stop_job(job):
                 return JsonResponse({'message': 'Successful stop.', 'success': True})
             else:
-                return JsonResponse({'message': 'Failed to stop job.', 'success': False})
+                raise WorkspaceClientException('Failed to stop job.')
         else:
-            return JsonResponse({'message': 'Invalid type passed.', 'success': False})
+            raise WorkspaceClientException('Invalid PUT type passed.')
 
 
 class JobTypeView(APIView):

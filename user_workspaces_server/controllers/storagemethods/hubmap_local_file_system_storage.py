@@ -24,6 +24,8 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
         for symlink in workspace_details.get('symlinks', []):
             if 'dataset_uuid' in symlink and not globus_groups_token:
                 raise ParseError('No globus_groups_token passed when trying to use dataset_uuid.')
+            if '..' in symlink.get('name', ''):
+                raise ParseError('Symlink name cannot contain double dots.')
 
         for symlink in workspace_details.get('symlinks', []):
             self.create_symlink(workspace.file_path, symlink, globus_groups_token)
@@ -38,6 +40,10 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
             symlink_path_list = symlink_name.split('/')
             symlink_name = symlink_path_list[-1]
             symlink_dest_path = symlink_path_list[:-1]
+
+            if not self.is_valid_path(os.path.join(path, symlink_name)):
+                print(f'Symlink {symlink_name} cannot be created in {path}.')
+                raise ParseError(f'Invalid symlink destination path specified {symlink_name}')
 
             symlink_full_dest_path = os.path.join(self.root_dir, path, '/'.join(symlink_dest_path))
             os.makedirs(symlink_full_dest_path, exist_ok=True)
