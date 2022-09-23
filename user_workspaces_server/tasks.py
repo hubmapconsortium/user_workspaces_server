@@ -23,9 +23,9 @@ def update_job_status(job_id):
 
     # Status should only ever be one of the following:
     # pending, running, complete, failed
-    if job.status == 'running' and job.datetime_start is None:
+    if job.status == models.Job.Status.RUNNING and job.datetime_start is None:
         job.datetime_start = datetime.datetime.now()
-    elif job.status in ['complete', 'failed']:
+    elif job.status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         job.datetime_end = datetime.datetime.now()
 
     # TODO: Initialize appropriate JobType
@@ -62,13 +62,14 @@ def queue_job_update(task):
         print(repr(e))
         raise e
 
-    if job.status in ['pending', 'running']:
+    if job.status in [models.Job.Status.PENDING, models.Job.Status.RUNNING]:
         async_task('user_workspaces_server.tasks.update_job_status', job_id,
                    hook='user_workspaces_server.tasks.queue_job_update')
-    elif job.status in ['complete', 'failed']:
+    elif job.status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         workspace = job.workspace_id
-        if not models.Job.objects.filter(workspace_id=job.workspace_id, status__in=['pending', 'running']).exists():
-            workspace.status = 'idle'
+        if not models.Job.objects.filter(workspace_id=job.workspace_id,
+                                         status__in=[models.Job.Status.PENDING, models.Job.Status.RUNNING]).exists():
+            workspace.status = models.Workspace.Status.IDLE
             workspace.save()
             async_task('user_workspaces_server.tasks.update_workspace', workspace.id)
             async_task('user_workspaces_server.tasks.update_job_core_hours', job_id)
@@ -102,7 +103,7 @@ def delete_workspace(workspace_id):
     try:
         main_storage.delete_dir(workspace.file_path, workspace.user_id)
     except Exception as e:
-        workspace.status = 'error'
+        workspace.status = models.Workspace.Status.ERROR
         workspace.save()
         print(repr(e))
         return
