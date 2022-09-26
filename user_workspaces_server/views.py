@@ -18,6 +18,9 @@ from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, Pa
 import os
 from django_q.tasks import async_task
 import requests as http_r
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # TODO: Add more robust query param support. Filter types, filtering by date.
@@ -94,8 +97,7 @@ class WorkspaceView(APIView):
 
         # file_path should be relative, not absolute
         if external_user_mapping.external_username == '' or str(workspace.pk) == '':
-            print(
-                f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
+            logger.error(f'Username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
             workspace.delete()
             return APIException("Please report this error to your system administrator and try again.")
 
@@ -153,7 +155,7 @@ class WorkspaceView(APIView):
                 main_storage.create_files(workspace, workspace_details)
                 main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
             except Exception as e:
-                print(repr(e))
+                logger.error(repr(e))
                 raise e
 
             return JsonResponse({'message': 'Update successful.', 'success': True})
@@ -307,7 +309,7 @@ class PassthroughView(APIView):
             response = http_r.get(url, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception as e:
-            print(repr(e))
+            logger.error(repr(e))
             return HttpResponse(status=500)
 
     def post(self, request, hostname, job_id, remainder=None):
@@ -319,7 +321,7 @@ class PassthroughView(APIView):
             response = http_r.post(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception as e:
-            print(repr(e))
+            logger.error((repr(e)))
             return HttpResponse(status=500)
 
     def patch(self, request, hostname, job_id, remainder=None):
@@ -331,7 +333,7 @@ class PassthroughView(APIView):
             response = http_r.patch(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception as e:
-            print(repr(e))
+            logger.error((repr(e)))
             return HttpResponse(status=500)
 
     def put(self, request, hostname, job_id, remainder=None):
@@ -343,7 +345,7 @@ class PassthroughView(APIView):
             response = http_r.put(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception as e:
-            print(repr(e))
+            logger.error((repr(e)))
             return HttpResponse(status=500)
 
     def delete(self, request, hostname, job_id, remainder=None):
@@ -355,7 +357,7 @@ class PassthroughView(APIView):
             response = http_r.delete(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception as e:
-            print(repr(e))
+            logger.error((repr(e)))
             return HttpResponse(status=500)
 
 
