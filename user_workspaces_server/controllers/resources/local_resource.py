@@ -1,3 +1,5 @@
+import logging
+
 from user_workspaces_server.controllers.resources.abstract_resource import AbstractResource
 import signal
 import psutil
@@ -48,7 +50,7 @@ class LocalResource(AbstractResource):
             resource_job['status'] = self.translate_status(resource_job['status'])
             return resource_job
         except Exception as e:
-            print(repr(e))
+            logging.error(e)
             return {'status': 'complete'}
 
     def get_job_core_hours(self, job):
@@ -65,5 +67,5 @@ class LocalResource(AbstractResource):
             resource_job.send_signal(signal.SIGKILL)
             return True
         except Exception as e:
-            print(repr(e))
+            logging.error(e)
             return False
