@@ -8,14 +8,17 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Sum
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def update_job_status(job_id):
     try:
         job = models.Job.objects.get(pk=job_id)
-    except Exception as e:
-        print(repr(e))
-        raise e
+    except models.Job.DoesNotExist:
+        logger.exception(f'Job {job_id} does not exist.')
+        raise
 
     resource = apps.get_app_config('user_workspaces_server').main_resource
     resource_job_info = resource.get_resource_job(job)
@@ -58,9 +61,9 @@ def queue_job_update(task):
 
     try:
         job = models.Job.objects.get(pk=job_id)
-    except Exception as e:
-        print(repr(e))
-        raise e
+    except models.Job.DoesNotExist:
+        logger.exception(f'Job {job_id} does not exist.')
+        raise
 
     if job.status in [models.Job.Status.PENDING, models.Job.Status.RUNNING]:
         async_task('user_workspaces_server.tasks.update_job_status', job_id,
@@ -78,9 +81,9 @@ def queue_job_update(task):
 def update_job_core_hours(job_id):
     try:
         job = models.Job.objects.get(pk=job_id)
-    except Exception as e:
-        print(repr(e))
-        raise e
+    except models.Job.DoesNotExist:
+        logger.exception(f'Job {job_id} does not exist.')
+        raise
 
     resource = apps.get_app_config('user_workspaces_server').main_resource
     job.core_hours = resource.get_job_core_hours(job)
@@ -95,18 +98,18 @@ def update_job_core_hours(job_id):
 def delete_workspace(workspace_id):
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
-    except Exception as e:
-        print(repr(e))
-        raise e
+    except models.Workspace.DoesNotExist:
+        logger.exception(f'Workspace {workspace_id} does not exist.')
+        raise
 
     main_storage = apps.get_app_config('user_workspaces_server').main_storage
     try:
         main_storage.delete_dir(workspace.file_path, workspace.user_id)
-    except Exception as e:
+    except Exception:
         workspace.status = models.Workspace.Status.ERROR
         workspace.save()
-        print(repr(e))
-        return
+        logger.exception(f'Could not delete workspace {workspace_id}')
+        raise
 
     workspace.delete()
 
@@ -119,9 +122,9 @@ def delete_workspace(workspace_id):
 def update_workspace(workspace_id):
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
-    except Exception as e:
-        print(repr(e))
-        raise e
+    except models.Workspace.DoesNotExist:
+        logger.exception(f'Workspace {workspace_id} does not exist.')
+        raise
 
     main_storage = apps.get_app_config('user_workspaces_server').main_storage
     current_details = {
@@ -164,9 +167,9 @@ def update_workspace(workspace_id):
 def update_user_quota_disk_space(user_quota_id):
     try:
         user_quota = models.UserQuota.objects.get(pk=user_quota_id)
-    except Exception as e:
-        print(repr(e))
-        raise e
+    except models.UserQuota.DoesNotExist:
+        logger.exception(f'UserQuota {user_quota_id} does not exist.')
+        raise
 
     user_quota.used_disk_space = models.Workspace.objects.filter(user_id=user_quota.user_id) \
         .aggregate(Sum('disk_space'))['disk_space__sum']
@@ -176,9 +179,9 @@ def update_user_quota_disk_space(user_quota_id):
 def update_user_quota_core_hours(user_quota_id):
     try:
         user_quota = models.UserQuota.objects.get(pk=user_quota_id)
-    except Exception as e:
-        print(repr(e))
-        raise e
+    except models.UserQuota.DoesNotExist:
+        logger.exception(f'UserQuota {user_quota_id} does not exist.')
+        raise
 
     user_quota.used_core_hours = models.Job.objects.filter(workspace_id__user_id=user_quota.user_id) \
         .aggregate(Sum('core_hours'))['core_hours__sum']
