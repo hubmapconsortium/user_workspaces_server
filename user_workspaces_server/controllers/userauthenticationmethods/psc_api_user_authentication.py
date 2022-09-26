@@ -5,6 +5,9 @@ import json
 from rest_framework.exceptions import ParseError, PermissionDenied
 from rest_framework.authtoken.models import Token
 import requests as http_r
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class PSCAPIUserAuthentication(AbstractUserAuthentication):
@@ -107,7 +110,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
         except Exception as e:
             # TODO: Move print to log
-            print(e)
+            logger.error(repr(e))
             return e
 
     def create_external_user(self, user_info):

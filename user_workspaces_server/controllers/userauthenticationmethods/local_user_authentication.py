@@ -140,7 +140,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                 'external_user_details': external_user
             } if external_user else external_user
         except Exception as e:
-            print(e)
+            logger.error(repr(e))
             return False
 
     def delete_external_user(self, user_id):
