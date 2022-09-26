@@ -2,6 +2,9 @@ from user_workspaces_server.controllers.resources.abstract_resource import Abstr
 import os
 import requests as http_r
 from rest_framework.exceptions import APIException
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SlurmAPIResource(AbstractResource):
@@ -93,7 +96,7 @@ class SlurmAPIResource(AbstractResource):
             resource_job['status'] = self.translate_status(resource_job['job_state'])
             return resource_job
         except Exception as e:
-            print(repr(e))
+            logger.error(repr(e))
             return {'status': 'complete'}
 
     def get_job_core_hours(self, job):
@@ -123,7 +126,7 @@ class SlurmAPIResource(AbstractResource):
             # We use (end time - start time) * allocated cores which is the same as the wall time * cores.
             return core_seconds / 3600 if core_seconds != 0 else 0
         except Exception as e:
-            print(repr(e))
+            logger.error(repr(e))
             return 0
 
     def stop_job(self, job):
@@ -147,7 +150,7 @@ class SlurmAPIResource(AbstractResource):
 
             return True
         except Exception as e:
-            print(repr(e))
+            logger.error((repr(e)))
             return False
 
     def get_user_token(self, external_user):
