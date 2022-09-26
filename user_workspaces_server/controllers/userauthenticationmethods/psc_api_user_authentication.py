@@ -109,7 +109,6 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                 return external_user_mapping.user_id
 
         except Exception as e:
-            # TODO: Move print to log
             logger.error(repr(e))
             return e
 
