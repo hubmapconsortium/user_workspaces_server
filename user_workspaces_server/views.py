@@ -283,6 +283,11 @@ class JobView(APIView):
             except models.Job.DoesNotExist:
                 raise NotFound(f'Job {job_id} not found for user.')
 
+            if job.resource_job_id == -1:
+                job.status = job.Status.COMPLETE
+                job.save()
+                return JsonResponse({'message': 'Successful stop.', 'success': True})
+
             resource = apps.get_app_config('user_workspaces_server').main_resource
 
             # This needs to be done asynchronously.
@@ -302,6 +307,8 @@ class JobTypeView(APIView):
 
 
 class PassthroughView(APIView):
+    permission_classes = []
+
     def get(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
@@ -364,6 +371,8 @@ class PassthroughView(APIView):
 
 
 class StatusView(APIView):
+    permission_classes = []
+
     def get(self, request):
         base_dir = Path(__file__).resolve().parent.parent
         version_file_path = os.path.join(base_dir, 'VERSION')
