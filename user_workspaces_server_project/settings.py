@@ -179,6 +179,13 @@ LOGGING = {
         'user_workspaces_server_console': {
             'class': 'logging.StreamHandler',
             'formatter': 'user_workspaces_server'
+        },
+        'mail': {
+            'class': 'user_workspaces_server.logging.AsyncEmailHandler',
+            'formatter': 'user_workspaces_server',
+            'level': 'ERROR',
+            'from_email': '',
+            'email_list': []
         }
     },
     'loggers': {
@@ -190,7 +197,14 @@ LOGGING = {
         'user_workspaces_server': {
             'level': 'DEBUG',
             'propagate': False,
-            'handlers': ['user_workspaces_server_console']
+            'handlers': ['user_workspaces_server_console', 'mail']
         }
     }
 }
+
+EMAIL_HOST = django_settings['EMAIL_HOST']
+EMAIL_HOST_USER = django_settings['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = django_settings['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = django_settings['EMAIL_PORT']
+EMAIL_USE_TLS = django_settings['EMAIL_USE_TLS']
+EMAIL_BACKEND = django_settings['EMAIL_BACKEND']
