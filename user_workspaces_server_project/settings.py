@@ -158,53 +158,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 CSRF_TRUSTED_ORIGINS = DJANGO_CONFIG['CSRF_TRUSTED_ORIGINS']
 
-LOGGING = {
-    'version': 1,
-    'formatters': {
-        'django-q': {
-            'format': '{asctime} [Q] {levelname} {message}',
-            'style': '{'
-        },
-        'user_workspaces_server': {
-            'format': '{asctime} [UWS] {levelname} {message}',
-            'style': '{'
-        }
-    },
-    'handlers': {
-        # Discard logging (for when a handler is mandatory).
-        'discard': {
-            'class': 'logging.NullHandler',
-        },
-        'django-q-console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'django-q',
-        },
-        'user_workspaces_server_console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'user_workspaces_server'
-        },
-        'mail': {
-            'class': 'user_workspaces_server.logging.AsyncEmailHandler',
-            'formatter': 'user_workspaces_server',
-            'level': 'ERROR',
-            'subject': '',
-            'from_email': '',
-            'email_list': []
-        }
-    },
-    'loggers': {
-        'django-q': {
-            'level': 'INFO',
-            'propagate': True,
-            'handlers': ['django-q-console'],
-        },
-        'user_workspaces_server': {
-            'level': 'DEBUG',
-            'propagate': False,
-            'handlers': ['user_workspaces_server_console', 'mail']
-        }
-    }
-}
+LOGGING = DJANGO_CONFIG['LOGGING']
 
 EMAIL_HOST = DJANGO_CONFIG['EMAIL_HOST']
 EMAIL_HOST_USER = DJANGO_CONFIG['EMAIL_HOST_USER']
