@@ -254,6 +254,9 @@ class WorkspaceView(APIView):
             raise WorkspaceClientException('User could not be found/created on main storage system.')
 
         if not main_storage.is_valid_path(workspace.file_path):
+            logger.error(f'Workspace {workspace_id} deletion failed due to invalid path')
+            workspace.status = models.Workspace.Status.ERROR
+            workspace.save()
             raise APIException('Please contact a system administrator there is a failure with '
                                'the workspace directory that will not allow for this workspace to be deleted.')
 
