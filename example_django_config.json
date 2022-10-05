@@ -1,0 +1,41 @@
+{
+  "SECRET_KEY": "",
+  "DEBUG": false,
+  "ALLOWED_HOSTS": [],
+  "DATABASES": {
+    "default": {
+      "ENGINE": "django.db.backends.sqlite3",
+      "NAME": "./db.sqlite3"
+    }
+  },
+  "CSRF_TRUSTED_ORIGINS": [],
+  "Q_CLUSTER": {
+    "name": "myproject",
+    "workers": 8,
+    "recycle": 500,
+    "timeout": 60,
+    "compress": true,
+    "save_limit": 250,
+    "queue_limit": 500,
+    "cpu_affinity": 1,
+    "label": "Django Q",
+    "redis": {
+      "host": "127.0.0.1",
+      "port": 6379
+    }
+  },
+  "CHANNEL_LAYERS": {
+    "default": {
+      "BACKEND": "channels_redis.core.RedisChannelLayer",
+      "CONFIG": {
+        "hosts": ["redis://127.0.0.1:6379/0?"]
+      }
+    }
+  },
+  "EMAIL_HOST": "",
+  "EMAIL_HOST_PASSWORD": "",
+  "EMAIL_HOST_USER": "",
+  "EMAIL_USE_TLS": true,
+  "EMAIL_PORT": "",
+  "EMAIL_BACKEND": "django.core.mail.backends.smtp.EmailBackend"
+}
