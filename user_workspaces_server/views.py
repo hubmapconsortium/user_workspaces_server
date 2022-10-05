@@ -120,7 +120,7 @@ class WorkspaceView(APIView):
             workspace.delete()
             raise
 
-        async_task('user_workspaces_server.tasks.update_workspaces', workspace.pk)
+        async_task('user_workspaces_server.tasks.update_workspace', workspace.pk)
 
         return JsonResponse({'message': 'Successful.', 'success': True,
                              'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
@@ -162,7 +162,7 @@ class WorkspaceView(APIView):
                 logger.exception('Failure when creating symlink/files or setting ownership.')
                 raise
 
-            async_task('user_workspaces_server.tasks.update_workspaces', workspace.pk)
+            async_task('user_workspaces_server.tasks.update_workspace', workspace.pk)
 
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
@@ -232,7 +232,7 @@ class WorkspaceView(APIView):
 
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
-            async_task('user_workspaces_server.tasks.update_workspaces', workspace.pk)
+            async_task('user_workspaces_server.tasks.update_workspace', workspace.pk)
 
             return JsonResponse({'message': 'Successful upload.', 'success': True})
         else:
