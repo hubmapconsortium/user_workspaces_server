@@ -1,10 +1,12 @@
+import logging
 from logging import Handler
 
 
 class AsyncEmailHandler(Handler):
 
-    def __init__(self, from_email, email_list):
+    def __init__(self, subject, from_email, email_list):
         Handler.__init__(self)
+        self.subject = subject
         self.from_email = from_email
         self.email_list = email_list
 
@@ -14,8 +16,6 @@ class AsyncEmailHandler(Handler):
         email_tuple = []
 
         for email in self.email_list:
-            email_tuple.append((f'User Workspaces Log - {self.level}', msg, self.from_email, [email]))
+            email_tuple.append((self.subject, msg, self.from_email, [email]))
 
         async_task('django.core.mail.send_mass_mail', tuple(email_tuple))
-
-

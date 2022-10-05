@@ -184,6 +184,7 @@ LOGGING = {
             'class': 'user_workspaces_server.logging.AsyncEmailHandler',
             'formatter': 'user_workspaces_server',
             'level': 'ERROR',
+            'subject': '',
             'from_email': '',
             'email_list': []
         }
