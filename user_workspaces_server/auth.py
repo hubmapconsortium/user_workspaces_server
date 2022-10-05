@@ -12,7 +12,7 @@ class UserWorkspacesTokenAuthentication(authentication.TokenAuthentication):
         auth_header = request.META.get('HTTP_UWS_AUTHORIZATION')
 
         if auth_header is None:
-            logger.error('Missing auth header')
+            logger.warning('Missing auth header')
             return None
 
         try:
