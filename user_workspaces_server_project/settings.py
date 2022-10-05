@@ -18,21 +18,24 @@ from corsheaders.defaults import default_headers
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-CONFIG = json.load(open(
+UWS_CONFIG = json.load(open(
     os.path.join(BASE_DIR, 'example_config.json' if os.environ.get('GITHUB_WORKFLOW') else 'config.json')
+))
+
+DJANGO_CONFIG = json.load(open(
+    os.path.join(BASE_DIR, 'example_django_config.json' if os.environ.get('GITHUB_WORKFLOW') else 'django_config.json')
 ))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-django_settings = CONFIG['django_settings']
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = django_settings['SECRET_KEY']
+SECRET_KEY = DJANGO_CONFIG['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = django_settings['DEBUG']
+DEBUG = DJANGO_CONFIG['DEBUG']
 
-ALLOWED_HOSTS = django_settings['ALLOWED_HOSTS']
+ALLOWED_HOSTS = DJANGO_CONFIG['ALLOWED_HOSTS']
 
 
 # Application definition
@@ -87,7 +90,7 @@ WSGI_APPLICATION = 'user_workspaces_server_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = django_settings['DATABASES']
+DATABASES = DJANGO_CONFIG['DATABASES']
 
 
 # Password validation
@@ -141,11 +144,11 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'user_workspaces_server.exceptions.workspaces_exception_handler'
 }
 
-Q_CLUSTER = django_settings['Q_CLUSTER']
+Q_CLUSTER = DJANGO_CONFIG['Q_CLUSTER']
 
 ASGI_APPLICATION = "user_workspaces_server_project.asgi.application"
 
-CHANNEL_LAYERS = django_settings['CHANNEL_LAYERS']
+CHANNEL_LAYERS = DJANGO_CONFIG['CHANNEL_LAYERS']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -153,7 +156,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     "UWS-Authorization",
 ]
 
-CSRF_TRUSTED_ORIGINS = django_settings['CSRF_TRUSTED_ORIGINS']
+CSRF_TRUSTED_ORIGINS = DJANGO_CONFIG['CSRF_TRUSTED_ORIGINS']
 
 LOGGING = {
     'version': 1,
@@ -203,9 +206,9 @@ LOGGING = {
     }
 }
 
-EMAIL_HOST = django_settings['EMAIL_HOST']
-EMAIL_HOST_USER = django_settings['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = django_settings['EMAIL_HOST_PASSWORD']
-EMAIL_PORT = django_settings['EMAIL_PORT']
-EMAIL_USE_TLS = django_settings['EMAIL_USE_TLS']
-EMAIL_BACKEND = django_settings['EMAIL_BACKEND']
+EMAIL_HOST = DJANGO_CONFIG['EMAIL_HOST']
+EMAIL_HOST_USER = DJANGO_CONFIG['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = DJANGO_CONFIG['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = DJANGO_CONFIG['EMAIL_PORT']
+EMAIL_USE_TLS = DJANGO_CONFIG['EMAIL_USE_TLS']
+EMAIL_BACKEND = DJANGO_CONFIG['EMAIL_BACKEND']
