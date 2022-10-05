@@ -37,5 +37,51 @@
   "EMAIL_HOST_USER": "",
   "EMAIL_USE_TLS": true,
   "EMAIL_PORT": "",
-  "EMAIL_BACKEND": "django.core.mail.backends.smtp.EmailBackend"
+  "EMAIL_BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+  "LOGGING": {
+    "version": 1,
+    "formatters": {
+        "django-q": {
+            "format": "{asctime} [Q] {levelname} {message}",
+            "style": "{"
+        },
+        "user_workspaces_server": {
+            "format": "{asctime} [UWS] {levelname} {message}",
+            "style": "{"
+        }
+    },
+    "handlers": {
+        "discard": {
+            "class": "logging.NullHandler"
+        },
+        "django-q-console": {
+            "class": "logging.StreamHandler",
+            "formatter": "django-q"
+        },
+        "user_workspaces_server_console": {
+            "class": "logging.StreamHandler",
+            "formatter": "user_workspaces_server"
+        },
+        "mail": {
+            "class": "user_workspaces_server.logging.AsyncEmailHandler",
+            "formatter": "user_workspaces_server",
+            "level": "ERROR",
+            "subject": "UWS Log",
+            "from_email": "noreply@noreply.com",
+            "email_list": []
+        }
+    },
+    "loggers": {
+        "django-q": {
+            "level": "INFO",
+            "propagate": true,
+            "handlers": ["django-q-console"]
+        },
+        "user_workspaces_server": {
+            "level": "DEBUG",
+            "propagate": false,
+            "handlers": ["user_workspaces_server_console", "mail"]
+        }
+    }
+  }
 }
