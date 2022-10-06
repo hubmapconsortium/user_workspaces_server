@@ -3,6 +3,9 @@ import os
 from django.apps import apps
 from urllib import parse
 from django.template import loader
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class JupyterLabJob(AbstractJob):
@@ -10,13 +13,11 @@ class JupyterLabJob(AbstractJob):
         super().__init__(config, job_details)
         self.script_template_name = 'jupyter_lab_template.sh'
 
-    # TODO: Modify the script that gets generated based on passed parameters.
     def get_script(self, template_params=None):
         template_config = {"job_id": self.job_details["id"]}
         template_config.update(self.config)
         template_config.update(template_params)
 
-        print(template_config)
         template = loader.get_template(f'script_templates/{self.script_template_name}')
         script = template.render(template_config)
 
@@ -36,8 +37,8 @@ class JupyterLabJob(AbstractJob):
                                    f'.{job_model.id}',
                                    output_file_name)) as f:
                 log_file = f.readlines()
-        except Exception as e:
-            print(repr(e))
+        except FileNotFoundError:
+            logger.warning(f"JupyterLab output file {job_model.workspace_id.file_path}/.{job_model.id} missing.")
             return {'message': 'Webserver not ready.'}
 
         url = ''
@@ -55,8 +56,8 @@ class JupyterLabJob(AbstractJob):
 
         try:
             token = parse.parse_qs(url.query)['token'][0].strip()
-        except Exception as e:
-            print(repr(e))
+        except KeyError:
+            logger.warning("Token missing in JupyterLab output.")
             return {'message': 'Token undefined.'}
 
         connection_string = f'{url.path}?token={token}'

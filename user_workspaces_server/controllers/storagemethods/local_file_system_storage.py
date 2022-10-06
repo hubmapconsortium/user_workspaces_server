@@ -5,6 +5,9 @@ from user_workspaces_server.exceptions import WorkspaceClientException
 from django.forms import model_to_dict
 import os
 import shutil
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class LocalFileSystemStorage(AbstractStorage):
@@ -15,10 +18,10 @@ class LocalFileSystemStorage(AbstractStorage):
         abs_root_dir = os.path.abspath(self.root_dir)
         workspace_path = os.path.abspath(os.path.join(abs_root_dir, path))
         if not os.path.commonpath([abs_root_dir]) == os.path.commonpath([abs_root_dir, workspace_path]):
-            print('Workspace path is not a child of the root_dir')
+            logger.error('Workspace path is not a child of the root_dir')
             return False
         elif workspace_path == abs_root_dir:
-            print('Workspace path is equal to root_dir')
+            logger.error('Workspace path is equal to root_dir')
             return False
         else:
             return True
@@ -106,7 +109,7 @@ class LocalFileSystemStorage(AbstractStorage):
         symlink_full_dest_path = os.path.join(self.root_dir, path, '/'.join(symlink_dest_path))
 
         if not self.is_valid_path(os.path.join(path, symlink_name)):
-            print(f'Symlink {symlink_name} cannot be created in {path}.')
+            logger.error(f'Symlink {symlink_name} cannot be created in {path}.')
             raise WorkspaceClientException(f'Invalid symlink destination path specified {symlink_name}')
 
         os.makedirs(symlink_full_dest_path, exist_ok=True)
@@ -124,7 +127,7 @@ class LocalFileSystemStorage(AbstractStorage):
         file_dest_path = file_path_list[:-1]
 
         if not self.is_valid_path(os.path.join(path, file.name)):
-            print(f'File {file.name} cannot be created in {path}')
+            logger.error(f'File {file.name} cannot be created in {path}')
             raise WorkspaceClientException(f'Invalid file path specified {file.name}')
 
         file_full_dest_path = os.path.join(self.root_dir, path, '/'.join(file_dest_path))

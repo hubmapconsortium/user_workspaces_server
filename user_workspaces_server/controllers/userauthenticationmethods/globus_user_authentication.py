@@ -6,6 +6,9 @@ from rest_framework.exceptions import ParseError
 import globus_sdk
 import json
 from hubmap_commons.hm_auth import AuthHelper
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class GlobusUserAuthentication(AbstractUserAuthentication):
@@ -78,7 +81,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
             self.oauth.get_identities(ids=external_user_info['external_user_id'])
             # TODO: Do additional checking here and return the User info.
         except Exception as e:
-            print(e)
+            logger.error(repr(e))
             return False
 
     def delete_external_user(self, user_id):
