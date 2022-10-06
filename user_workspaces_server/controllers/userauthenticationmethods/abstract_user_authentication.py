@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 from user_workspaces_server import models
 from django.contrib.auth.models import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class AbstractUserAuthentication(ABC):
@@ -42,8 +45,8 @@ class AbstractUserAuthentication(ABC):
     def get_internal_user(self, user_info):
         try:
             return User.objects.filter(**user_info).first()
-        except Exception as e:
-            print(e)
+        except User.DoesNotExist:
+            logger.exception(f"Unable to find user {user_info}")
             return False
 
     @abstractmethod
@@ -53,8 +56,8 @@ class AbstractUserAuthentication(ABC):
     def get_external_user_mapping(self, user_info):
         try:
             return models.ExternalUserMapping.objects.filter(**user_info).first()
-        except Exception as e:
-            print(e)
+        except models.ExternalUserMapping.DoesNotExist:
+            logger.exception(f"Unable to find external user mapping {user_info}")
             return False
 
     @abstractmethod

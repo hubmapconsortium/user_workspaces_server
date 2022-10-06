@@ -5,6 +5,9 @@ import subprocess
 import json
 from rest_framework.exceptions import ParseError, PermissionDenied
 from rest_framework.authtoken.models import Token
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class LocalUserAuthentication(AbstractUserAuthentication):
@@ -97,8 +100,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                 return external_user_mapping.user_id
 
         except Exception as e:
-            # TODO: Move print to log
-            print(e)
+            logger.error(repr(e))
             return e
 
     def create_external_user(self, user_info):
@@ -138,7 +140,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                 'external_user_details': external_user
             } if external_user else external_user
         except Exception as e:
-            print(e)
+            logger.error(repr(e))
             return False
 
     def delete_external_user(self, user_id):

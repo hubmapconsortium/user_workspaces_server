@@ -5,16 +5,20 @@ import subprocess
 import os
 import time
 from django.core.files.base import ContentFile
+from user_workspaces_server.models import Job
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class LocalResource(AbstractResource):
     def translate_status(self, status):
         status_list = {
-            'sleeping': 'running',
-            'running': 'running',
-            'zombie': 'complete',
-            'complete': 'complete',
-            'dead': 'failed'
+            'sleeping': Job.Status.RUNNING,
+            'running': Job.Status.RUNNING,
+            'zombie': Job.Status.COMPLETE,
+            'complete': Job.Status.COMPLETE,
+            'dead': Job.Status.FAILED
         }
 
         return status_list[status]
@@ -48,7 +52,7 @@ class LocalResource(AbstractResource):
             resource_job['status'] = self.translate_status(resource_job['status'])
             return resource_job
         except Exception as e:
-            print(repr(e))
+            logger.exception(repr(e))
             return {'status': 'complete'}
 
     def get_job_core_hours(self, job):
@@ -65,5 +69,5 @@ class LocalResource(AbstractResource):
             resource_job.send_signal(signal.SIGKILL)
             return True
         except Exception as e:
-            print(repr(e))
+            logger.error(repr(e))
             return False

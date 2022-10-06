@@ -46,9 +46,9 @@ class UserWorkspacesServerConfig(AppConfig):
     available_job_types = {}
 
     def ready(self):
-        config_user_authentication = settings.CONFIG['available_user_authentication']
-        config_storage = settings.CONFIG['available_storage']
-        config_resource = settings.CONFIG['available_resources']
+        config_user_authentication = settings.UWS_CONFIG['available_user_authentication']
+        config_storage = settings.UWS_CONFIG['available_storage']
+        config_resource = settings.UWS_CONFIG['available_resources']
 
         for user_authentication_name, user_authentication_dict in config_user_authentication.items():
             self.available_user_authentication_methods[user_authentication_name] = generate_object(
@@ -85,12 +85,12 @@ class UserWorkspacesServerConfig(AppConfig):
             )
 
         self.api_user_authentication = self.available_user_authentication_methods[
-            settings.CONFIG['api_user_authentication']
+            settings.UWS_CONFIG['api_user_authentication']
         ]
 
-        self.main_storage = self.available_storage_methods[settings.CONFIG['main_storage']]
+        self.main_storage = self.available_storage_methods[settings.UWS_CONFIG['main_storage']]
 
-        self.main_resource = self.available_resources[settings.CONFIG['main_resource']]
+        self.main_resource = self.available_resources[settings.UWS_CONFIG['main_resource']]
 
         if os.environ.get('SUBCOMMAND', None) != 'qcluster':
             return

@@ -18,6 +18,9 @@ from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, Pa
 import os
 from django_q.tasks import async_task
 import requests as http_r
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # TODO: Add more robust query param support. Filter types, filtering by date.
@@ -94,8 +97,8 @@ class WorkspaceView(APIView):
 
         # file_path should be relative, not absolute
         if external_user_mapping.external_username == '' or str(workspace.pk) == '':
-            print(
-                f'ERROR: username {external_user_mapping.external_username} or workspace id {str(workspace.pk)} are blank.')
+            logger.error(f'Username {external_user_mapping.external_username} or '
+                         f'workspace id {str(workspace.pk)} are blank.')
             workspace.delete()
             return APIException("Please report this error to your system administrator and try again.")
 
@@ -111,10 +114,13 @@ class WorkspaceView(APIView):
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             workspace.save()
-        except Exception as e:
+        except Exception:
             # If there was a failure here, then we need to delete this workspace
+            logger.exception('Failure when creating workspace.')
             workspace.delete()
-            raise e
+            raise
+
+        async_task('user_workspaces_server.tasks.update_workspace', workspace.pk)
 
         return JsonResponse({'message': 'Successful.', 'success': True,
                              'data': {'workspace': model_to_dict(workspace, models.Workspace.get_dict_fields())}})
@@ -152,9 +158,11 @@ class WorkspaceView(APIView):
                 main_storage.create_symlinks(workspace, workspace_details)
                 main_storage.create_files(workspace, workspace_details)
                 main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
-            except Exception as e:
-                print(repr(e))
-                raise e
+            except Exception:
+                logger.exception('Failure when creating symlink/files or setting ownership.')
+                raise
+
+            async_task('user_workspaces_server.tasks.update_workspace', workspace.pk)
 
             return JsonResponse({'message': 'Update successful.', 'success': True})
 
@@ -201,8 +209,8 @@ class WorkspaceView(APIView):
             # I think that instantiating the job here and passing that through to the resource makes the most sense
             # TODO: Grab the correct job type based on the request
             job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob(
-                settings.CONFIG['available_job_types']['jupyter_lab']['environment_details'][
-                    settings.CONFIG['main_resource']], model_to_dict(job))
+                settings.UWS_CONFIG['available_job_types']['jupyter_lab']['environment_details'][
+                    settings.UWS_CONFIG['main_resource']], model_to_dict(job))
 
             resource_job_id = resource.launch_job(job_to_launch, workspace)
 
@@ -224,6 +232,8 @@ class WorkspaceView(APIView):
 
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
+            async_task('user_workspaces_server.tasks.update_workspace', workspace.pk)
+
             return JsonResponse({'message': 'Successful upload.', 'success': True})
         else:
             raise WorkspaceClientException('Invalid PUT type passed.')
@@ -231,7 +241,7 @@ class WorkspaceView(APIView):
     def delete(self, request, workspace_id):
         try:
             workspace = models.Workspace.objects.get(user_id=request.user, id=workspace_id)
-        except Exception:
+        except models.Workspace.DoesNotExist:
             raise NotFound(f'Workspace {workspace_id} not found for user.')
 
         if models.Job.objects.filter(workspace_id=workspace, status__in=['pending', 'running']).exists():
@@ -244,6 +254,9 @@ class WorkspaceView(APIView):
             raise WorkspaceClientException('User could not be found/created on main storage system.')
 
         if not main_storage.is_valid_path(workspace.file_path):
+            logger.error(f'Workspace {workspace_id} deletion failed due to invalid path')
+            workspace.status = models.Workspace.Status.ERROR
+            workspace.save()
             raise APIException('Please contact a system administrator there is a failure with '
                                'the workspace directory that will not allow for this workspace to be deleted.')
 
@@ -276,8 +289,13 @@ class JobView(APIView):
         if put_type.lower() == 'stop':
             try:
                 job = models.Job.objects.get(workspace_id__user_id=request.user, id=job_id)
-            except Exception:
+            except models.Job.DoesNotExist:
                 raise NotFound(f'Job {job_id} not found for user.')
+
+            if job.resource_job_id == -1:
+                job.status = job.Status.COMPLETE
+                job.save()
+                return JsonResponse({'message': 'Successful stop.', 'success': True})
 
             resource = apps.get_app_config('user_workspaces_server').main_resource
 
@@ -298,6 +316,8 @@ class JobTypeView(APIView):
 
 
 class PassthroughView(APIView):
+    permission_classes = []
+
     def get(self, request, hostname, job_id, remainder=None):
         try:
             job_model = models.Job.objects.get(pk=job_id)
@@ -306,9 +326,9 @@ class PassthroughView(APIView):
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.get(url, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
-        except Exception as e:
-            print(repr(e))
-            return HttpResponse(status=500)
+        except Exception:
+            logger.exception('Passthrough GET failure')
+            raise APIException
 
     def post(self, request, hostname, job_id, remainder=None):
         try:
@@ -318,9 +338,9 @@ class PassthroughView(APIView):
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.post(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
-        except Exception as e:
-            print(repr(e))
-            return HttpResponse(status=500)
+        except Exception:
+            logger.exception('Passthrough POST failure')
+            raise APIException
 
     def patch(self, request, hostname, job_id, remainder=None):
         try:
@@ -330,9 +350,9 @@ class PassthroughView(APIView):
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.patch(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
-        except Exception as e:
-            print(repr(e))
-            return HttpResponse(status=500)
+        except Exception:
+            logger.exception('Passthrough PATCH failure')
+            raise APIException
 
     def put(self, request, hostname, job_id, remainder=None):
         try:
@@ -342,9 +362,9 @@ class PassthroughView(APIView):
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.put(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
-        except Exception as e:
-            print(repr(e))
-            return HttpResponse(status=500)
+        except Exception:
+            logger.exception('Passthrough PUT failure')
+            raise APIException
 
     def delete(self, request, hostname, job_id, remainder=None):
         try:
@@ -354,12 +374,14 @@ class PassthroughView(APIView):
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
             response = http_r.delete(url, data=request.body, cookies=request.COOKIES)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
-        except Exception as e:
-            print(repr(e))
-            return HttpResponse(status=500)
+        except Exception:
+            logger.exception('Passthrough DELETE failure')
+            raise APIException
 
 
 class StatusView(APIView):
+    permission_classes = []
+
     def get(self, request):
         base_dir = Path(__file__).resolve().parent.parent
         version_file_path = os.path.join(base_dir, 'VERSION')

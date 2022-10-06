@@ -1,6 +1,10 @@
+import logging
+
 from rest_framework import authentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authtoken.models import Token
+
+logger = logging.getLogger(__name__)
 
 
 class UserWorkspacesTokenAuthentication(authentication.TokenAuthentication):
@@ -8,13 +12,19 @@ class UserWorkspacesTokenAuthentication(authentication.TokenAuthentication):
         auth_header = request.META.get('HTTP_UWS_AUTHORIZATION')
 
         if auth_header is None:
+            logger.warning('Missing auth header')
             return None
 
-        identifier, token = auth_header.split(' ')
+        try:
+            identifier, token = auth_header.split(' ')
+        except ValueError:
+            logger.exception(f'Invalid auth header format: {auth_header}')
+            raise AuthenticationFailed('Invalid auth header format.')
 
         try:
             valid_token = Token.objects.get(key=token)
-        except Exception:
+        except Token.DoesNotExist:
+            logger.exception(f'Token {token} not found.')
             raise AuthenticationFailed('Invalid token provided.')
 
         return valid_token.user, None
