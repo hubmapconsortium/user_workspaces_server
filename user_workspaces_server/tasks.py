@@ -103,8 +103,10 @@ def delete_workspace(workspace_id):
         raise
 
     main_storage = apps.get_app_config('user_workspaces_server').main_storage
+    external_user_mapping = main_storage.storage_user_authentication.has_permission(workspace.user_id)
+
     try:
-        main_storage.delete_dir(workspace.file_path, workspace.user_id)
+        main_storage.delete_dir(workspace.file_path, external_user_mapping)
     except Exception:
         workspace.status = models.Workspace.Status.ERROR
         workspace.save()
