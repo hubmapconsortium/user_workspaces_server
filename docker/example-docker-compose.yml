@@ -1,11 +1,12 @@
 version: '3'
+name: uws
 services:
   nginx:
     image: nginx:alpine
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/nginx/conf.d/user-workspaces.conf:/etc/nginx/conf.d/user-workspaces.conf
-# This can be file should be used in the case where the domain name between user-workspaces and proxying are different.
+      - ./user_workspaces_server/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./user_workspaces_server/nginx/conf.d/user-workspaces.conf:/etc/nginx/conf.d/user-workspaces.conf
+# This file should be used in the case where the domain name between user-workspaces and proxying are different.
 #      - ./docker/nginx/conf.d/passthrough.conf:/etc/nginx/conf.d/passthrough.conf
     ports:
       - "80:80"
@@ -26,10 +27,11 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
   web:
     build: .
-    command: bash -c "docker/start.sh"
+    command: bash -c "docker/user_workspaces_server/start.sh"
     volumes:
 #     - This line should mount the host machine's user information into the container
-      - .:/code
+      - ./user_workspaces_server:/code/docker/user_workspaces_server
+      - ../src:/code
 #     - This line should mount root_dir of main_storage onto docker container
     environment:
       - POSTGRES_PASSWORD=blank
