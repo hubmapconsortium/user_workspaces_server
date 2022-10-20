@@ -33,7 +33,11 @@ class UserWorkspacesServerTokenView(ObtainAuthToken):
 
         if type(api_user) == User:
             token, created = Token.objects.get_or_create(user=api_user)
-            result = Response({'token': token.key})
+            result = JsonResponse({
+                'success': True,
+                'message': 'Successful authentication',
+                'token': token.key
+            })
         elif type(api_user) == Response:
             result = api_user
         else:
@@ -71,7 +75,7 @@ class WorkspaceView(APIView):
         workspace_details = body.get('workspace_details', {})
 
         if type(workspace_details) != dict:
-            raise ParseError('Workspace details not JSON')
+            raise ParseError('Workspace details not JSON.')
 
         workspace_data = {
             "user_id": request.user,
@@ -136,7 +140,7 @@ class WorkspaceView(APIView):
         try:
             workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
         except models.Workspace.DoesNotExist:
-            raise PermissionDenied('Workspace does not exist/is not owned by this user.')
+            raise NotFound(f'Workspace {workspace_id} not found for user.')
 
         if not put_type:
             try:
@@ -152,7 +156,7 @@ class WorkspaceView(APIView):
             workspace_details = body.get('workspace_details', {})
 
             if type(workspace_details) != dict:
-                raise ParseError('Workspace details not JSON')
+                raise ParseError('Workspace details not JSON.')
 
             try:
                 main_storage.create_symlinks(workspace, workspace_details)
@@ -165,7 +169,6 @@ class WorkspaceView(APIView):
             async_task('user_workspaces_server.tasks.update_workspace', workspace.pk)
 
             return JsonResponse({'message': 'Update successful.', 'success': True})
-
         if put_type.lower() == 'start':
             if not main_storage.is_valid_path(workspace.file_path):
                 raise APIException('Please contact a system administrator there is a failure with '
@@ -177,7 +180,7 @@ class WorkspaceView(APIView):
                 raise ParseError(f'Invalid JSON: {str(e)}')
 
             if 'job_type' not in body:
-                raise ParseError('Missing job_type or job_details')
+                raise ParseError('Missing job_type.')
 
             job_details = body.get('job_details', {})
 
@@ -227,6 +230,9 @@ class WorkspaceView(APIView):
             return JsonResponse({'message': 'Successful start.', 'success': True,
                                  'data': {'job': model_to_dict(job, models.Job.get_dict_fields())}})
         elif put_type.lower() == 'upload':
+            if not request.FILES:
+                raise WorkspaceClientException('No files found in request.')
+
             for file_index, file in request.FILES.items():
                 main_storage.create_file(workspace.file_path, file)
 
@@ -286,12 +292,12 @@ class JobView(APIView):
         return JsonResponse({'message': 'Successful.', 'success': True, 'data': {'jobs': job}})
 
     def put(self, request, job_id, put_type):
-        if put_type.lower() == 'stop':
-            try:
-                job = models.Job.objects.get(workspace_id__user_id=request.user, id=job_id)
-            except models.Job.DoesNotExist:
-                raise NotFound(f'Job {job_id} not found for user.')
+        try:
+            job = models.Job.objects.get(workspace_id__user_id=request.user, id=job_id)
+        except models.Job.DoesNotExist:
+            raise NotFound(f'Job {job_id} not found for user.')
 
+        if put_type.lower() == 'stop':
             if job.resource_job_id == -1:
                 job.status = job.Status.COMPLETE
                 job.save()
@@ -391,6 +397,8 @@ class StatusView(APIView):
         build = open(build_file_path).read().strip() if os.path.exists(build_file_path) else 'invalid_build'
 
         response_data = {
+            'message': '',
+            'success': True,
             'version': version,
             'build': build
         }
