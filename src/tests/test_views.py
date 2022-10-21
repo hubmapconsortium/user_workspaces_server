@@ -1,4 +1,4 @@
-from user_workspaces_server.models import Workspace, Job, UserQuota, ExternalUserMapping
+from user_workspaces_server.models import Workspace, Job
 from django.urls import reverse
 from rest_framework import status
 from datetime import datetime
@@ -11,7 +11,7 @@ import json
 class UserWorkspacesAPITestCase(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = User.objects.create_user('jpuerto')
+        cls.user = User.objects.create_user('test')
 
     def assertValidResponse(self, response, status_code, success=None, message=''):
         self.assertEqual(response.status_code, status_code)
@@ -37,28 +37,30 @@ class TokenAPITests(UserWorkspacesAPITestCase):
 
     # TODO: Mocking
     def test_get_invalid_user_token(self):
-        body = {
-            "client_token": self.client_token.key,
-            "user_info": {
-                "username": "fake_user",
-                "email": "fake@fake.com"
-            }
-        }
+        # body = {
+        #     "client_token": self.client_token.key,
+        #     "user_info": {
+        #         "username": "fake_user",
+        #         "email": "fake@fake.com"
+        #     }
+        # }
         # response = self.client.post(self.tokens_url, body)
         # print(response.content)
+        pass
 
     # TODO: Mocking
     def test_get_user_token(self):
-        body = {
-            "client_token": self.client_token.key,
-            "user_info": {
-                "username": self.user.username,
-                "email": "test@test.com"
-            }
-        }
+        # body = {
+        #     "client_token": self.client_token.key,
+        #     "user_info": {
+        #         "username": self.user.username,
+        #         "email": "test@test.com"
+        #     }
+        # }
         # response = self.client.post(self.tokens_url, body)
         # print(response.content)
         # self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+        pass
 
 
 class StatusAPITests(UserWorkspacesAPITestCase):
@@ -99,8 +101,8 @@ class WorkspaceGETAPITests(WorkspaceAPITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('workspaces_with_id', args=[self.workspace.id]))
         self.assertValidResponse(response, status.HTTP_200_OK, success=True)
-        parsed_content = json.loads(response.content)
-        workspace_to_check = Workspace.objects.filter(id=self.workspace.id).values(*Workspace.get_dict_fields()).get()
+        # parsed_content = json.loads(response.content)
+        # workspace_to_check = Workspace.objects.filter(id=self.workspace.id).values(*Workspace.get_dict_fields()).get()
         # print(workspace_to_check)
         # self.assertDictEqual(parsed_content['data']['workspaces'][0], workspace_to_check)
 
@@ -155,7 +157,7 @@ class WorkspacePOSTAPITests(WorkspaceAPITestCase):
     # TODO: Mocking.
     def test_minimum_valid_post(self):
         self.client.force_authenticate(user=self.user)
-        body = {'name': 'Test', 'description': 'Test', 'workspace_details': {}}
+        # body = {'name': 'Test', 'description': 'Test', 'workspace_details': {}}
         # response = self.client.post(self.workspaces_url, body)
         # print(response)
         # self.assertValidResponse(response, status.HTTP_200_OK)
@@ -313,7 +315,6 @@ class JobAPITestCase(UserWorkspacesAPITestCase):
         cls.workspace = Workspace(**workspace_data)
         cls.workspace.save()
 
-
         job_data = {
             "workspace_id": cls.workspace,
             "job_type": "TestJobType",
@@ -336,10 +337,10 @@ class JobGETAPITests(JobAPITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('jobs_with_id', args=[self.job.id]))
         self.assertValidResponse(response, status.HTTP_200_OK, success=True)
-        parsed_content = json.loads(response.content)
-        workspace_to_check = Workspace.objects.filter(id=self.workspace.id).values(*Workspace.get_dict_fields()).get()
-        # print(workspace_to_check)
-        # self.assertDictEqual(parsed_content['data']['workspaces'][0], workspace_to_check)
+        # parsed_content = json.loads(response.content)
+        # job_to_check = Job.objects.filter(id=self.job.id).values(*Job.get_dict_fields()).get()
+        # print(job_to_check)
+        # self.assertDictEqual(parsed_content['data']['jobs'][0], job_to_check)
 
     def test_job_query_param_name_get(self):
         self.client.force_authenticate(user=self.user)
@@ -374,7 +375,7 @@ class JobPUTAPITests(JobAPITestCase):
     # TODO: Mocking
     def test_job_stop_put(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.put(reverse('jobs_put_type', args=[self.job.id, 'stop']))
+        # response = self.client.put(reverse('jobs_put_type', args=[self.job.id, 'stop']))
 
 
 class JobTypeAPITestCase(UserWorkspacesAPITestCase):

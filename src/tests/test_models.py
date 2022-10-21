@@ -1,5 +1,5 @@
 from django.test import TestCase
-from user_workspaces_server.models import Workspace, Job, UserQuota, ExternalUserMapping
+from user_workspaces_server.models import Workspace, Job
 
 
 class WorkspaceModelTests(TestCase):

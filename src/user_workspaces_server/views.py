@@ -14,7 +14,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, ParseError, NotFound, APIException
+from rest_framework.exceptions import AuthenticationFailed, ParseError, NotFound, APIException
 import os
 from django_q.tasks import async_task
 import requests as http_r
