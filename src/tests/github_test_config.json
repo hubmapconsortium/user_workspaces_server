@@ -1,0 +1,44 @@
+{
+  "api_user_authentication": "main_auth",
+  "main_storage": "main_storage",
+  "main_resource": "main_resource",
+  "available_user_authentication": {
+    "main_auth": {
+      "name": "Local User Auth",
+      "user_authentication_type": "LocalUserAuthentication",
+      "connection_details": {
+        "create_external_users": true,
+        "operating_system": "linux"
+      }
+    }
+  },
+  "available_storage": {
+    "main_storage": {
+      "name": "Local File Storage",
+      "storage_type": "LocalFileSystemStorage",
+      "user_authentication": "main_auth",
+      "root_dir": ".",
+      "connection_details": {}
+    }
+  },
+  "available_resources": {
+    "main_resource": {
+      "name": "Local Resource",
+      "resource_type": "LocalResource",
+      "storage": "main_storage",
+      "user_authentication": "main_auth",
+      "passthrough_domain": "127.0.0.1:8000",
+      "connection_details": {}
+    }
+  },
+  "available_job_types": {
+    "local_test_job": {
+      "name": "Local Test Job",
+      "job_type": "LocalTestJob",
+      "environment_details": {
+        "main_resource": {
+        }
+      }
+    }
+  }
+}

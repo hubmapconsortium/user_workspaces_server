@@ -1,0 +1,83 @@
+{
+  "SECRET_KEY": "",
+  "DEBUG": false,
+  "ALLOWED_HOSTS": [],
+  "DATABASES": {
+    "default": {
+      "ENGINE": "django.db.backends.sqlite3",
+      "NAME": "test_db.sqlite3"
+    }
+  },
+  "CSRF_TRUSTED_ORIGINS": [],
+  "Q_CLUSTER": {
+    "name": "myproject",
+    "workers": 8,
+    "recycle": 500,
+    "compress": true,
+    "save_limit": 250,
+    "queue_limit": 500,
+    "cpu_affinity": 1,
+    "label": "Django Q",
+    "orm": "default"
+  },
+  "CHANNEL_LAYERS": {
+    "default": {
+      "BACKEND": "channels_redis.core.RedisChannelLayer",
+      "CONFIG": {
+        "hosts": ["redis://127.0.0.1:6379/0?"]
+      }
+    }
+  },
+  "EMAIL_HOST": "",
+  "EMAIL_HOST_PASSWORD": "",
+  "EMAIL_HOST_USER": "",
+  "EMAIL_USE_TLS": true,
+  "EMAIL_PORT": "",
+  "EMAIL_BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+  "LOGGING": {
+    "version": 1,
+    "formatters": {
+        "django-q": {
+            "format": "{asctime} [Q] {levelname} {message}",
+            "style": "{"
+        },
+        "user_workspaces_server": {
+            "format": "{asctime} [UWS] {levelname} {message}",
+            "style": "{"
+        }
+    },
+    "handlers": {
+        "discard": {
+            "class": "logging.NullHandler"
+        },
+        "django-q-console": {
+            "class": "logging.StreamHandler",
+            "formatter": "django-q"
+        },
+        "user_workspaces_server_console": {
+            "class": "logging.StreamHandler",
+            "formatter": "user_workspaces_server"
+        },
+        "mail": {
+            "class": "user_workspaces_server.logging.AsyncEmailHandler",
+            "formatter": "user_workspaces_server",
+            "level": "ERROR",
+            "subject": "UWS Log",
+            "from_email": "noreply@noreply.com",
+            "email_list": []
+        }
+    },
+    "loggers": {
+        "django-q": {
+            "level": "INFO",
+            "propagate": true,
+            "handlers": ["django-q-console"]
+        },
+        "user_workspaces_server": {
+            "level": "DEBUG",
+            "propagate": false,
+            "handlers": ["user_workspaces_server_console", "mail"]
+        }
+    }
+  }
+}
