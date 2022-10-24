@@ -14,6 +14,8 @@ import json
 import os
 from pathlib import Path
 
+from django.utils.crypto import get_random_string
+
 BASE_DIR = Path(__file__).resolve().parent
 
 UWS_CONFIG = json.load(open(
@@ -24,7 +26,7 @@ DJANGO_CONFIG = json.load(open(
     BASE_DIR / ('github_test_django_config.json' if os.environ.get('GITHUB_WORKFLOW') else 'test_django_config.json')
 ))
 
-SECRET_KEY = DJANGO_CONFIG['SECRET_KEY']
+SECRET_KEY = get_random_string(12) if not DJANGO_CONFIG['SECRET_KEY'] else DJANGO_CONFIG['SECRET_KEY']
 
 DEBUG = DJANGO_CONFIG['DEBUG']
 
