@@ -337,7 +337,6 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
     def test_workspace_delete(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.delete(reverse('workspaces_with_id', args=[self.workspace.id]))
-        print(response.content)
         self.assertValidResponse(response, status.HTTP_200_OK, success=True,
                                  message=f'Workspace {self.workspace.id} queued for deletion.')
 
