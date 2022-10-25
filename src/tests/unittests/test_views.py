@@ -6,12 +6,55 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
 import json
+from django.apps import apps
+from tests.controllers.resources.test_resource import TestResource
+from tests.controllers.storagemethods.test_storage import TestStorage
+from tests.controllers.userauthenticationmethods.test_user_authentication import TestUserAuthentication
 
 
 class UserWorkspacesAPITestCase(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = User.objects.create_user('test')
+        # Initialize test controllers
+        test_user_auth = TestUserAuthentication(**{
+            "config": {
+                "name": "Test Auth",
+                "user_authentication_type": "TestAuthentication",
+                "connection_details": {}
+            }
+        })
+        test_storage = TestStorage(**{
+            "config": {
+                "name": "Test Storage",
+                "storage_type": "TestStorage",
+                "user_authentication": "test_auth",
+                "root_dir": ".",
+                "connection_details": {}
+            },
+            "storage_user_authentication": test_user_auth
+        })
+        test_resource = TestResource(**{
+            "config": {
+                "name": "Test Resource",
+                "resource_type": "TestResource",
+                "storage": "test_storage",
+                "user_authentication": "test_auth",
+                "passthrough_domain": "127.0.0.1:8000",
+                "connection_details": {}
+            },
+            "resource_storage": test_storage,
+            "resource_user_authentication": test_user_auth
+        })
+
+        # Override existing controllers
+        apps.get_app_config('user_workspaces_server').available_user_authentication_methods = \
+            {'test_user_auth': test_user_auth}
+        apps.get_app_config('user_workspaces_server').available_storage_methods = {'test_storage': test_storage}
+        apps.get_app_config('user_workspaces_server').available_resources = {'test_resource': test_resource}
+        apps.get_app_config('user_workspaces_server').api_user_authentication = test_user_auth
+        apps.get_app_config('user_workspaces_server').main_storage = test_storage
+        apps.get_app_config('user_workspaces_server').main_resource = test_resource
+        cls.user = User.objects.create_user('test', email="test@test.com")
 
     def assertValidResponse(self, response, status_code, success=None, message=''):
         self.assertEqual(response.status_code, status_code)
@@ -35,32 +78,27 @@ class TokenAPITests(UserWorkspacesAPITestCase):
         api_clients_group.user_set.add(api_user)
         cls.client_token = Token.objects.create(user=api_user)
 
-    # TODO: Mocking
-    def test_get_invalid_user_token(self):
-        # body = {
-        #     "client_token": self.client_token.key,
-        #     "user_info": {
-        #         "username": "fake_user",
-        #         "email": "fake@fake.com"
-        #     }
-        # }
-        # response = self.client.post(self.tokens_url, body)
-        # print(response.content)
-        pass
+    def test_get_new_user_token(self):
+        body = {
+            "client_token": self.client_token.key,
+            "user_info": {
+                "username": "fake_user",
+                "email": "fake@fake.com"
+            }
+        }
+        response = self.client.post(self.tokens_url, body)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful authentication.")
 
-    # TODO: Mocking
     def test_get_user_token(self):
-        # body = {
-        #     "client_token": self.client_token.key,
-        #     "user_info": {
-        #         "username": self.user.username,
-        #         "email": "test@test.com"
-        #     }
-        # }
-        # response = self.client.post(self.tokens_url, body)
-        # print(response.content)
-        # self.assertValidResponse(response, status.HTTP_200_OK, success=True)
-        pass
+        body = {
+            "client_token": self.client_token.key,
+            "user_info": {
+                "username": self.user.username,
+                "email": "test@test.com"
+            }
+        }
+        response = self.client.post(self.tokens_url, body)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful authentication.")
 
 
 class StatusAPITests(UserWorkspacesAPITestCase):
