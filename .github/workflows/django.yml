@@ -25,5 +25,5 @@ jobs:
     - name: Run Tests
       run: |
         cd src
-        coverage run manage.py test --settings=tests.settings
+        coverage run manage.py test tests.unittests --settings=tests.settings
         coverage report -m
