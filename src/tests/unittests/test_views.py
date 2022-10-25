@@ -135,6 +135,7 @@ class WorkspaceAPITestCase(UserWorkspacesAPITestCase):
 
 
 class WorkspaceGETAPITests(WorkspaceAPITestCase):
+    # TODO: Check body
     def test_workspace_id_get(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('workspaces_with_id', args=[self.workspace.id]))
@@ -192,13 +193,13 @@ class WorkspacePOSTAPITests(WorkspaceAPITestCase):
         self.assertValidResponse(response, status.HTTP_400_BAD_REQUEST, success=False,
                                  message='Workspace details not JSON.')
 
-    # TODO: Mocking.
     def test_minimum_valid_post(self):
         self.client.force_authenticate(user=self.user)
-        # body = {'name': 'Test', 'description': 'Test', 'workspace_details': {}}
-        # response = self.client.post(self.workspaces_url, body)
-        # print(response)
-        # self.assertValidResponse(response, status.HTTP_200_OK)
+        body = {'name': 'Test', 'description': 'Test', 'workspace_details': {}}
+        response = self.client.post(self.workspaces_url, body)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True,
+                                 message="Successful.")
+        # TODO: Check body
 
     def test_invalid_symlinks_structure_post(self):
         self.client.force_authenticate(user=self.user)
@@ -278,16 +279,17 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
         self.assertValidResponse(response, status.HTTP_400_BAD_REQUEST, success=False,
                                  message='No files found in request.')
 
-    # TODO: Mocking
     def test_workspace_upload_file_put(self):
         from io import StringIO
         test_file = StringIO("Test File")
         test_file.name = "test_file.txt"
         self.client.force_authenticate(user=self.user)
-        # response = self.client.put(reverse('workspaces_put_type', args=[self.workspace.id, 'upload']), {'files': [test_file]})
+        response = self.client.put(reverse('workspaces_put_type', args=[self.workspace.id, 'upload']),
+                                   {'files': [test_file]}, format='multipart')
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True,
+                                 message='Successful upload.')
         test_file.close()
 
-    # TODO: Mocking
     def test_workspace_upload_multiple_files_put(self):
         from io import StringIO
         test_file_1 = StringIO('Test File 1')
@@ -295,7 +297,10 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
         test_file_2 = StringIO('Test File 2')
         test_file_2.name = 'test_file_2.txt'
         self.client.force_authenticate(user=self.user)
-        # response = self.client.put(reverse('workspaces_put_type', args=[self.workspace.id, 'upload']), {'files': [test_file_1, test_file_2]})
+        response = self.client.put(reverse('workspaces_put_type', args=[self.workspace.id, 'upload']),
+                                   {'files': [test_file_1, test_file_2]}, format='multipart')
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True,
+                                 message='Successful upload.')
         test_file_1.close()
         test_file_2.close()
 
@@ -329,7 +334,12 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
         self.assertValidResponse(response, status.HTTP_400_BAD_REQUEST, success=False,
                                  message='Cannot delete workspace, jobs are running for this workspace.')
 
-    # TODO: Add test for actually deleting (and mocking)
+    def test_workspace_delete(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(reverse('workspaces_with_id', args=[self.workspace.id]))
+        print(response.content)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True,
+                                 message=f'Workspace {self.workspace.id} queued for deletion.')
 
 
 class JobAPITestCase(UserWorkspacesAPITestCase):
@@ -371,6 +381,7 @@ class JobAPITestCase(UserWorkspacesAPITestCase):
 
 
 class JobGETAPITests(JobAPITestCase):
+    # TODO: Check body
     def test_job_id_get(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('jobs_with_id', args=[self.job.id]))
@@ -410,10 +421,11 @@ class JobPUTAPITests(JobAPITestCase):
         self.assertValidResponse(response, status.HTTP_200_OK, success=True,
                                  message='Successful stop.')
 
-    # TODO: Mocking
     def test_job_stop_put(self):
         self.client.force_authenticate(user=self.user)
-        # response = self.client.put(reverse('jobs_put_type', args=[self.job.id, 'stop']))
+        response = self.client.put(reverse('jobs_put_type', args=[self.job.id, 'stop']))
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True,
+                                 message='Successful stop.')
 
 
 class JobTypeAPITestCase(UserWorkspacesAPITestCase):
