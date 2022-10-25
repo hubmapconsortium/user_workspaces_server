@@ -35,7 +35,7 @@ class UserWorkspacesServerTokenView(ObtainAuthToken):
             token, created = Token.objects.get_or_create(user=api_user)
             result = JsonResponse({
                 'success': True,
-                'message': 'Successful authentication',
+                'message': 'Successful authentication.',
                 'token': token.key
             })
         elif type(api_user) == Response:
