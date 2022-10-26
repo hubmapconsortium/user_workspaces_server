@@ -428,6 +428,7 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "the workspace directory that will not allow for jobs to be created.",
         )
 
+    # TODO: Update this test once we allow for passing job types
     def test_workspace_start_minimum_valid_put(self):
         self.client.force_authenticate(user=self.user)
         body = {"job_type": "test", "job_details": {}}

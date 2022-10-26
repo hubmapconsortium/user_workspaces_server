@@ -32,11 +32,14 @@
     }
   },
   "available_job_types": {
-    "local_test_job": {
-      "name": "Local Test Job",
-      "job_type": "LocalTestJob",
+    "jupyter_lab": {
+      "name": "Jupyter Lab",
+      "job_type": "JupyterLabJob",
       "environment_details": {
-        "main_resource": {
+        "test_resource": {
+          "python_version": "python3.8",
+          "module_manager": "virtualenv",
+          "python_packages": ["jupyterlab"]
         }
       }
     }
