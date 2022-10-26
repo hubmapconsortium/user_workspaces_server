@@ -631,6 +631,18 @@ class JobPUTAPITests(JobAPITestCase):
             message="Invalid PUT type passed.",
         )
 
+    def test_job_stop_failed_put(self):
+        self.client.force_authenticate(user=self.user)
+        self.job.resource_job_id = 0
+        self.job.save()
+        response = self.client.put(reverse("jobs_put_type", args=[self.job.id, "stop"]))
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Failed to stop job.",
+        )
+
     def test_job_stop_resource_job_id_negative_one_put(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.put(reverse("jobs_put_type", args=[self.job.id, "stop"]))
@@ -640,6 +652,8 @@ class JobPUTAPITests(JobAPITestCase):
 
     def test_job_stop_put(self):
         self.client.force_authenticate(user=self.user)
+        self.job.resource_job_id = 1
+        self.job.save()
         response = self.client.put(reverse("jobs_put_type", args=[self.job.id, "stop"]))
         self.assertValidResponse(
             response, status.HTTP_200_OK, success=True, message="Successful stop."
