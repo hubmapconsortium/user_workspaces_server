@@ -16,6 +16,7 @@ build/
 db.sqlite3
 
 .idea/
-/config.json
-/docker-compose.yml
-/django_config.json
+/src/config.json
+/src/django_config.json
+/src/tests/test_config.json
+/src/tests/test_django_config.json
