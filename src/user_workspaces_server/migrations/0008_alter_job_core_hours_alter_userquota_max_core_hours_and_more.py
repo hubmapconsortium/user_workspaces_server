@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0007_workspace_status'),
+        ("user_workspaces_server", "0007_workspace_status"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='job',
-            name='core_hours',
+            model_name="job",
+            name="core_hours",
             field=models.DecimalField(decimal_places=5, max_digits=10),
         ),
         migrations.AlterField(
-            model_name='userquota',
-            name='max_core_hours',
+            model_name="userquota",
+            name="max_core_hours",
             field=models.DecimalField(decimal_places=5, max_digits=15),
         ),
         migrations.AlterField(
-            model_name='userquota',
-            name='used_core_hours',
+            model_name="userquota",
+            name="used_core_hours",
             field=models.DecimalField(decimal_places=5, max_digits=15),
         ),
     ]

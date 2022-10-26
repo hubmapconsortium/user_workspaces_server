@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 
 class Workspace(models.Model):
     class Status(models.TextChoices):
-        IDLE = 'idle'
-        ACTIVE = 'active'
-        DELETING = 'deleting'
-        ERROR = 'error'
+        IDLE = "idle"
+        ACTIVE = "active"
+        DELETING = "deleting"
+        ERROR = "error"
 
     user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=64, default="")
@@ -16,7 +16,9 @@ class Workspace(models.Model):
     disk_space = models.IntegerField(default=0)
     datetime_created = models.DateTimeField()
     workspace_details = models.JSONField()
-    status = models.CharField(max_length=64, default=Status.IDLE, choices=Status.choices)
+    status = models.CharField(
+        max_length=64, default=Status.IDLE, choices=Status.choices
+    )
 
     @staticmethod
     def get_query_param_fields():
@@ -24,21 +26,31 @@ class Workspace(models.Model):
 
     @staticmethod
     def get_dict_fields():
-        return ["id", "name", "description", "disk_space", "datetime_created", "workspace_details", "status"]
+        return [
+            "id",
+            "name",
+            "description",
+            "disk_space",
+            "datetime_created",
+            "workspace_details",
+            "status",
+        ]
 
 
 class Job(models.Model):
     class Status(models.TextChoices):
-        PENDING = 'pending'
-        RUNNING = 'running'
-        COMPLETE = 'complete'
-        FAILED = 'failed'
+        PENDING = "pending"
+        RUNNING = "running"
+        COMPLETE = "complete"
+        FAILED = "failed"
 
     workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
     resource_job_id = models.IntegerField()
     job_type = models.CharField(max_length=64)
     resource_name = models.CharField(max_length=64)
-    status = models.CharField(max_length=64, default=Status.PENDING, choices=Status.choices)
+    status = models.CharField(
+        max_length=64, default=Status.PENDING, choices=Status.choices
+    )
     datetime_created = models.DateTimeField()
     datetime_start = models.DateTimeField(null=True)
     datetime_end = models.DateTimeField(null=True)
@@ -51,8 +63,18 @@ class Job(models.Model):
 
     @staticmethod
     def get_dict_fields():
-        return ["id", "workspace_id", "resource_job_id", "job_type", "status", "datetime_created",
-                "datetime_start", "datetime_end", "core_hours", "job_details"]
+        return [
+            "id",
+            "workspace_id",
+            "resource_job_id",
+            "job_type",
+            "status",
+            "datetime_created",
+            "datetime_start",
+            "datetime_end",
+            "core_hours",
+            "job_details",
+        ]
 
 
 class UserQuota(models.Model):

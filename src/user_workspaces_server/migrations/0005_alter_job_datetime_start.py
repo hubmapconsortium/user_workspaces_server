@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0004_auto_20220131_2151'),
+        ("user_workspaces_server", "0004_auto_20220131_2151"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='job',
-            name='datetime_start',
+            model_name="job",
+            name="datetime_start",
             field=models.DateTimeField(null=True),
         ),
     ]

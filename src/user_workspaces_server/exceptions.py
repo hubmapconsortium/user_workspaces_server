@@ -9,15 +9,12 @@ def workspaces_exception_handler(exc, context):
 
     # Now add the HTTP status code to the response.
     if response is not None:
-        response.data = {
-            'success': False,
-            'message': response.data['detail']
-        }
+        response.data = {"success": False, "message": response.data["detail"]}
 
     return response
 
 
 class WorkspaceClientException(APIException):
     status_code = 400
-    default_detail = 'Error with client request.'
-    default_code = 'client_request_error'
+    default_detail = "Error with client request."
+    default_code = "client_request_error"

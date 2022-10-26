@@ -1,4 +1,6 @@
-from user_workspaces_server.controllers.resources.abstract_resource import AbstractResource
+from user_workspaces_server.controllers.resources.abstract_resource import (
+    AbstractResource,
+)
 from user_workspaces_server.models import Job
 import logging
 
@@ -8,11 +10,11 @@ logger = logging.getLogger(__name__)
 class TestResource(AbstractResource):
     def translate_status(self, status):
         status_list = {
-            'sleeping': Job.Status.RUNNING,
-            'running': Job.Status.RUNNING,
-            'zombie': Job.Status.COMPLETE,
-            'complete': Job.Status.COMPLETE,
-            'dead': Job.Status.FAILED
+            "sleeping": Job.Status.RUNNING,
+            "running": Job.Status.RUNNING,
+            "zombie": Job.Status.COMPLETE,
+            "complete": Job.Status.COMPLETE,
+            "dead": Job.Status.FAILED,
         }
 
         return status_list[status]
@@ -21,7 +23,7 @@ class TestResource(AbstractResource):
         return 0
 
     def get_resource_job(self, job):
-        return {'status': Job.Status.COMPLETE}
+        return {"status": Job.Status.COMPLETE}
 
     def get_job_core_hours(self, job):
         return 0

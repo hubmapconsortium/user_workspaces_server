@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0005_alter_job_datetime_start'),
+        ("user_workspaces_server", "0005_alter_job_datetime_start"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='externalusermapping',
-            name='external_user_details',
+            model_name="externalusermapping",
+            name="external_user_details",
             field=models.JSONField(blank=True, null=True),
         ),
     ]

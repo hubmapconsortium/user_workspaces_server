@@ -6,18 +6,39 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0008_alter_job_core_hours_alter_userquota_max_core_hours_and_more'),
+        (
+            "user_workspaces_server",
+            "0008_alter_job_core_hours_alter_userquota_max_core_hours_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='job',
-            name='status',
-            field=models.CharField(choices=[('pending', 'Pending'), ('running', 'Running'), ('complete', 'Complete'), ('failed', 'Failed')], default='pending', max_length=64),
+            model_name="job",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("pending", "Pending"),
+                    ("running", "Running"),
+                    ("complete", "Complete"),
+                    ("failed", "Failed"),
+                ],
+                default="pending",
+                max_length=64,
+            ),
         ),
         migrations.AlterField(
-            model_name='workspace',
-            name='status',
-            field=models.CharField(choices=[('idle', 'Idle'), ('active', 'Active'), ('deleting', 'Deleting'), ('error', 'Error')], default='idle', max_length=64),
+            model_name="workspace",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("idle", "Idle"),
+                    ("active", "Active"),
+                    ("deleting", "Deleting"),
+                    ("error", "Error"),
+                ],
+                default="idle",
+                max_length=64,
+            ),
         ),
     ]

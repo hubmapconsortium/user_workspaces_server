@@ -6,7 +6,7 @@ class AbstractResource(ABC):
         self.config = config
         self.resource_storage = resource_storage
         self.resource_user_authentication = resource_user_authentication
-        self.passthrough_domain = config.get('passthrough_domain', '')
+        self.passthrough_domain = config.get("passthrough_domain", "")
 
     @abstractmethod
     def translate_status(self, status):

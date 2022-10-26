@@ -7,24 +7,26 @@ class AbstractStorage(ABC):
     def __init__(self, config, storage_user_authentication):
         self.config = config
         self.storage_user_authentication = storage_user_authentication
-        self.root_dir = config['root_dir']
+        self.root_dir = config["root_dir"]
 
     def create_symlinks(self, workspace, workspace_details):
-        if type(workspace_details.get('symlinks', [])) != list:
+        if type(workspace_details.get("symlinks", [])) != list:
             raise ParseError("'symlinks' index must contain a list.")
-        for symlink in workspace_details.get('symlinks', []):
-            if '..' in symlink.get('name', ''):
-                raise ParseError('Symlink name cannot contain double dots.')
+        for symlink in workspace_details.get("symlinks", []):
+            if ".." in symlink.get("name", ""):
+                raise ParseError("Symlink name cannot contain double dots.")
             self.create_symlink(workspace.file_path, symlink)
 
     def create_files(self, workspace, workspace_details):
-        if type(workspace_details.get('files', [])) != list:
+        if type(workspace_details.get("files", [])) != list:
             raise ParseError("'files' index must contain a list.")
-        for file in workspace_details.get('files', []):
+        for file in workspace_details.get("files", []):
             # Create a file object here
-            content_file = ContentFile(bytes(file.get('content', ''), 'utf-8'), name=file.get('name'))
-            if '..' in content_file.name:
-                raise ParseError('File name cannot contain double dots.')
+            content_file = ContentFile(
+                bytes(file.get("content", ""), "utf-8"), name=file.get("name")
+            )
+            if ".." in content_file.name:
+                raise ParseError("File name cannot contain double dots.")
 
             self.create_file(workspace.file_path, content_file)
 

@@ -6,19 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0003_remove_job_user_id'),
+        ("user_workspaces_server", "0003_remove_job_user_id"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='job',
-            name='datetime_created',
-            field=models.DateTimeField(default='2022-01-31 00:00:00'),
+            model_name="job",
+            name="datetime_created",
+            field=models.DateTimeField(default="2022-01-31 00:00:00"),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='job',
-            name='resource_job_id',
+            model_name="job",
+            name="resource_job_id",
             field=models.IntegerField(default=-1),
             preserve_default=False,
         ),

@@ -6,10 +6,12 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'user_workspaces_server_project.settings')
+    os.environ.setdefault(
+        "DJANGO_SETTINGS_MODULE", "user_workspaces_server_project.settings"
+    )
     argv = sys.argv
     cmd = argv[1] if len(argv) > 1 else ""
-    os.environ['SUBCOMMAND'] = cmd
+    os.environ["SUBCOMMAND"] = cmd
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -21,5 +23,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

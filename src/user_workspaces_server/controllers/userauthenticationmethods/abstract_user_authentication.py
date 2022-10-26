@@ -7,9 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 class AbstractUserAuthentication(ABC):
-    @abstractmethod
-    def __init__(self):
-        pass
+    def __init__(self, config):
+        self.connection_details = config.get("connection_details", {})
 
     @abstractmethod
     def has_permission(self, internal_user):
@@ -20,16 +19,18 @@ class AbstractUserAuthentication(ABC):
         pass
 
     def create_internal_user(self, user_info):
-        if 'username' not in user_info:
+        if "username" not in user_info:
             return False
 
         # TODO: Consider creating the root dir for the user at this time?
 
         return User.objects.create_user(
-            user_info['username'],
-            email=user_info.get('email', None),
-            **{"first_name": user_info.get('first_name', ''),
-               "last_name": user_info.get('last_name', '')}
+            user_info["username"],
+            email=user_info.get("email", None),
+            **{
+                "first_name": user_info.get("first_name", ""),
+                "last_name": user_info.get("last_name", ""),
+            },
         )
 
     @abstractmethod
