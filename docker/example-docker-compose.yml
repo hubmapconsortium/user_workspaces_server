@@ -26,7 +26,9 @@ services:
       - ./redis_dir:/data
     command: ["redis-server", "--appendonly", "yes"]
   web:
-    build: .
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     command: bash -c "docker/user_workspaces_server/start.sh"
     volumes:
 #     - This line should mount the host machine's user information into the container

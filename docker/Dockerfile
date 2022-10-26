@@ -1,7 +1,7 @@
 FROM python:3.8-buster
 WORKDIR /code
 ENV PYTHONUNBUFFERED=1
-COPY ../requirements/requirements.txt /tmp/
+COPY requirements/requirements.txt /tmp/
 RUN pip install --upgrade pip
 RUN pip install -r /tmp/requirements.txt
 RUN apt-get update && \
