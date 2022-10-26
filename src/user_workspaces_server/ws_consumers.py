@@ -1,9 +1,11 @@
-from channels.generic.websocket import WebsocketConsumer
-from . import models
-import websocket
-import threading
-from asgiref.sync import async_to_sync
 import json
+import threading
+
+import websocket
+from asgiref.sync import async_to_sync
+from channels.generic.websocket import WebsocketConsumer
+
+from . import models
 
 
 class PassthroughConsumer(WebsocketConsumer):

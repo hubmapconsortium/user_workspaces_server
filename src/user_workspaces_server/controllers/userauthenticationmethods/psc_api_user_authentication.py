@@ -1,12 +1,13 @@
-from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
-    AbstractUserAuthentication,
-)
-from django.forms.models import model_to_dict
 import json
-from rest_framework.exceptions import ParseError, PermissionDenied
-from rest_framework.authtoken.models import Token
-import requests as http_r
 import logging
+
+import requests as http_r
+from django.forms.models import model_to_dict
+from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ParseError, PermissionDenied
+
+from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import \
+    AbstractUserAuthentication
 
 logger = logging.getLogger(__name__)
 

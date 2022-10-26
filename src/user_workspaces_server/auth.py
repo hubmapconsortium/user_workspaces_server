@@ -1,8 +1,8 @@
 import logging
 
 from rest_framework import authentication
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import AuthenticationFailed
 
 logger = logging.getLogger(__name__)
 

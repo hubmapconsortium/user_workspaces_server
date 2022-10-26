@@ -1,14 +1,18 @@
-from django_q.tasks import async_task
-from . import models
 import datetime
-from user_workspaces_server.controllers.job_types.jupyter_lab_job import JupyterLabJob
-from django.apps import apps
-from django.conf import settings
+import logging
+import os
+
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.apps import apps
+from django.conf import settings
 from django.db.models import Sum
-import os
-import logging
+from django_q.tasks import async_task
+
+from user_workspaces_server.controllers.job_types.jupyter_lab_job import \
+    JupyterLabJob
+
+from . import models
 
 logger = logging.getLogger(__name__)
 

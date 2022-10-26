@@ -1,9 +1,10 @@
-from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
-    AbstractUserAuthentication,
-)
 import json
-from rest_framework.exceptions import ParseError, PermissionDenied
+
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ParseError, PermissionDenied
+
+from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import \
+    AbstractUserAuthentication
 
 
 class TestUserAuthentication(AbstractUserAuthentication):

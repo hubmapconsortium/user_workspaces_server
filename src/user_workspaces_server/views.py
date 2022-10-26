@@ -1,29 +1,28 @@
-from django.http import JsonResponse, HttpResponse
-from django.contrib.auth.models import User
-import user_workspaces_server.controllers.job_types.jupyter_lab_job
-from . import models
-from user_workspaces_server.exceptions import WorkspaceClientException
-from django.conf import settings
-from django.apps import apps
-from pathlib import Path
-from django.forms.models import model_to_dict
 import json
+import logging
+import os
 from datetime import datetime
-from rest_framework.authtoken.views import ObtainAuthToken
+from pathlib import Path
+
+import requests as http_r
+from django.apps import apps
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.forms.models import model_to_dict
+from django.http import HttpResponse, JsonResponse
+from django_q.tasks import async_task
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.exceptions import (APIException, AuthenticationFailed,
+                                       NotFound, ParseError)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import (
-    AuthenticationFailed,
-    ParseError,
-    NotFound,
-    APIException,
-)
-import os
-from django_q.tasks import async_task
-import requests as http_r
-import logging
+
+import user_workspaces_server.controllers.job_types.jupyter_lab_job
+from user_workspaces_server.exceptions import WorkspaceClientException
+
+from . import models
 
 logger = logging.getLogger(__name__)
 

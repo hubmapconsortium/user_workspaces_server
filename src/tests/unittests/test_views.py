@@ -1,17 +1,18 @@
-from user_workspaces_server.models import Workspace, Job
+import json
+from datetime import datetime
+
+from django.apps import apps
+from django.contrib.auth.models import Group, User
 from django.urls import reverse
 from rest_framework import status
-from datetime import datetime
-from rest_framework.test import APITestCase
-from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
-import json
-from django.apps import apps
+from rest_framework.test import APITestCase
+
 from tests.controllers.resources.test_resource import TestResource
 from tests.controllers.storagemethods.test_storage import TestStorage
-from tests.controllers.userauthenticationmethods.test_user_authentication import (
-    TestUserAuthentication,
-)
+from tests.controllers.userauthenticationmethods.test_user_authentication import \
+    TestUserAuthentication
+from user_workspaces_server.models import Job, Workspace
 
 
 class UserWorkspacesAPITestCase(APITestCase):

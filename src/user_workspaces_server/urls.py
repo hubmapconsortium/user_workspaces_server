@@ -13,9 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path, include
-from . import views
-from . import ws_consumers
+from django.urls import include, path
+
+from . import views, ws_consumers
 
 token_view_patterns = [
     path("", views.UserWorkspacesServerTokenView.as_view(), name="tokens")

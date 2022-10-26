@@ -1,5 +1,7 @@
-from user_workspaces_server.controllers.job_types.abstract_job import AbstractJob
 from django.template import loader
+
+from user_workspaces_server.controllers.job_types.abstract_job import \
+    AbstractJob
 
 
 class LocalTestJob(AbstractJob):

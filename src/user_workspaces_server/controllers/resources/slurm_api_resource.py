@@ -1,10 +1,11 @@
-from user_workspaces_server.controllers.resources.abstract_resource import (
-    AbstractResource,
-)
+import logging
 import os
+
 import requests as http_r
 from rest_framework.exceptions import APIException
-import logging
+
+from user_workspaces_server.controllers.resources.abstract_resource import \
+    AbstractResource
 
 logger = logging.getLogger(__name__)
 

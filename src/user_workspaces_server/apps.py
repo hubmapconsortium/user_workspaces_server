@@ -1,6 +1,7 @@
+import os
+
 from django.apps import AppConfig
 from django.conf import settings
-import os
 
 
 def translate_class_to_module(class_name):
@@ -106,9 +107,10 @@ class UserWorkspacesServerConfig(AppConfig):
         if os.environ.get("SUBCOMMAND", None) != "qcluster":
             return
 
-        from . import models
-        from django_q.tasks import async_task
         from django_q import brokers
+        from django_q.tasks import async_task
+
+        from . import models
 
         broker = brokers.get_broker()
         broker.purge_queue()

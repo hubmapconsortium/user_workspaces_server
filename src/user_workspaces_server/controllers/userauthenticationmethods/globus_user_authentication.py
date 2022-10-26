@@ -1,13 +1,14 @@
-from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
-    AbstractUserAuthentication,
-)
-from rest_framework.response import Response
-from flask.wrappers import Response as flask_response
-from rest_framework.exceptions import ParseError
-import globus_sdk
 import json
-from hubmap_commons.hm_auth import AuthHelper
 import logging
+
+import globus_sdk
+from flask.wrappers import Response as flask_response
+from hubmap_commons.hm_auth import AuthHelper
+from rest_framework.exceptions import ParseError
+from rest_framework.response import Response
+
+from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import \
+    AbstractUserAuthentication
 
 logger = logging.getLogger(__name__)
 

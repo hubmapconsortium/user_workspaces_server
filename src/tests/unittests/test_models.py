@@ -1,5 +1,6 @@
 from django.test import TestCase
-from user_workspaces_server.models import Workspace, Job
+
+from user_workspaces_server.models import Job, Workspace
 
 
 class WorkspaceModelTests(TestCase):

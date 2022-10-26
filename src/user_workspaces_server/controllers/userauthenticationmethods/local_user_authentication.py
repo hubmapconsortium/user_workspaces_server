@@ -1,12 +1,13 @@
-from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
-    AbstractUserAuthentication,
-)
+import json
+import logging
 import pwd
 import subprocess
-import json
-from rest_framework.exceptions import ParseError, PermissionDenied
+
 from rest_framework.authtoken.models import Token
-import logging
+from rest_framework.exceptions import ParseError, PermissionDenied
+
+from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import \
+    AbstractUserAuthentication
 
 logger = logging.getLogger(__name__)
 
