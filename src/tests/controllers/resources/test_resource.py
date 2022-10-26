@@ -30,4 +30,4 @@ class TestResource(AbstractResource):
         return 0
 
     def stop_job(self, job):
-        return True
+        return job.resource_job_id
