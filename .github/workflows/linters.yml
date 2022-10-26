@@ -29,4 +29,4 @@ jobs:
         black --line-length 88 --check --diff src
     - name: isort Lint
       run: |
-        isort --check-only --diff src
+        isort --profile black --check-only --diff src
