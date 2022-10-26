@@ -1,0 +1,47 @@
+{
+  "api_user_authentication": "test_auth",
+  "main_storage": "test_storage",
+  "main_resource": "test_resource",
+  "available_user_authentication": {
+    "test_auth": {
+      "name": "Local User Auth",
+      "user_authentication_type": "LocalUserAuthentication",
+      "connection_details": {
+        "create_external_users": true,
+        "operating_system": "linux"
+      }
+    }
+  },
+  "available_storage": {
+    "test_storage": {
+      "name": "Local File Storage",
+      "storage_type": "LocalFileSystemStorage",
+      "user_authentication": "test_auth",
+      "root_dir": ".",
+      "connection_details": {}
+    }
+  },
+  "available_resources": {
+    "test_resource": {
+      "name": "Local Resource",
+      "resource_type": "LocalResource",
+      "storage": "test_storage",
+      "user_authentication": "test_auth",
+      "passthrough_domain": "127.0.0.1:8000",
+      "connection_details": {}
+    }
+  },
+  "available_job_types": {
+    "jupyter_lab": {
+      "name": "Jupyter Lab",
+      "job_type": "JupyterLabJob",
+      "environment_details": {
+        "test_resource": {
+          "python_version": "python3.8",
+          "module_manager": "virtualenv",
+          "python_packages": ["jupyterlab"]
+        }
+      }
+    }
+  }
+}
