@@ -1,9 +1,9 @@
 {
-  "api_user_authentication": "main_auth",
-  "main_storage": "main_storage",
-  "main_resource": "main_resource",
+  "api_user_authentication": "test_auth",
+  "main_storage": "test_storage",
+  "main_resource": "test_resource",
   "available_user_authentication": {
-    "main_auth": {
+    "test_auth": {
       "name": "Local User Auth",
       "user_authentication_type": "LocalUserAuthentication",
       "connection_details": {
@@ -13,20 +13,20 @@
     }
   },
   "available_storage": {
-    "main_storage": {
+    "test_storage": {
       "name": "Local File Storage",
       "storage_type": "LocalFileSystemStorage",
-      "user_authentication": "main_auth",
+      "user_authentication": "test_auth",
       "root_dir": ".",
       "connection_details": {}
     }
   },
   "available_resources": {
-    "main_resource": {
+    "test_resource": {
       "name": "Local Resource",
       "resource_type": "LocalResource",
-      "storage": "main_storage",
-      "user_authentication": "main_auth",
+      "storage": "test_storage",
+      "user_authentication": "test_auth",
       "passthrough_domain": "127.0.0.1:8000",
       "connection_details": {}
     }
