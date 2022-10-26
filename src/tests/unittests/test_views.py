@@ -412,6 +412,35 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             message="Job details not JSON.",
         )
 
+    def test_workspace_start_invalid_file_path_put(self):
+        self.client.force_authenticate(user=self.user)
+        self.workspace.file_path = "."
+        self.workspace.save()
+        body = {"job_type": "test", "job_details": {}}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            success=False,
+            message="Please contact a system administrator there is a failure with "
+            "the workspace directory that will not allow for jobs to be created.",
+        )
+
+    def test_workspace_start_minimum_valid_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {"job_type": "test", "job_details": {}}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Successful start.",
+        )
+
     def test_workspace_upload_missing_files_put(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.put(
@@ -469,6 +498,21 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
             status.HTTP_404_NOT_FOUND,
             success=False,
             message="Workspace 9999 not found for user.",
+        )
+
+    def test_workspace_invalid_file_path_delete(self):
+        self.client.force_authenticate(user=self.user)
+        self.workspace.file_path = "."
+        self.workspace.save()
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.workspace.id])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            success=False,
+            message="Please contact a system administrator there is a failure with "
+            "the workspace directory that will not allow for this workspace to be deleted.",
         )
 
     def test_workspace_active_job_delete(self):
