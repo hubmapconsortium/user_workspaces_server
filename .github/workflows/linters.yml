@@ -23,7 +23,7 @@ jobs:
         pip install flake8 black isort
     - name: Flake8 Lint
       run: |
-        flake8 src
+        flake8 --ignore=E501 src
     - name: Black Lint
       run: |
         black --line-length 88 --check --diff src
