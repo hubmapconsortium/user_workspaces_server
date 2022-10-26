@@ -1,7 +1,8 @@
 import logging
 
-from user_workspaces_server.controllers.resources.abstract_resource import \
-    AbstractResource
+from user_workspaces_server.controllers.resources.abstract_resource import (
+    AbstractResource,
+)
 from user_workspaces_server.models import Job
 
 logger = logging.getLogger(__name__)

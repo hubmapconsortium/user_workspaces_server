@@ -1,7 +1,8 @@
 import logging
 
-from user_workspaces_server.controllers.storagemethods.abstract_storage import \
-    AbstractStorage
+from user_workspaces_server.controllers.storagemethods.abstract_storage import (
+    AbstractStorage,
+)
 
 logger = logging.getLogger(__name__)
 

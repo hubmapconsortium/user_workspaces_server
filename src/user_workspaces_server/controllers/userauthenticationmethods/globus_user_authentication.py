@@ -7,8 +7,9 @@ from hubmap_commons.hm_auth import AuthHelper
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
-from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import \
-    AbstractUserAuthentication
+from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
+    AbstractUserAuthentication,
+)
 
 logger = logging.getLogger(__name__)
 

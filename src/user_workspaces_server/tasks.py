@@ -9,8 +9,7 @@ from django.conf import settings
 from django.db.models import Sum
 from django_q.tasks import async_task
 
-from user_workspaces_server.controllers.job_types.jupyter_lab_job import \
-    JupyterLabJob
+from user_workspaces_server.controllers.job_types.jupyter_lab_job import JupyterLabJob
 
 from . import models
 

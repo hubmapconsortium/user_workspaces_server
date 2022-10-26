@@ -4,8 +4,9 @@ import os
 import requests as http_r
 from rest_framework.exceptions import APIException
 
-from user_workspaces_server.controllers.resources.abstract_resource import \
-    AbstractResource
+from user_workspaces_server.controllers.resources.abstract_resource import (
+    AbstractResource,
+)
 
 logger = logging.getLogger(__name__)
 

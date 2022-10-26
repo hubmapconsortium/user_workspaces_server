@@ -6,8 +6,9 @@ import subprocess
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ParseError, PermissionDenied
 
-from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import \
-    AbstractUserAuthentication
+from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
+    AbstractUserAuthentication,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,9 @@ class LocalUserAuthentication(AbstractUserAuthentication):
         self.create_external_users = self.connection_details.get(
             "create_external_users", False
         )
-        self.operating_system = self.connection_details.get("operating_system", "").lower()
+        self.operating_system = self.connection_details.get(
+            "operating_system", ""
+        ).lower()
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping(

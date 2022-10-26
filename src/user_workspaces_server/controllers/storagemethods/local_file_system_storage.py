@@ -6,8 +6,9 @@ import shutil
 
 from django.forms import model_to_dict
 
-from user_workspaces_server.controllers.storagemethods.abstract_storage import \
-    AbstractStorage
+from user_workspaces_server.controllers.storagemethods.abstract_storage import (
+    AbstractStorage,
+)
 from user_workspaces_server.exceptions import WorkspaceClientException
 
 logger = logging.getLogger(__name__)
