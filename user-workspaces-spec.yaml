@@ -68,6 +68,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+            - idle
+            - active
+            - deleting
+            - error
         workspace_details:
           type: object
           properties:
@@ -120,6 +125,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+            - running
+            - pending
+            - complete
+            - failed
         datetime_created:
           type: string
         datetime_start:
@@ -178,6 +188,16 @@ paths:
           schema:
             type: string
           description: Description of workspace
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              - idle
+              - active
+              - deleting
+              - error
+          description: Workspace status
       responses:
         "200":
           description: successful operation
@@ -346,6 +366,11 @@ paths:
           name: status
           schema:
             type: string
+            enum:
+              - running
+              - pending
+              - complete
+              - failed
           description: Status of job.
       responses:
         "200":
