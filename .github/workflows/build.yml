@@ -5,7 +5,10 @@ name: Generate Build File
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "development" branch
-  pull_request:
+  push:
+    branches:
+      - main
+      - development
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
