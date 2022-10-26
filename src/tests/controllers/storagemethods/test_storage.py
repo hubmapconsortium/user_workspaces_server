@@ -12,7 +12,7 @@ class TestStorage(AbstractStorage):
         # The correct way to do this is to make sure that path_to_delete is a child of self.root_dir
         # IE, path_to_delete should not be a parent of root_dir (as is the case for if path is /)
         # it should not be a sibling of root_dir, nor should it be equal to root_dir
-        return True
+        return False if path == "." else True
 
     def create_dir(self, path):
         pass
