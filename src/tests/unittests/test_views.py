@@ -316,6 +316,57 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             message="Workspace details not JSON.",
         )
 
+    def test_workspace_data_update_invalid_symlinks_structure_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {"symlinks": ""},
+        }
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="'symlinks' index must contain a list.",
+        )
+
+    def test_workspace_data_update_invalid_files_structure_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {"files": ""},
+        }
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="'files' index must contain a list.",
+        )
+
+    def test_workspace_data_update_minimum_valid_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {"symlinks": [], "files": []},
+        }
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Update successful.",
+        )
+
     def test_workspace_invalid_put_type_put(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.put(
