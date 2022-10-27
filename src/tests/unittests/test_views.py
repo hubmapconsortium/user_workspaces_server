@@ -518,6 +518,7 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
 
     def test_workspace_active_job_delete(self):
         job_data = {
+            "user_id": self.workspace.user_id,
             "workspace_id": self.workspace,
             "job_type": "TestJobType",
             "datetime_created": datetime.now(),
@@ -576,6 +577,7 @@ class JobAPITestCase(UserWorkspacesAPITestCase):
         cls.workspace.save()
 
         job_data = {
+            "user_id": cls.workspace.user_id,
             "workspace_id": cls.workspace,
             "job_type": "TestJobType",
             "datetime_created": datetime.now(),
@@ -632,23 +634,25 @@ class JobPUTAPITests(JobAPITestCase):
             message="Invalid PUT type passed.",
         )
 
-    def test_job_stop_failed_put(self):
-        self.client.force_authenticate(user=self.user)
-        self.job.resource_job_id = 0
-        self.job.save()
-        response = self.client.put(reverse("jobs_put_type", args=[self.job.id, "stop"]))
-        self.assertValidResponse(
-            response,
-            status.HTTP_400_BAD_REQUEST,
-            success=False,
-            message="Failed to stop job.",
-        )
-
     def test_job_stop_resource_job_id_negative_one_put(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.put(reverse("jobs_put_type", args=[self.job.id, "stop"]))
         self.assertValidResponse(
             response, status.HTTP_200_OK, success=True, message="Successful stop."
+        )
+
+    def test_job_stop_complete_status_failed_put(self):
+        self.client.force_authenticate(user=self.user)
+        self.job.resource_job_id = 1
+        self.job.status = Job.Status.COMPLETE
+        self.job.save()
+        response = self.client.put(reverse("jobs_put_type", args=[self.job.id, "stop"]))
+        print(response.content)
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="This job is not running or pending.",
         )
 
     def test_job_stop_put(self):
@@ -657,7 +661,7 @@ class JobPUTAPITests(JobAPITestCase):
         self.job.save()
         response = self.client.put(reverse("jobs_put_type", args=[self.job.id, "stop"]))
         self.assertValidResponse(
-            response, status.HTTP_200_OK, success=True, message="Successful stop."
+            response, status.HTTP_200_OK, success=True, message="Job queued to stop."
         )
 
 
