@@ -163,8 +163,13 @@ components:
     JobTypeResponse:
       type: object
       properties:
-        id:
-          type: string
+        job_id:
+          type: object
+          properties:
+            job_id:
+              type: string
+            name:
+              type: string
     GeneralResponse:
       type: object
       properties:
@@ -423,7 +428,7 @@ paths:
     get:
       tags:
         - JobTypes
-      summary: Get a list of job types that can be run. NOT AVAILABLE YET.
+      summary: Get the job types that can be run.
       responses:
         "200":
           description: successful operation
