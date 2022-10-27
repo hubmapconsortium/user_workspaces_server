@@ -43,7 +43,9 @@ class Job(models.Model):
         RUNNING = "running"
         COMPLETE = "complete"
         FAILED = "failed"
+        STOPPING = "stopping"
 
+    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
     resource_job_id = models.IntegerField()
     job_type = models.CharField(max_length=64)
