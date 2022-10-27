@@ -24,10 +24,12 @@ class LocalFileSystemStorage(AbstractStorage):
         if not os.path.commonpath([abs_root_dir]) == os.path.commonpath(
             [abs_root_dir, workspace_path]
         ):
-            logger.error("Workspace path is not a child of the root_dir")
+            logger.error(
+                f"Workspace path {workspace_path} is not a child of the root_dir"
+            )
             return False
         elif workspace_path == abs_root_dir:
-            logger.error("Workspace path is equal to root_dir")
+            logger.error(f"Workspace path {workspace_path} is equal to root_dir")
             return False
         else:
             return True

@@ -130,6 +130,7 @@ components:
             - pending
             - complete
             - failed
+            - stopping
         datetime_created:
           type: string
         datetime_start:
@@ -371,6 +372,7 @@ paths:
               - pending
               - complete
               - failed
+              - stopping
           description: Status of job.
       responses:
         "200":
