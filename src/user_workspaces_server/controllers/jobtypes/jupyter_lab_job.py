@@ -5,7 +5,7 @@ from urllib import parse
 from django.apps import apps
 from django.template import loader
 
-from user_workspaces_server.controllers.job_types.abstract_job import AbstractJob
+from user_workspaces_server.controllers.jobtypes.abstract_job import AbstractJob
 
 logger = logging.getLogger(__name__)
 
