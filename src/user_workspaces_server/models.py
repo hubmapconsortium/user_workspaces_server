@@ -20,6 +20,9 @@ class Workspace(models.Model):
         max_length=64, default=Status.IDLE, choices=Status.choices
     )
 
+    def __str__(self):
+        return f"{self.id}: {self.user_id.username} - {self.status}"
+
     @staticmethod
     def get_query_param_fields():
         return ["name", "description", "status"]
@@ -59,6 +62,12 @@ class Job(models.Model):
     core_hours = models.DecimalField(max_digits=10, decimal_places=5)
     job_details = models.JSONField()
 
+    def __str__(self):
+        return (
+            f"{self.id}: {self.user_id.username if self.user_id else 'User Missing'} - "
+            f"Workspace {self.workspace_id.id if self.workspace_id else 'Deleted'} - {self.status}"
+        )
+
     @staticmethod
     def get_query_param_fields():
         return ["workspace_id", "resource_job_id", "job_type", "status"]
@@ -93,3 +102,9 @@ class ExternalUserMapping(models.Model):
     external_username = models.CharField(max_length=64)
     user_authentication_name = models.CharField(max_length=64)
     external_user_details = models.JSONField(blank=True, null=True)
+
+    def __str__(self):
+        return (
+            f"{self.id}: {self.user_id.username if self.user_id else 'User Missing'} -"
+            f" {self.user_authentication_name}"
+        )
