@@ -25,14 +25,29 @@ def update_job_status(job_id):
 
     resource = apps.get_app_config("user_workspaces_server").main_resource
     resource_job_info = resource.get_resource_job(job)
-    job.status = resource_job_info["status"]
+    current_job_status = resource_job_info["status"]
 
+    # Check the existing job status
+    # If the job is STOPPING, FAILED, or COMPLETE
     # Status should only ever be one of the following:
-    # pending, running, complete, failed
-    if job.status == models.Job.Status.RUNNING and job.datetime_start is None:
+    # pending, running, complete, failed, stopping
+
+    job.refresh_from_db()
+
+    if current_job_status == models.Job.Status.RUNNING and job.datetime_start is None:
         job.datetime_start = datetime.datetime.now()
-    elif job.status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
+    elif current_job_status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         job.datetime_end = datetime.datetime.now()
+
+    job.status = (
+        job.status
+        if (
+            job.status == models.Job.Status.STOPPING
+            and current_job_status
+            not in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]
+        )
+        else current_job_status
+    )
 
     # TODO: Initialize appropriate JobType
     job_type = JupyterLabJob(
@@ -75,7 +90,11 @@ def queue_job_update(task):
         logger.exception(f"Job {job_id} does not exist.")
         raise
 
-    if job.status in [models.Job.Status.PENDING, models.Job.Status.RUNNING]:
+    if job.status in [
+        models.Job.Status.PENDING,
+        models.Job.Status.RUNNING,
+        models.Job.Status.STOPPING,
+    ]:
         async_task(
             "user_workspaces_server.tasks.update_job_status",
             job_id,
@@ -112,6 +131,19 @@ def update_job_core_hours(job_id):
         async_task(
             "user_workspaces_server.tasks.update_user_quota_core_hours", user_quota.id
         )
+
+
+def stop_job(job_id):
+    try:
+        job = models.Job.objects.get(pk=job_id)
+    except models.Job.DoesNotExist:
+        logger.exception(f"Job {job_id} does not exist.")
+        raise
+
+    resource = apps.get_app_config("user_workspaces_server").main_resource
+    if not resource.stop_job(job):
+        job.status = models.Job.Status.FAILED
+        job.save()
 
 
 def delete_workspace(workspace_id):
