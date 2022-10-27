@@ -247,6 +247,7 @@ class WorkspaceView(APIView):
             # TODO: Check whether user has permission for this resource (and resource storage).
 
             job_data = {
+                "user_id": workspace.user_id,
                 "workspace_id": workspace,
                 "job_type": body["job_type"],
                 "datetime_created": datetime.now(),
@@ -388,17 +389,21 @@ class JobView(APIView):
 
         if put_type.lower() == "stop":
             if job.resource_job_id == -1:
-                job.status = job.Status.COMPLETE
+                job.status = models.Job.Status.COMPLETE
                 job.save()
                 return JsonResponse({"message": "Successful stop.", "success": True})
 
-            resource = apps.get_app_config("user_workspaces_server").main_resource
+            if job.status in [
+                models.Job.Status.COMPLETE,
+                models.Job.Status.FAILED,
+                models.Job.Status.STOPPING,
+            ]:
+                raise WorkspaceClientException("This job is not running or pending.")
 
-            # This needs to be done asynchronously.
-            if resource.stop_job(job):
-                return JsonResponse({"message": "Successful stop.", "success": True})
-            else:
-                raise WorkspaceClientException("Failed to stop job.")
+            job.status = models.Job.Status.STOPPING
+            job.save()
+            async_task("user_workspaces_server.tasks.stop_job", job.pk)
+            return JsonResponse({"message": "Job queued to stop.", "success": True})
         else:
             raise WorkspaceClientException("Invalid PUT type passed.")
 
