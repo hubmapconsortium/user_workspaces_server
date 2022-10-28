@@ -1,9 +1,9 @@
 import os
 
-from . import utils
-
 from django.apps import AppConfig
 from django.conf import settings
+
+from . import utils
 
 
 class UserWorkspacesServerConfig(AppConfig):
