@@ -52,7 +52,8 @@ components:
       properties:
         job_type:
           type: string
-          example: 'JupyterLabJob'
+          description: This should be the id index of one of the JobType entries
+          example: 'jupyter_lab'
         job_details:
           type: object
     WorkspaceDataResponse:
@@ -367,7 +368,7 @@ paths:
           name: job_type
           schema:
             type: string
-          description: Type of job.
+          description: This should be the id index of one of the JobType entries.
         - in: query
           name: status
           schema:
