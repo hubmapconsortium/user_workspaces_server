@@ -23,10 +23,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import user_workspaces_server.controllers.job_types.jupyter_lab_job
 from user_workspaces_server.exceptions import WorkspaceClientException
 
-from . import models
+from . import models, utils
 
 logger = logging.getLogger(__name__)
 
@@ -265,13 +264,23 @@ class WorkspaceView(APIView):
             job.save()
 
             # I think that instantiating the job here and passing that through to the resource makes the most sense
-            # TODO: Grab the correct job type based on the request
-            job_to_launch = user_workspaces_server.controllers.job_types.jupyter_lab_job.JupyterLabJob(
-                settings.UWS_CONFIG["available_job_types"]["jupyter_lab"][
-                    "environment_details"
-                ][settings.UWS_CONFIG["main_resource"]],
-                model_to_dict(job),
-            )
+            try:
+                job_type_config = apps.get_app_config(
+                    "user_workspaces_server"
+                ).available_job_types.get(body["job_type"])
+
+                job_to_launch = utils.generate_controller_object(
+                    job_type_config["job_type"],
+                    "jobtypes",
+                    {
+                        "config": job_type_config["environment_details"][
+                            settings.UWS_CONFIG["main_resource"]
+                        ],
+                        "job_details": model_to_dict(job),
+                    },
+                )
+            except Exception:
+                raise WorkspaceClientException("Invalid job type specified")
 
             resource_job_id = resource.launch_job(job_to_launch, workspace)
 
@@ -410,8 +419,12 @@ class JobView(APIView):
 
 class JobTypeView(APIView):
     def get(self, request):
-        # TODO: Grab job types from the config.
         job_types = {}
+        for job_type_id, job_type_dict in apps.get_app_config(
+            "user_workspaces_server"
+        ).available_job_types.items():
+            job_types[job_type_id] = {"id": job_type_id, "name": job_type_dict["name"]}
+
         return JsonResponse(
             {
                 "message": "Successful.",
