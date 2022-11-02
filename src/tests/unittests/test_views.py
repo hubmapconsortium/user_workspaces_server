@@ -431,7 +431,7 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
     # TODO: Update this test once we allow for passing job types
     def test_workspace_start_minimum_valid_put(self):
         self.client.force_authenticate(user=self.user)
-        body = {"job_type": "test", "job_details": {}}
+        body = {"job_type": "test_job", "job_details": {}}
         response = self.client.put(
             reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
         )
@@ -647,7 +647,6 @@ class JobPUTAPITests(JobAPITestCase):
         self.job.status = Job.Status.COMPLETE
         self.job.save()
         response = self.client.put(reverse("jobs_put_type", args=[self.job.id, "stop"]))
-        print(response.content)
         self.assertValidResponse(
             response,
             status.HTTP_400_BAD_REQUEST,
@@ -673,4 +672,6 @@ class JobTypeGETAPITests(JobTypeAPITestCase):
     def test_job_types_get(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.job_types_url)
-        self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+        self.assertValidResponse(
+            response, status.HTTP_200_OK, success=True, message="Successful."
+        )

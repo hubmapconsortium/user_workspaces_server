@@ -9,9 +9,7 @@ from django.conf import settings
 from django.db.models import Sum
 from django_q.tasks import async_task
 
-from user_workspaces_server.controllers.job_types.jupyter_lab_job import JupyterLabJob
-
-from . import models
+from . import models, utils
 
 logger = logging.getLogger(__name__)
 
@@ -49,13 +47,23 @@ def update_job_status(job_id):
         else current_job_status
     )
 
-    # TODO: Initialize appropriate JobType
-    job_type = JupyterLabJob(
-        settings.UWS_CONFIG["available_job_types"]["jupyter_lab"][
-            "environment_details"
-        ][settings.UWS_CONFIG["main_resource"]],
-        job,
-    )
+    try:
+        job_type_config = apps.get_app_config(
+            "user_workspaces_server"
+        ).available_job_types.get(job.job_type)
+
+        job_type = utils.generate_controller_object(
+            job_type_config["job_type"],
+            "jobtypes",
+            {
+                "config": job_type_config["environment_details"][
+                    settings.UWS_CONFIG["main_resource"]
+                ],
+                "job_details": job,
+            },
+        )
+    except Exception:
+        raise Exception("Invalid job type specified")
 
     # TODO: Make sure that we're using the resource to do this type of status check
     job.job_details["current_job_details"].update(job_type.status_check(job))

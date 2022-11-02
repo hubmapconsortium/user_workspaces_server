@@ -3,36 +3,7 @@ import os
 from django.apps import AppConfig
 from django.conf import settings
 
-
-def translate_class_to_module(class_name):
-    translation = {
-        "SlurmAPIResource": "slurm_api_resource",
-        "LocalResource": "local_resource",
-        "LocalFileSystemStorage": "local_file_system_storage",
-        "HubmapLocalFileSystemStorage": "hubmap_local_file_system_storage",
-        "GlobusUserAuthentication": "globus_user_authentication",
-        "LocalUserAuthentication": "local_user_authentication",
-        "PSCAPIUserAuthentication": "psc_api_user_authentication",
-    }
-
-    try:
-        return translation.get(class_name)
-    except Exception as e:
-        raise e
-
-
-def generate_object(class_name, module_type, params):
-    try:
-        o = getattr(
-            __import__(
-                f"user_workspaces_server.controllers.{module_type}.{translate_class_to_module(class_name)}",
-                fromlist=[class_name],
-            ),
-            class_name,
-        )(**params)
-        return o
-    except Exception as e:
-        raise e
+from . import utils
 
 
 class UserWorkspacesServerConfig(AppConfig):
@@ -52,6 +23,7 @@ class UserWorkspacesServerConfig(AppConfig):
         ]
         config_storage = settings.UWS_CONFIG["available_storage"]
         config_resource = settings.UWS_CONFIG["available_resources"]
+        config_job_types = settings.UWS_CONFIG["available_job_types"]
 
         for (
             user_authentication_name,
@@ -59,14 +31,16 @@ class UserWorkspacesServerConfig(AppConfig):
         ) in config_user_authentication.items():
             self.available_user_authentication_methods[
                 user_authentication_name
-            ] = generate_object(
+            ] = utils.generate_controller_object(
                 user_authentication_dict["user_authentication_type"],
                 "userauthenticationmethods",
                 {"config": user_authentication_dict},
             )
 
         for storage_name, storage_dict in config_storage.items():
-            self.available_storage_methods[storage_name] = generate_object(
+            self.available_storage_methods[
+                storage_name
+            ] = utils.generate_controller_object(
                 storage_dict["storage_type"],
                 "storagemethods",
                 {
@@ -78,7 +52,7 @@ class UserWorkspacesServerConfig(AppConfig):
             )
 
         for resource_name, resource_dict in config_resource.items():
-            self.available_resources[resource_name] = generate_object(
+            self.available_resources[resource_name] = utils.generate_controller_object(
                 resource_dict["resource_type"],
                 "resources",
                 {
@@ -91,6 +65,8 @@ class UserWorkspacesServerConfig(AppConfig):
                     ],
                 },
             )
+
+        self.available_job_types = config_job_types
 
         self.api_user_authentication = self.available_user_authentication_methods[
             settings.UWS_CONFIG["api_user_authentication"]
