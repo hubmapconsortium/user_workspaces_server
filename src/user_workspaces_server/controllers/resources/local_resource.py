@@ -71,7 +71,7 @@ class LocalResource(AbstractResource):
             return resource_job
         except Exception as e:
             logger.exception(repr(e))
-            return {"status": "complete"}
+            return {"status": Job.Status.COMPLETE}
 
     def get_job_core_hours(self, job):
         datetime_running = job.datetime_end - job.datetime_start

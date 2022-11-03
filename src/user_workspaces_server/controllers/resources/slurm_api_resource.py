@@ -7,6 +7,7 @@ from rest_framework.exceptions import APIException
 from user_workspaces_server.controllers.resources.abstract_resource import (
     AbstractResource,
 )
+from user_workspaces_server.models import Job
 
 logger = logging.getLogger(__name__)
 
@@ -18,13 +19,13 @@ class SlurmAPIResource(AbstractResource):
 
     def translate_status(self, status):
         status_list = {
-            "PENDING": "pending",
-            "RUNNING": "running",
-            "SUSPENDED": "pending",
-            "COMPLETING": "running",
-            "COMPLETED": "complete",
-            "FAILED": "failed",
-            "CANCELLED": "complete",
+            "PENDING": Job.Status.PENDING,
+            "RUNNING": Job.Status.RUNNING,
+            "SUSPENDED": Job.Status.PENDING,
+            "COMPLETING": Job.Status.RUNNING,
+            "COMPLETED": Job.Status.COMPLETE,
+            "FAILED": Job.Status.FAILED,
+            "CANCELLED": Job.Status.COMPLETE,
         }
 
         return status_list[status]
@@ -111,7 +112,7 @@ class SlurmAPIResource(AbstractResource):
             return resource_job
         except Exception as e:
             logger.error(repr(e))
-            return {"status": "complete"}
+            return {"status": Job.Status.COMPLETE}
 
     def get_job_core_hours(self, job):
         workspace = job.workspace_id
