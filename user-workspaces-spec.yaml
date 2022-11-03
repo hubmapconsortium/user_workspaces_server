@@ -164,10 +164,10 @@ components:
     JobTypeResponse:
       type: object
       properties:
-        job_id:
+        job_type_id:
           type: object
           properties:
-            job_id:
+            id:
               type: string
             name:
               type: string
