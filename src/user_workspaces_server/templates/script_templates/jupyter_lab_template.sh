@@ -20,6 +20,10 @@ CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
 VERSION=$(python -m jupyterlab --version)
 
+random_number () {
+    shuf -i ${1}-${2} -n 1
+}
+
 port_used_python() {
   python -c "import socket; socket.socket().connect(('$1',$2))" >/dev/null 2>&1
 }
