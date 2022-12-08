@@ -78,7 +78,7 @@ find_port () {
   echo "${port}"
 }
 
-port=$(find_port)
+PORT=$(find_port)
 
 # Generate Jupyter configuration file with secure file permissions based on JupyterLab version
 (
@@ -91,7 +91,7 @@ if ${VERSION:0:1} < 3:
   c.NotebookApp.notebook_dir = "{{ workspace_full_path }}"
   c.NotebookApp.disable_check_xsrf = True
   c.NotebookApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
-  c.NotebookApp.port = $(port)
+  c.NotebookApp.port = ${PORT}
 else:
   c.ServerApp.ip = '*'
   c.ServerApp.open_browser = False
@@ -99,7 +99,7 @@ else:
   c.ServerApp.root_dir = "{{ workspace_full_path }}"
   c.ServerApp.disable_check_xsrf = True
   c.ServerApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
-  c.ServerApp.port = $(port)
+  c.ServerApp.port = ${PORT}
 EOL
 )
 
