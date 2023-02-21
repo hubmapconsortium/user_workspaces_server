@@ -40,7 +40,8 @@
         "main_resource": {
           "python_version": "python3.8",
           "module_manager": "virtualenv",
-          "modules": ["jupyterlab"]
+          "modules": ["jupyterlab"],
+          "time_limit": "60"
         }
       }
     },
