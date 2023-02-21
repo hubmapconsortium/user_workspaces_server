@@ -26,6 +26,7 @@ class SlurmAPIResource(AbstractResource):
             "COMPLETED": Job.Status.COMPLETE,
             "FAILED": Job.Status.FAILED,
             "CANCELLED": Job.Status.COMPLETE,
+            "TIMEOUT": Job.Status.COMPLETE,
         }
 
         return status_list[status]
@@ -51,6 +52,8 @@ class SlurmAPIResource(AbstractResource):
             "Slurm-User": user_info.external_username,
         }
 
+        time_limit = job.config.get("time_limit", "30")
+
         body = {
             "script": job.get_script({"workspace_full_path": workspace_full_path}),
             "job": {
@@ -68,6 +71,8 @@ class SlurmAPIResource(AbstractResource):
                     "PATH": "/bin/:/usr/bin/:/usr/local/bin/",
                     "LD_LIBRARY_PATH": "/lib/:/lib64/:/usr/local/lib",
                 },
+                "time_limit": time_limit,
+                "requeue": False,
             },
         }
 
