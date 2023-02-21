@@ -71,6 +71,7 @@ class SlurmAPIResource(AbstractResource):
                     "LD_LIBRARY_PATH": "/lib/:/lib64/:/usr/local/lib",
                 },
                 "time_limit": time_limit,
+                "requeue": False
             },
         }
 
