@@ -51,9 +51,7 @@ class SlurmAPIResource(AbstractResource):
             "Slurm-User": user_info.external_username,
         }
 
-        time_limit = job.config.environment_details.get("slurm_api_resource", {}).get(
-            "time_limit", "30"
-        )
+        time_limit = job.config.environment_details.get("time_limit", "30")
 
         body = {
             "script": job.get_script({"workspace_full_path": workspace_full_path}),
