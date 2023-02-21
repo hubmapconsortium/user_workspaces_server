@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user_workspaces_server", "0005_alter_job_datetime_start"),
     ]

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user_workspaces_server", "0006_externalusermapping_external_user_details"),
     ]
