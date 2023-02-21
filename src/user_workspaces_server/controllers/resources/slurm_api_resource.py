@@ -26,7 +26,7 @@ class SlurmAPIResource(AbstractResource):
             "COMPLETED": Job.Status.COMPLETE,
             "FAILED": Job.Status.FAILED,
             "CANCELLED": Job.Status.COMPLETE,
-            "TIMEOUT": Job.Status.STOPPING,
+            "TIMEOUT": Job.Status.COMPLETE,
         }
 
         return status_list[status]
