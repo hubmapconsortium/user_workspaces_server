@@ -117,12 +117,21 @@ class SlurmAPIResource(AbstractResource):
             resource_job["status"] = self.translate_status(resource_job["job_state"])
             
             end_time = resource_job.get("end_time")
+            
+            #TODO_Here under resource_job["time_left"] we want to expose this to the back-end
+            # resource_job["current_job_details"] = {}
+            # resource_job["current_job_details"][new_variable_to_expose] = variable
             if end_time is not None:
-                resource_job["time_left"] = max(0, end_time - time.time())
+                time_left = max(0, end_time - time.time())
             else:
-                resource_job["time_left"] = None  # or some other value that indicates unknown
+                time_left = None  # or some other value that indicates unknown
+                
+            resource_job["current_job_details"] = {
+                "time_left" : time_left
+            }
                 
             return resource_job
+        
         except Exception as e:
             logger.error(repr(e))
             return {"status": Job.Status.COMPLETE}
