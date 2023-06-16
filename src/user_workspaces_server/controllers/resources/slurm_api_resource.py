@@ -103,7 +103,6 @@ class SlurmAPIResource(AbstractResource):
             "Slurm-Token": token,
             "Slurm-User": user_info.external_username,
         }
-
         try:
             resource_job = http_r.get(
                 f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/{job.resource_job_id}',
@@ -111,27 +110,20 @@ class SlurmAPIResource(AbstractResource):
             ).json()
             if len(resource_job["errors"]):
                 raise APIException(resource_job["errors"])
-
             resource_job = resource_job["jobs"][0]
-            
             resource_job["status"] = self.translate_status(resource_job["job_state"])
-            
             end_time = resource_job.get("end_time")
             if end_time is not None:
                 time_left = max(0, end_time - time.time())
             else:
                 time_left = None  # or some other value that indicates unknown
-                
             resource_job["current_job_details"] = {
                 "time_left" : time_left
             }
-                
             return resource_job
-        
         except Exception as e:
             logger.error(repr(e))
             return {"status": Job.Status.COMPLETE}
-
     def get_job_core_hours(self, job):
         workspace = job.workspace_id
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
