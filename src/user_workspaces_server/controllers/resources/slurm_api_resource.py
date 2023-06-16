@@ -118,12 +118,13 @@ class SlurmAPIResource(AbstractResource):
             else:
                 time_left = None  # or some other value that indicates unknown
             resource_job["current_job_details"] = {
-                "time_left" : time_left
+                "time_left":time_left
             }
             return resource_job
         except Exception as e:
             logger.error(repr(e))
             return {"status": Job.Status.COMPLETE}
+        
     def get_job_core_hours(self, job):
         workspace = job.workspace_id
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
