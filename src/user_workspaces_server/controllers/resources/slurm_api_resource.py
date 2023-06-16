@@ -117,9 +117,10 @@ class SlurmAPIResource(AbstractResource):
                 time_left = max(0, end_time - time.time())
             else:
                 time_left = None  # or some other value that indicates unknown
-            resource_job["current_job_details"] = {
-                "time_left": time_left
-            }
+            # resource_job["current_job_details"] = {
+            #     "time_left": time_left
+            # }
+            resource_job["current_job_details"] = {"time_left": time_left}
             return resource_job
         except Exception as e:
             logger.error(repr(e))
