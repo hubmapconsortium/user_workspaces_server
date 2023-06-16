@@ -124,7 +124,7 @@ class SlurmAPIResource(AbstractResource):
         except Exception as e:
             logger.error(repr(e))
             return {"status": Job.Status.COMPLETE}
-        
+
     def get_job_core_hours(self, job):
         workspace = job.workspace_id
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
