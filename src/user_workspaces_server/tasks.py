@@ -37,6 +37,9 @@ def update_job_status(job_id):
     elif current_job_status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         job.datetime_end = datetime.datetime.now()
 
+    if current_job_status == models.Job.Status.FAILED:
+        logger.error(f"Job {job_id} for user {job.user_id.username} has failed.")
+
     job.status = (
         job.status
         if (
