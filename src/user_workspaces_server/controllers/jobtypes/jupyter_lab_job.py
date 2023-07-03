@@ -6,6 +6,7 @@ from django.apps import apps
 from django.template import loader
 
 from user_workspaces_server.controllers.jobtypes.abstract_job import AbstractJob
+from user_workspaces_server import models
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,11 @@ class JupyterLabJob(AbstractJob):
     def status_check(self, job_model):
         output_file_name = f"JupyterLabJob_{job_model.id}_output.log"
         resource = apps.get_app_config("user_workspaces_server").main_resource
+
+        if job_model.status == models.Job.Status.FAILED:
+            return {
+                "message": "This job has failed. Support team has been notified and will investigate the error."
+            }
 
         # Check to see if we already have a connection url in place.
         if "connection_params" in job_model.job_details["current_job_details"]:
