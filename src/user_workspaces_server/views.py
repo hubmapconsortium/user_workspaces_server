@@ -40,7 +40,7 @@ class UserWorkspacesServerTokenView(ObtainAuthToken):
         # hit the api_authenticate method
         api_user = api_user_authentication.api_authenticate(request)
 
-        if type(api_user) == User:
+        if isinstance(api_user, User):
             token, created = Token.objects.get_or_create(user=api_user)
             result = JsonResponse(
                 {
@@ -49,7 +49,7 @@ class UserWorkspacesServerTokenView(ObtainAuthToken):
                     "token": token.key,
                 }
             )
-        elif type(api_user) == Response:
+        elif isinstance(api_user, Response):
             result = api_user
         else:
             raise AuthenticationFailed
@@ -92,7 +92,7 @@ class WorkspaceView(APIView):
 
         workspace_details = body.get("workspace_details", {})
 
-        if type(workspace_details) != dict:
+        if workspace_details is dict:
             raise ParseError("Workspace details not JSON.")
 
         workspace_data = {
@@ -202,7 +202,7 @@ class WorkspaceView(APIView):
 
             workspace_details = body.get("workspace_details", {})
 
-            if type(workspace_details) != dict:
+            if workspace_details is dict:
                 raise ParseError("Workspace details not JSON.")
 
             try:
@@ -237,7 +237,7 @@ class WorkspaceView(APIView):
 
             job_details = body.get("job_details", {})
 
-            if type(job_details) != dict:
+            if job_details is dict:
                 raise ParseError("Job details not JSON.")
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
