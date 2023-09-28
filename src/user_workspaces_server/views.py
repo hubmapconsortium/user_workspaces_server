@@ -92,7 +92,7 @@ class WorkspaceView(APIView):
 
         workspace_details = body.get("workspace_details", {})
 
-        if workspace_details is not dict:
+        if not isinstance(workspace_details, dict):
             raise ParseError("Workspace details not JSON.")
 
         workspace_data = {
@@ -202,7 +202,7 @@ class WorkspaceView(APIView):
 
             workspace_details = body.get("workspace_details", {})
 
-            if workspace_details is not dict:
+            if not isinstance(workspace_details, dict):
                 raise ParseError("Workspace details not JSON.")
 
             try:
@@ -237,7 +237,7 @@ class WorkspaceView(APIView):
 
             job_details = body.get("job_details", {})
 
-            if job_details is not dict:
+            if not isinstance(job_details, dict):
                 raise ParseError("Job details not JSON.")
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
