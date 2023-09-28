@@ -2,59 +2,25 @@ import json
 import logging
 import os
 from datetime import datetime
-from pathlib import Path
 
-import requests as http_r
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django_q.tasks import async_task
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.exceptions import (
     APIException,
-    AuthenticationFailed,
     NotFound,
     ParseError,
 )
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from user_workspaces_server.exceptions import WorkspaceClientException
 
-from . import models, utils
+from user_workspaces_server import models, utils
 
 logger = logging.getLogger(__name__)
-
-
-# TODO: Add more robust query param support. Filter types, filtering by date.
-class UserWorkspacesServerTokenView(ObtainAuthToken):
-    def post(self, request, *args, **kwargs):
-        api_user_authentication = apps.get_app_config(
-            "user_workspaces_server"
-        ).api_user_authentication
-
-        # hit the api_authenticate method
-        api_user = api_user_authentication.api_authenticate(request)
-
-        if type(api_user) == User:
-            token, created = Token.objects.get_or_create(user=api_user)
-            result = JsonResponse(
-                {
-                    "success": True,
-                    "message": "Successful authentication.",
-                    "token": token.key,
-                }
-            )
-        elif type(api_user) == Response:
-            result = api_user
-        else:
-            raise AuthenticationFailed
-
-        return result
 
 
 class WorkspaceView(APIView):
@@ -92,7 +58,7 @@ class WorkspaceView(APIView):
 
         workspace_details = body.get("workspace_details", {})
 
-        if type(workspace_details) != dict:
+        if workspace_details is not dict:
             raise ParseError("Workspace details not JSON.")
 
         workspace_data = {
@@ -202,7 +168,7 @@ class WorkspaceView(APIView):
 
             workspace_details = body.get("workspace_details", {})
 
-            if type(workspace_details) != dict:
+            if workspace_details is not dict:
                 raise ParseError("Workspace details not JSON.")
 
             try:
@@ -237,7 +203,7 @@ class WorkspaceView(APIView):
 
             job_details = body.get("job_details", {})
 
-            if type(job_details) != dict:
+            if job_details is not dict:
                 raise ParseError("Job details not JSON.")
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
@@ -368,180 +334,3 @@ class WorkspaceView(APIView):
                 "success": True,
             }
         )
-
-
-class JobView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, job_id=None):
-        job = models.Job.objects.filter(workspace_id__user_id=request.user)
-
-        if job_id:
-            job = job.filter(id=job_id)
-        elif params := request.GET:
-            for key in set(params.keys()).intersection(
-                set(models.Job.get_query_param_fields())
-            ):
-                job = job.filter(**{key: params[key]})
-
-        job = list(job.all().values(*models.Job.get_dict_fields()))
-
-        return JsonResponse(
-            {"message": "Successful.", "success": True, "data": {"jobs": job}}
-        )
-
-    def put(self, request, job_id, put_type):
-        try:
-            job = models.Job.objects.get(workspace_id__user_id=request.user, id=job_id)
-        except models.Job.DoesNotExist:
-            raise NotFound(f"Job {job_id} not found for user.")
-
-        if put_type.lower() == "stop":
-            if job.resource_job_id == -1:
-                job.status = models.Job.Status.COMPLETE
-                job.save()
-                return JsonResponse({"message": "Successful stop.", "success": True})
-
-            if job.status in [
-                models.Job.Status.COMPLETE,
-                models.Job.Status.FAILED,
-                models.Job.Status.STOPPING,
-            ]:
-                raise WorkspaceClientException("This job is not running or pending.")
-
-            job.status = models.Job.Status.STOPPING
-            job.save()
-            async_task("user_workspaces_server.tasks.stop_job", job.pk)
-            return JsonResponse({"message": "Job queued to stop.", "success": True})
-        else:
-            raise WorkspaceClientException("Invalid PUT type passed.")
-
-
-class JobTypeView(APIView):
-    def get(self, request):
-        job_types = {}
-        for job_type_id, job_type_dict in apps.get_app_config(
-            "user_workspaces_server"
-        ).available_job_types.items():
-            job_types[job_type_id] = {"id": job_type_id, "name": job_type_dict["name"]}
-
-        return JsonResponse(
-            {
-                "message": "Successful.",
-                "success": True,
-                "data": {"job_types": job_types},
-            }
-        )
-
-
-class PassthroughView(APIView):
-    permission_classes = []
-
-    def get(self, request, hostname, job_id, remainder=None):
-        try:
-            job_model = models.Job.objects.get(pk=job_id)
-            proxy_details = job_model.job_details["current_job_details"][
-                "proxy_details"
-            ]
-            port = proxy_details["port"]
-            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.get(url, cookies=request.COOKIES)
-            return HttpResponse(
-                response, headers=response.headers, status=response.status_code
-            )
-        except Exception:
-            logger.exception("Passthrough GET failure")
-            raise APIException
-
-    def post(self, request, hostname, job_id, remainder=None):
-        try:
-            job_model = models.Job.objects.get(pk=job_id)
-            proxy_details = job_model.job_details["current_job_details"][
-                "proxy_details"
-            ]
-            port = proxy_details["port"]
-            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.post(url, data=request.body, cookies=request.COOKIES)
-            return HttpResponse(
-                response, headers=response.headers, status=response.status_code
-            )
-        except Exception:
-            logger.exception("Passthrough POST failure")
-            raise APIException
-
-    def patch(self, request, hostname, job_id, remainder=None):
-        try:
-            job_model = models.Job.objects.get(pk=job_id)
-            proxy_details = job_model.job_details["current_job_details"][
-                "proxy_details"
-            ]
-            port = proxy_details["port"]
-            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.patch(url, data=request.body, cookies=request.COOKIES)
-            return HttpResponse(
-                response, headers=response.headers, status=response.status_code
-            )
-        except Exception:
-            logger.exception("Passthrough PATCH failure")
-            raise APIException
-
-    def put(self, request, hostname, job_id, remainder=None):
-        try:
-            job_model = models.Job.objects.get(pk=job_id)
-            proxy_details = job_model.job_details["current_job_details"][
-                "proxy_details"
-            ]
-            port = proxy_details["port"]
-            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.put(url, data=request.body, cookies=request.COOKIES)
-            return HttpResponse(
-                response, headers=response.headers, status=response.status_code
-            )
-        except Exception:
-            logger.exception("Passthrough PUT failure")
-            raise APIException
-
-    def delete(self, request, hostname, job_id, remainder=None):
-        try:
-            job_model = models.Job.objects.get(pk=job_id)
-            proxy_details = job_model.job_details["current_job_details"][
-                "proxy_details"
-            ]
-            port = proxy_details["port"]
-            url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.delete(url, data=request.body, cookies=request.COOKIES)
-            return HttpResponse(
-                response, headers=response.headers, status=response.status_code
-            )
-        except Exception:
-            logger.exception("Passthrough DELETE failure")
-            raise APIException
-
-
-class StatusView(APIView):
-    permission_classes = []
-
-    def get(self, request):
-        base_dir = Path(__file__).resolve().parent.parent
-        version_file_path = os.path.join(base_dir, "VERSION")
-        build_file_path = os.path.join(base_dir, "BUILD")
-
-        version = (
-            open(version_file_path).read().strip()
-            if os.path.exists(version_file_path)
-            else "invalid_version"
-        )
-        build = (
-            open(build_file_path).read().strip()
-            if os.path.exists(build_file_path)
-            else "invalid_build"
-        )
-
-        response_data = {
-            "message": "",
-            "success": True,
-            "version": version,
-            "build": build,
-        }
-
-        return JsonResponse(response_data)
