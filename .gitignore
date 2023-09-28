@@ -20,3 +20,6 @@ db.sqlite3
 /src/django_config.json
 /src/tests/test_config.json
 /src/tests/test_django_config.json
+/docker/db_dir/
+/docker/redis_dir/
+/docker/docker-compose.yml
