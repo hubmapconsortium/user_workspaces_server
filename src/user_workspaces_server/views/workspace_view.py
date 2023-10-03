@@ -8,17 +8,12 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django_q.tasks import async_task
-from rest_framework.exceptions import (
-    APIException,
-    NotFound,
-    ParseError,
-)
+from rest_framework.exceptions import APIException, NotFound, ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from user_workspaces_server.exceptions import WorkspaceClientException
-
 from user_workspaces_server import models, utils
+from user_workspaces_server.exceptions import WorkspaceClientException
 
 logger = logging.getLogger(__name__)
 

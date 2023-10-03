@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.urls import include, path
 
+from . import ws_consumers
 from .views import (
     job_type_view,
     job_view,
@@ -23,8 +24,6 @@ from .views import (
     user_workspaces_server_token_view,
     workspace_view,
 )
-
-from . import ws_consumers
 
 token_view_patterns = [
     path(

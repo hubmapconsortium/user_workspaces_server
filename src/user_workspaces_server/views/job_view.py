@@ -2,15 +2,12 @@ import logging
 
 from django.http import JsonResponse
 from django_q.tasks import async_task
-from rest_framework.exceptions import (
-    NotFound,
-)
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from user_workspaces_server.exceptions import WorkspaceClientException
-
 from user_workspaces_server import models
+from user_workspaces_server.exceptions import WorkspaceClientException
 
 logger = logging.getLogger(__name__)
 

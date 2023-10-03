@@ -2,9 +2,7 @@ import logging
 
 import requests as http_r
 from django.http import HttpResponse
-from rest_framework.exceptions import (
-    APIException,
-)
+from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 
 from user_workspaces_server import models
