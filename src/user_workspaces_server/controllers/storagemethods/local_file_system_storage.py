@@ -76,7 +76,7 @@ class LocalFileSystemStorage(AbstractStorage):
         )
         uid = (
             pwd.getpwnam(external_user["external_username"])[2]
-            if external_user["external_user_uid"] is str
+            if isinstance(external_user["external_user_uid"], str)
             else external_user["external_user_uid"]
         )
         owner_uid = os.stat(os.path.join(self.root_dir, path)).st_uid
@@ -89,12 +89,12 @@ class LocalFileSystemStorage(AbstractStorage):
 
         uid = (
             pwd.getpwnam(external_user["external_username"])[2]
-            if external_user["external_user_uid"] is str
+            if isinstance(external_user["external_user_uid"], str)
             else external_user["external_user_uid"]
         )
         gid = (
             grp.getgrnam(external_user["external_user_gid"])[2]
-            if external_user["external_user_gid"] is str
+            if isinstance(external_user["external_user_gid"], str)
             else external_user["external_user_gid"]
         )
 
