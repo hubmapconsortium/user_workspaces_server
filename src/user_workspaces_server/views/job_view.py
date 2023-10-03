@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 from user_workspaces_server.exceptions import WorkspaceClientException
 
-from user_workspaces_server import models, utils
+from user_workspaces_server import models
 
 logger = logging.getLogger(__name__)
 
