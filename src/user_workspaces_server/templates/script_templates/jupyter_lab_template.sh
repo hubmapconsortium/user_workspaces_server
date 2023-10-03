@@ -1,17 +1,22 @@
 #!/bin/bash
+VENV_PATH="{{ workspace_full_path }}/JupyterLabJob_venv"
 
 ### Environment initialization
 {% if module_manager == "lmod" %}
 module load {{ modules|join:" " }}
 {% if use_local_environment %}
-export PYTHONNOUSERSITE=True
-conda create --prefix "$(pwd)/JupyterLabJob_{{ job_id }}_venv" python={{ python_version }} -y
-source activate "$(pwd)/JupyterLabJob_{{ job_id }}_venv"
+if [ ! -d "$VENV_PATH" ]; then
+  export PYTHONNOUSERSITE=True
+  conda create --prefix "$VENV_PATH" python={{ python_version }} -y
+fi
+source activate "$VENV_PATH"
 pip install {{ python_packages|join:" " }}
 {% endif %}
 {% elif module_manager == "virtualenv" %}
-virtualenv -p {{ python_version }} "$(pwd)/JupyterLabJob_{{ job_id }}_venv"
-source "$(pwd)/JupyterLabJob_{{ job_id }}_venv/bin/activate"
+if [ ! -d "$VENV_PATH" ]; then
+  virtualenv -p {{ python_version }} "$VENV_PATH"
+fi
+source "$VENV_PATH/bin/activate"
 pip install {{ python_packages|join:" " }}
 {% endif %}
 
