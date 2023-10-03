@@ -9,7 +9,7 @@ Automat==20.2.0
 backports.zoneinfo==0.2.1
 blessed==1.19.1
 cachetools==5.2.0
-certifi==2022.9.24
+certifi==2023.7.22
 cffi==1.15.1
 channels==3.0.5
 channels-redis==3.4.1

@@ -15,43 +15,59 @@ Including another URLconf
 """
 from django.urls import include, path
 
-from . import views, ws_consumers
+from . import ws_consumers
+from .views import (
+    job_type_view,
+    job_view,
+    passthrough_view,
+    status_view,
+    user_workspaces_server_token_view,
+    workspace_view,
+)
 
 token_view_patterns = [
-    path("", views.UserWorkspacesServerTokenView.as_view(), name="tokens")
+    path(
+        "",
+        user_workspaces_server_token_view.UserWorkspacesServerTokenView.as_view(),
+        name="tokens",
+    )
 ]
 
 workspace_view_patterns = [
-    path("", views.WorkspaceView.as_view(), name="workspaces"),
+    path("", workspace_view.WorkspaceView.as_view(), name="workspaces"),
     path(
-        "<int:workspace_id>/", views.WorkspaceView.as_view(), name="workspaces_with_id"
+        "<int:workspace_id>/",
+        workspace_view.WorkspaceView.as_view(),
+        name="workspaces_with_id",
     ),
     path(
         "<int:workspace_id>/<str:put_type>/",
-        views.WorkspaceView.as_view(),
+        workspace_view.WorkspaceView.as_view(),
         name="workspaces_put_type",
     ),
 ]
 
 job_view_patterns = [
-    path("", views.JobView.as_view(), name="jobs"),
-    path("<int:job_id>/", views.JobView.as_view(), name="jobs_with_id"),
-    path("<int:job_id>/<str:put_type>/", views.JobView.as_view(), name="jobs_put_type"),
+    path("", job_view.JobView.as_view(), name="jobs"),
+    path("<int:job_id>/", job_view.JobView.as_view(), name="jobs_with_id"),
+    path(
+        "<int:job_id>/<str:put_type>/", job_view.JobView.as_view(), name="jobs_put_type"
+    ),
 ]
 
 job_type_view_patterns = [
-    path("", views.JobTypeView.as_view(), name="job_types"),
+    path("", job_type_view.JobTypeView.as_view(), name="job_types"),
 ]
 
 passthrough_view_patterns = [
     path(
         "<str:hostname>/<int:job_id>/",
-        views.PassthroughView.as_view(),
+        passthrough_view.PassthroughView.as_view(),
         name="passthrough",
     ),
     path(
         "<str:hostname>/<int:job_id>/<path:remainder>",
-        views.PassthroughView.as_view(),
+        passthrough_view.PassthroughView.as_view(),
         name="passthrough_remainder",
     ),
 ]
@@ -62,7 +78,7 @@ urlpatterns = [
     path("jobs/", include(job_view_patterns)),
     path("job_types/", include(job_type_view_patterns)),
     path("passthrough/", include(passthrough_view_patterns)),
-    path("status/", views.StatusView.as_view(), name="status"),
+    path("status/", status_view.StatusView.as_view(), name="status"),
 ]
 
 ws_urlpatterns = [
