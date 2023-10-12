@@ -1,5 +1,5 @@
 #!/bin/bash
-VENV_PATH="{{ workspace_full_path }}/JupyterLabJob_venv"
+VENV_PATH="{{ workspace_full_path }}/.JupyterLabJob_venv"
 
 ### Environment initialization
 {% if module_manager == "tar" %}
