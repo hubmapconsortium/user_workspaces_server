@@ -53,6 +53,11 @@ class WorkspaceView(APIView):
 
         workspace_details = body.get("workspace_details", {})
 
+        request_workspace_details = {
+            "files": [file["name"] for file in workspace_details.get("files", [])],
+            "symlinks": workspace_details.get("symlinks", []),
+        }
+
         if not isinstance(workspace_details, dict):
             raise ParseError("Workspace details not JSON.")
 
@@ -63,7 +68,7 @@ class WorkspaceView(APIView):
             "disk_space": 0,
             "datetime_created": datetime.now(),
             "workspace_details": {
-                "request_workspace_details": workspace_details,
+                "request_workspace_details": request_workspace_details,
                 "current_workspace_details": {"files": [], "symlinks": []},
             },
             "status": "idle",
