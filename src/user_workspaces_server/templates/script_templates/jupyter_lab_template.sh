@@ -3,10 +3,11 @@ VENV_PATH="{{ workspace_full_path }}/.JupyterLabJob_venv"
 
 ### Environment initialization
 {% if module_manager == "tar" %}
-  mkdir -p "$VENV_PATH"
-  tar -xzf {{ tar_file_path }} -C "$VENV_PATH"
+  if [ ! -d "$VENV_PATH" ]; then
+    mkdir -p "$VENV_PATH"
+    tar -xzf {{ tar_file_path }} -C "$VENV_PATH"
+  fi
   source "$VENV_PATH/bin/activate"
-  pip install {{ python_packages|join:" " }}
 {% endif %}
 {% if module_manager == "lmod" %}
   module load {{ modules|join:" " }}
