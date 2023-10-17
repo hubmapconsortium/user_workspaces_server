@@ -89,7 +89,7 @@ class JupyterLabJob(AbstractJob):
         return {
             "metrics": {
                 "time_init": time_init,
-                "timestamp_init": time.mktime(timestamp_init),
+                "timestamp_init": time.mktime(timestamp_init.timetuple()),
             },
             "current_job_details": {
                 "message": "Webserver ready.",
