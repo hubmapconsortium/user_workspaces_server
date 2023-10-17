@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 from datetime import datetime
 from urllib import parse
 
@@ -37,7 +38,7 @@ class JupyterLabJob(AbstractJob):
             }
 
         # Check to see if we already have a connection url in place.
-        if "connection_params" in job_model.job_details["current_job_details"]:
+        if "connection_details" in job_model.job_details["current_job_details"]:
             return {}
 
         try:
@@ -54,7 +55,7 @@ class JupyterLabJob(AbstractJob):
             logger.warning(
                 f"JupyterLab output file {job_model.workspace_id.file_path}/.{job_model.id} missing."
             )
-            return {"message": "Webserver not ready."}
+            return {"current_job_details": {"message": "Webserver not ready."}}
 
         url = ""
 
@@ -64,7 +65,7 @@ class JupyterLabJob(AbstractJob):
                 break
 
         if not url:
-            return {"message": "No url found."}
+            return {"current_job_details": {"message": "No url found."}}
 
         port = url.port
         hostname = url.hostname
@@ -73,20 +74,23 @@ class JupyterLabJob(AbstractJob):
             token = parse.parse_qs(url.query)["token"][0].strip()
         except KeyError:
             logger.warning("Token missing in JupyterLab output.")
-            return {"message": "Token undefined."}
+            return {"current_job_details": {"message": "Token undefined."}}
 
         connection_string = f"{url.path}?token={token}"
 
-        time_init = (
-            datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
-        )
+        timestamp_init = datetime.now(job_model.datetime_start.tzinfo)
+
+        time_init = timestamp_init - job_model.datetime_start
 
         time_init = (
             time_init.total_seconds() / 3600 if time_init.total_seconds() != 0 else 0
         )
 
         return {
-            "metrics": {"time_init": time_init},
+            "metrics": {
+                "time_init": time_init,
+                "timestamp_init": time.mktime(timestamp_init),
+            },
             "current_job_details": {
                 "message": "Webserver ready.",
                 "proxy_details": {
