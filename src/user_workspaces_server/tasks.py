@@ -71,8 +71,10 @@ def update_job_status(job_id):
     # TODO: Make sure that we're using the resource to do this type of status check
     job_status = job_type.status_check(job)
 
-    job.job_details["current_job_details"].update(job_status["current_job_details"])
-    job.job_details["metrics"].update(job_status["metrics"])
+    job.job_details["current_job_details"].update(
+        job_status.get("current_job_details", {})
+    )
+    job.job_details["metrics"].update(job_status.get("metrics", {}))
 
     # TODO: At some point we will have metrics returned by resource_job_info
     job.job_details["current_job_details"].update(
