@@ -69,11 +69,12 @@ def update_job_status(job_id):
         raise Exception("Invalid job type specified")
 
     # TODO: Make sure that we're using the resource to do this type of status check
-    job.job_details["current_job_details"].update(job_type.status_check(job))
+    job_status = job_type.status_check(job)
 
-    # TODO: Grab the current_job_details from resource_job_info and update the job.job_details["current_job_details"] with it.
+    job.job_details["current_job_details"].update(job_status["current_job_details"])
+    job.job_details["metrics"].update(job_status["metrics"])
 
-    # job.job_details["current_job_details"].update(resource_job_info["current_job_details"])
+    # TODO: At some point we will have metrics returned by resource_job_info
     job.job_details["current_job_details"].update(
         resource_job_info["current_job_details"]
     )
