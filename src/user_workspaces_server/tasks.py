@@ -34,6 +34,10 @@ def update_job_status(job_id):
 
     if current_job_status == models.Job.Status.RUNNING and job.datetime_start is None:
         job.datetime_start = datetime.datetime.now()
+        time_pending = (job.datetime_start - job.datetime_created).total_seconds()
+        job.job_details["metrics"]["time_pending"] = (
+            time_pending / 3600 if time_pending != 0 else 0
+        )
     elif current_job_status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         job.datetime_end = datetime.datetime.now()
 
