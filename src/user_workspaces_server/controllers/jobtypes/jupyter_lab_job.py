@@ -80,15 +80,11 @@ class JupyterLabJob(AbstractJob):
 
         time_init = (
             datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
-        )
-
-        time_init = (
-            time_init.total_seconds() / 3600 if time_init.total_seconds() != 0 else 0
-        )
+        ).total_seconds()
 
         return {
             "metrics": {
-                "time_init": time_init,
+                "time_init": time_init / 3600 if time_init != 0 else 0,
             },
             "current_job_details": {
                 "message": "Webserver ready.",
