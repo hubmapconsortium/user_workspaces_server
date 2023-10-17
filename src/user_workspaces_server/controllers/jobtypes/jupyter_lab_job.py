@@ -83,9 +83,7 @@ class JupyterLabJob(AbstractJob):
         )
 
         return {
-            "metrics": {
-                "time_init": time_init
-            },
+            "metrics": {"time_init": time_init},
             "current_job_details": {
                 "message": "Webserver ready.",
                 "proxy_details": {
