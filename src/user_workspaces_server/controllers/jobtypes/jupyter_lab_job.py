@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime
 from urllib import parse
 
 from django.apps import apps
@@ -76,14 +77,24 @@ class JupyterLabJob(AbstractJob):
 
         connection_string = f"{url.path}?token={token}"
 
+        time_init = datetime.now() - job_model.datetime_start
+        time_init = (
+            time_init.total_seconds() / 3600 if time_init.total_seconds() != 0 else 0
+        )
+
         return {
-            "message": "Webserver ready.",
-            "proxy_details": {
-                "hostname": hostname,
-                "port": port,
-                "path": connection_string,
+            "metrics": {
+                "time_init": time_init
             },
-            "connection_details": {
-                "url_path": connection_string,
+            "current_job_details": {
+                "message": "Webserver ready.",
+                "proxy_details": {
+                    "hostname": hostname,
+                    "port": port,
+                    "path": connection_string,
+                },
+                "connection_details": {
+                    "url_path": connection_string,
+                },
             },
         }
