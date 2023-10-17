@@ -77,7 +77,10 @@ class JupyterLabJob(AbstractJob):
 
         connection_string = f"{url.path}?token={token}"
 
-        time_init = datetime.now() - job_model.datetime_start
+        time_init = (
+            datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
+        )
+
         time_init = (
             time_init.total_seconds() / 3600 if time_init.total_seconds() != 0 else 0
         )
