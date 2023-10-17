@@ -217,6 +217,7 @@ class WorkspaceView(APIView):
                 "job_type": body["job_type"],
                 "datetime_created": datetime.now(),
                 "job_details": {
+                    "metrics": {},
                     "request_job_details": job_details,
                     "current_job_details": {},
                 },
