@@ -53,13 +53,13 @@ class WorkspaceView(APIView):
 
         workspace_details = body.get("workspace_details", {})
 
+        if not isinstance(workspace_details, dict):
+            raise ParseError("Workspace details not JSON.")
+
         request_workspace_details = {
             "files": [file["name"] for file in workspace_details.get("files", [])],
             "symlinks": workspace_details.get("symlinks", []),
         }
-
-        if not isinstance(workspace_details, dict):
-            raise ParseError("Workspace details not JSON.")
 
         workspace_data = {
             "user_id": request.user,
