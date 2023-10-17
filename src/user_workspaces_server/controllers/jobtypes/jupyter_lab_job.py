@@ -78,9 +78,9 @@ class JupyterLabJob(AbstractJob):
 
         connection_string = f"{url.path}?token={token}"
 
-        timestamp_init = datetime.now(job_model.datetime_start.tzinfo)
-
-        time_init = timestamp_init - job_model.datetime_start
+        time_init = (
+            datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
+        )
 
         time_init = (
             time_init.total_seconds() / 3600 if time_init.total_seconds() != 0 else 0
@@ -89,7 +89,6 @@ class JupyterLabJob(AbstractJob):
         return {
             "metrics": {
                 "time_init": time_init,
-                "timestamp_init": time.mktime(timestamp_init.timetuple()),
             },
             "current_job_details": {
                 "message": "Webserver ready.",
