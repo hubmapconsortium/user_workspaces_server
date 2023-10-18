@@ -83,7 +83,7 @@ class JupyterLabJob(AbstractJob):
 
         return {
             "metrics": {
-                "time_init": time_init / 3600 if time_init != 0 else 0,
+                "time_init": time_init,
             },
             "current_job_details": {
                 "message": "Webserver ready.",
