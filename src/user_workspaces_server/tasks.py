@@ -33,7 +33,11 @@ def update_job_status(job_id):
     job.refresh_from_db()
 
     if current_job_status == models.Job.Status.RUNNING and job.datetime_start is None:
-        job.datetime_start = datetime.datetime.now()
+        job.datetime_start = datetime.datetime.now(job.datetime_created.tzinfo)
+        time_pending = (job.datetime_start - job.datetime_created).total_seconds()
+        job.job_details["metrics"]["time_pending"] = (
+            time_pending / 3600 if time_pending != 0 else 0
+        )
     elif current_job_status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         job.datetime_end = datetime.datetime.now()
 
@@ -69,11 +73,14 @@ def update_job_status(job_id):
         raise Exception("Invalid job type specified")
 
     # TODO: Make sure that we're using the resource to do this type of status check
-    job.job_details["current_job_details"].update(job_type.status_check(job))
+    job_status = job_type.status_check(job)
 
-    # TODO: Grab the current_job_details from resource_job_info and update the job.job_details["current_job_details"] with it.
+    job.job_details["current_job_details"].update(
+        job_status.get("current_job_details", {})
+    )
+    job.job_details["metrics"].update(job_status.get("metrics", {}))
 
-    # job.job_details["current_job_details"].update(resource_job_info["current_job_details"])
+    # TODO: At some point we will have metrics returned by resource_job_info
     job.job_details["current_job_details"].update(
         resource_job_info["current_job_details"]
     )
