@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime
 from urllib import parse
 
 from django.apps import apps
@@ -36,7 +37,7 @@ class JupyterLabJob(AbstractJob):
             }
 
         # Check to see if we already have a connection url in place.
-        if "connection_params" in job_model.job_details["current_job_details"]:
+        if "connection_details" in job_model.job_details["current_job_details"]:
             return {}
 
         try:
@@ -53,7 +54,7 @@ class JupyterLabJob(AbstractJob):
             logger.warning(
                 f"JupyterLab output file {job_model.workspace_id.file_path}/.{job_model.id} missing."
             )
-            return {"message": "Webserver not ready."}
+            return {"current_job_details": {"message": "Webserver not ready."}}
 
         url = ""
 
@@ -63,7 +64,7 @@ class JupyterLabJob(AbstractJob):
                 break
 
         if not url:
-            return {"message": "No url found."}
+            return {"current_job_details": {"message": "No url found."}}
 
         port = url.port
         hostname = url.hostname
@@ -72,18 +73,27 @@ class JupyterLabJob(AbstractJob):
             token = parse.parse_qs(url.query)["token"][0].strip()
         except KeyError:
             logger.warning("Token missing in JupyterLab output.")
-            return {"message": "Token undefined."}
+            return {"current_job_details": {"message": "Token undefined."}}
 
         connection_string = f"{url.path}?token={token}"
 
+        time_init = (
+            datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
+        ).total_seconds()
+
         return {
-            "message": "Webserver ready.",
-            "proxy_details": {
-                "hostname": hostname,
-                "port": port,
-                "path": connection_string,
+            "metrics": {
+                "time_init": time_init / 3600 if time_init != 0 else 0,
             },
-            "connection_details": {
-                "url_path": connection_string,
+            "current_job_details": {
+                "message": "Webserver ready.",
+                "proxy_details": {
+                    "hostname": hostname,
+                    "port": port,
+                    "path": connection_string,
+                },
+                "connection_details": {
+                    "url_path": connection_string,
+                },
             },
         }
