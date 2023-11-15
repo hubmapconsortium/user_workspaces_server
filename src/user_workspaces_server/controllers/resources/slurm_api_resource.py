@@ -112,6 +112,12 @@ class SlurmAPIResource(AbstractResource):
             if len(resource_job["errors"]):
                 raise APIException(resource_job["errors"])
             resource_job = resource_job["jobs"][0]
+
+            if resource_job["job_state"] == "TIMEOUT":
+                logger.error(
+                    f"Workspaces Job {job.id}/Slurm job {job.resource_job_id} has timed out."
+                )
+
             resource_job["status"] = self.translate_status(resource_job["job_state"])
             end_time = resource_job.get("end_time")
             if end_time is not None:
