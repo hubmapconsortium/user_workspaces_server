@@ -43,7 +43,7 @@ class WorkspaceView(APIView):
                 }
             )
         else:
-            raise NotFound(f"Workspace matching given parameters could not be found.")
+            raise NotFound("Workspace matching given parameters could not be found.")
 
     def post(self, request):
         try:

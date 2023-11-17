@@ -33,7 +33,7 @@ class JobView(APIView):
                 {"message": "Successful.", "success": True, "data": {"jobs": job}}
             )
         else:
-            raise NotFound(f"Job matching given parameters could not be found.")
+            raise NotFound("Job matching given parameters could not be found.")
 
     def put(self, request, job_id, put_type):
         try:
