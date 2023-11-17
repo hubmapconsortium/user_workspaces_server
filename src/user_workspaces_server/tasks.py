@@ -80,7 +80,7 @@ def update_job_status(job_id):
 
     # TODO: At some point we will have metrics returned by resource_job_info
     job.job_details["current_job_details"].update(
-        resource_job_info["current_job_details"]
+        resource_job_info.get("current_job_details", {})
     )
 
     if job.job_details["current_job_details"].get("connection_details", {}):
