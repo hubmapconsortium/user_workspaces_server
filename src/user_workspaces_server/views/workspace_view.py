@@ -34,13 +34,16 @@ class WorkspaceView(APIView):
 
         workspaces = list(workspace.all().values(*models.Workspace.get_dict_fields()))
 
-        return JsonResponse(
-            {
-                "message": "Successful.",
-                "success": True,
-                "data": {"workspaces": workspaces},
-            }
-        )
+        if workspaces:
+            return JsonResponse(
+                {
+                    "message": "Successful.",
+                    "success": True,
+                    "data": {"workspaces": workspaces},
+                }
+            )
+        else:
+            raise NotFound("Workspace matching given parameters could not be found.")
 
     def post(self, request):
         try:
@@ -57,7 +60,9 @@ class WorkspaceView(APIView):
             raise ParseError("Workspace details not JSON.")
 
         request_workspace_details = {
-            "files": [file["name"] for file in workspace_details.get("files", [])],
+            "files": [
+                {"name": file["name"]} for file in workspace_details.get("files", [])
+            ],
             "symlinks": workspace_details.get("symlinks", []),
         }
 
