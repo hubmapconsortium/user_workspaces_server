@@ -28,9 +28,12 @@ class JobView(APIView):
 
         job = list(job.all().values(*models.Job.get_dict_fields()))
 
-        return JsonResponse(
-            {"message": "Successful.", "success": True, "data": {"jobs": job}}
-        )
+        if job:
+            return JsonResponse(
+                {"message": "Successful.", "success": True, "data": {"jobs": job}}
+            )
+        else:
+            raise NotFound(f"Job matching given parameters could not be found.")
 
     def put(self, request, job_id, put_type):
         try:

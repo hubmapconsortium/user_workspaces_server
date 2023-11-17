@@ -34,13 +34,16 @@ class WorkspaceView(APIView):
 
         workspaces = list(workspace.all().values(*models.Workspace.get_dict_fields()))
 
-        return JsonResponse(
-            {
-                "message": "Successful.",
-                "success": True,
-                "data": {"workspaces": workspaces},
-            }
-        )
+        if workspaces:
+            return JsonResponse(
+                {
+                    "message": "Successful.",
+                    "success": True,
+                    "data": {"workspaces": workspaces},
+                }
+            )
+        else:
+            raise NotFound(f"Workspace matching given parameters could not be found.")
 
     def post(self, request):
         try:
