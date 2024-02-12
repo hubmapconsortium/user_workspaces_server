@@ -35,7 +35,11 @@ echo $(date)
 ### Jupyter configuration
 CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
-VERSION=$(python -m jupyterlab --version)
+echo "Getting version"
+echo $(date)
+VERSION=$(jupyterlab --version)
+echo "Have version"
+echo $(date)
 
 random_number () {
     shuf -i ${1}-${2} -n 1
@@ -125,4 +129,6 @@ EOL
 
 # Launch the Jupyter Notebook Server
 set -x
-python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
+echo "Launching jupyterlab"
+echo $(date)
+jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
