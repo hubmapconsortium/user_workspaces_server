@@ -8,7 +8,7 @@ echo $(date)
     TEMP_WORK_PATH=$(pwd)
     cd "{{ workspace_full_path }}"
     mkdir -p ".JupyterLabJob_venv"
-    tar -xzf {{ tar_file_path }} -C ".JupyterLabJob_venv"
+    tar -xf {{ tar_file_path }} -C ".JupyterLabJob_venv"
     cd $TEMP_WORK_PATH
   fi
   echo $(date)
