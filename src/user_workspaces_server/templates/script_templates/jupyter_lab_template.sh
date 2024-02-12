@@ -6,7 +6,7 @@ echo $(date)
 {% if module_manager == "tar" %}
   if [ ! -d "$VENV_PATH" ]; then
     mkdir -p "$VENV_PATH"
-    tar -xzf {{ tar_file_path }} -C "$VENV_PATH"
+    tar -xf {{ tar_file_path }} -C "$VENV_PATH"
   fi
   echo "VENV copied"
   echo $(date)
