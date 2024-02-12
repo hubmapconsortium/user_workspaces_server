@@ -37,7 +37,7 @@ CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
 echo "Getting version"
 echo $(date)
-VERSION=$(jupyterlab --version)
+VERSION=$(python -m jupyterlab --version)
 echo "Have version"
 echo $(date)
 
@@ -131,4 +131,4 @@ EOL
 set -x
 echo "Launching jupyterlab"
 echo $(date)
-jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
+python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
