@@ -1,13 +1,17 @@
 #!/bin/bash
 VENV_PATH="{{ workspace_full_path }}/.JupyterLabJob_venv"
 
+echo $(date)
 ### Environment initialization
 {% if module_manager == "tar" %}
   if [ ! -d "$VENV_PATH" ]; then
     mkdir -p "$VENV_PATH"
     tar -xzf {{ tar_file_path }} -C "$VENV_PATH"
   fi
+  echo "VENV copied"
+  echo $(date)
   source "$VENV_PATH/bin/activate"
+  echo "VENV activated"
 {% endif %}
 {% if module_manager == "lmod" %}
   module load {{ modules|join:" " }}
