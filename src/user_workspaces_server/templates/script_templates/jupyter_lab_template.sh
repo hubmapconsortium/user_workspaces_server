@@ -5,8 +5,11 @@ echo $(date)
 ### Environment initialization
 {% if module_manager == "tar" %}
   if [ ! -d "$VENV_PATH" ]; then
-    mkdir -p "$VENV_PATH"
-    tar -xf {{ tar_file_path }} -C "$VENV_PATH"
+    TEMP_WORK_PATH=$(pwd)
+    cd "{{ workspace_full_path }}"
+    mkdir -p ".JupyterLabJob_venv"
+    tar -xzf {{ tar_file_path }} -C ".JupyterLabJob_venv"
+    cd $TEMP_WORK_PATH
   fi
   echo $(date)
   echo "VENV copied"
