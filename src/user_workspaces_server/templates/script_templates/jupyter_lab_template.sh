@@ -8,9 +8,10 @@ echo $(date)
     mkdir -p "$VENV_PATH"
     tar -xf {{ tar_file_path }} -C "$VENV_PATH"
   fi
-  echo "VENV copied"
   echo $(date)
+  echo "VENV copied"
   source "$VENV_PATH/bin/activate"
+  echo $(date)
   echo "VENV activated"
 {% endif %}
 {% if module_manager == "lmod" %}
@@ -93,8 +94,11 @@ find_port () {
   done
   echo "${port}"
 }
-
+echo "Looking for port"
+echo $(date)
 PORT=$(find_port)
+echo "Found port"
+echo $(date)
 
 # Generate Jupyter configuration file with secure file permissions based on JupyterLab version
 (
