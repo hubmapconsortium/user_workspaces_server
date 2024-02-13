@@ -1,5 +1,5 @@
 #!/bin/bash
-VENV_PATH="{{ workspace_full_path }}/.JupyterLabJob_venv"
+VENV_PATH="{{ workspace_full_path }}/{{ environment_name }}_venv"
 
 echo $(date)
 ### Environment initialization

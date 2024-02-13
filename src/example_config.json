@@ -41,7 +41,8 @@
           "python_version": "python3.8",
           "module_manager": "virtualenv",
           "modules": ["jupyterlab"],
-          "time_limit": "60"
+          "time_limit": "60",
+          "environment_name": "JupyterLabJob"
         }
       }
     },
