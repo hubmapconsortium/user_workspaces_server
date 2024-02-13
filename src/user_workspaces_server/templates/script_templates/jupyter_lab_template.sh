@@ -131,5 +131,5 @@ EOL
 set -x
 echo "Launching jupyterlab"
 echo $(date)
-export JUPYTER_DATA_DIR="$(VENV)/share/jupyter"
+export JUPYTER_DATA_DIR="$VENV/share/jupyter"
 python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
