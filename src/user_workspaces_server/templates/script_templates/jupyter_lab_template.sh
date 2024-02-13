@@ -1,5 +1,6 @@
 #!/bin/bash
-VENV_PATH="{{ workspace_full_path }}/{{ environment_name }}_venv"
+### TODO: Modify this to make sure we aren't doing double dots in the name
+VENV_PATH="{{ workspace_full_path }}/.{{ environment_name }}_venv"
 
 echo $(date)
 ### Environment initialization
