@@ -5,11 +5,8 @@ echo $(date)
 ### Environment initialization
 {% if module_manager == "tar" %}
   if [ ! -d "$VENV_PATH" ]; then
-    TEMP_WORK_PATH=$(pwd)
-    cd "{{ workspace_full_path }}"
-    mkdir -p ".JupyterLabJob_venv"
-    tar -xf {{ tar_file_path }} -C ".JupyterLabJob_venv"
-    cd $TEMP_WORK_PATH
+    mkdir -p "$VENV_PATH"
+    tar -xf {{ tar_file_path }} -C "$VENV_PATH"
   fi
   echo $(date)
   echo "VENV copied"
@@ -134,4 +131,5 @@ EOL
 set -x
 echo "Launching jupyterlab"
 echo $(date)
+export JUPYTER_DATA_DIR="$(VENV)/share/jupyter"
 python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
