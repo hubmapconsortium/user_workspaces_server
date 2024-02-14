@@ -2,18 +2,19 @@
 ### TODO: Modify this to make sure we aren't doing double dots in the name
 VENV_PATH="{{ workspace_full_path }}/.{{ environment_name }}_venv"
 
-echo $(date)
+echo "STARTED @ $(date)"
 ### Environment initialization
 {% if module_manager == "tar" %}
   if [ ! -d "$VENV_PATH" ]; then
     mkdir -p "$VENV_PATH"
     tar -xf {{ tar_file_path }} -C "$VENV_PATH"
+    echo "VENV COPIED @ $(date)"
+    source "$VENV_PATH/bin/activate"
+    conda-unpack
+    echo "VENV UNPACKED @ $(date)"
+    source "$VENV_PATH/bin/deactivate"
   fi
-  echo $(date)
-  echo "VENV copied"
   source "$VENV_PATH/bin/activate"
-  echo $(date)
-  echo "VENV activated"
 {% endif %}
 {% if module_manager == "lmod" %}
   module load {{ modules|join:" " }}
@@ -36,11 +37,7 @@ echo $(date)
 ### Jupyter configuration
 CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
-echo "Getting version"
-echo $(date)
 VERSION=$(python -m jupyterlab --version)
-echo "Have version"
-echo $(date)
 
 random_number () {
     shuf -i ${1}-${2} -n 1
@@ -99,11 +96,8 @@ find_port () {
   done
   echo "${port}"
 }
-echo "Looking for port"
-echo $(date)
+
 PORT=$(find_port)
-echo "Found port"
-echo $(date)
 
 # Generate Jupyter configuration file with secure file permissions based on JupyterLab version
 (
@@ -130,7 +124,5 @@ EOL
 
 # Launch the Jupyter Notebook Server
 set -x
-echo "Launching jupyterlab"
-echo $(date)
 export JUPYTER_DATA_DIR="$VENV_PATH/share/jupyter"
 python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
