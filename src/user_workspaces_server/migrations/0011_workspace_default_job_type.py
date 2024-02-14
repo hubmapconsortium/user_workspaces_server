@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0010_job_user_id_alter_job_status'),
+        ("user_workspaces_server", "0010_job_user_id_alter_job_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='workspace',
-            name='default_job_type',
+            model_name="workspace",
+            name="default_job_type",
             field=models.CharField(max_length=64, null=True),
         ),
     ]
