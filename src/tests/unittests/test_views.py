@@ -378,12 +378,12 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             response,
             status.HTTP_400_BAD_REQUEST,
             success=False,
-            message="Missing job_type.",
+            message="Missing job_type and no default job type set on workspace.",
         )
 
     def test_workspace_start_invalid_job_details_put(self):
         self.client.force_authenticate(user=self.user)
-        body = {"job_type": "test", "job_details": ""}
+        body = {"job_type": "test_job", "job_details": ""}
         response = self.client.put(
             reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
         )
