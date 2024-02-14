@@ -1,6 +1,6 @@
 #!/bin/bash
-### TODO: Modify this to make sure we aren't doing double dots in the name
-VENV_PATH="{{ workspace_full_path }}/.{{ environment_name }}_venv"
+[[ {{ environment_name }} == .* ]] && ENV_NAME="{{ environment_name }}" || ENV_NAME=".{{ environment_name }}"
+VENV_PATH="{{ workspace_full_path }}/${ENV_NAME}_venv"
 
 echo "STARTED @ $(date)"
 ### Environment initialization
