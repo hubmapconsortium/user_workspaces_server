@@ -32,9 +32,11 @@ DJANGO_CONFIG = json.load(
     open(
         os.path.join(
             BASE_DIR,
-            "example_django_config.json"
-            if os.environ.get("GITHUB_WORKFLOW")
-            else "django_config.json",
+            (
+                "example_django_config.json"
+                if os.environ.get("GITHUB_WORKFLOW")
+                else "django_config.json"
+            ),
         )
     )
 )

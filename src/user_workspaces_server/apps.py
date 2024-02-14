@@ -27,12 +27,12 @@ class UserWorkspacesServerConfig(AppConfig):
             user_authentication_name,
             user_authentication_dict,
         ) in config_user_authentication.items():
-            self.available_user_authentication_methods[
-                user_authentication_name
-            ] = utils.generate_controller_object(
-                user_authentication_dict["user_authentication_type"],
-                "userauthenticationmethods",
-                {"config": user_authentication_dict},
+            self.available_user_authentication_methods[user_authentication_name] = (
+                utils.generate_controller_object(
+                    user_authentication_dict["user_authentication_type"],
+                    "userauthenticationmethods",
+                    {"config": user_authentication_dict},
+                )
             )
 
         for storage_name, storage_dict in config_storage.items():
