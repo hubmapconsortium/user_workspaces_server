@@ -17,7 +17,7 @@ class Workspace(models.Model):
     datetime_created = models.DateTimeField()
     workspace_details = models.JSONField()
     status = models.CharField(max_length=64, default=Status.IDLE, choices=Status.choices)
-    default_job_type = models.CharField(max_length=64)
+    default_job_type = models.CharField(max_length=64, null=True)
 
     def __str__(self):
         return f"{self.id}: {self.user_id.username} - {self.status}"
