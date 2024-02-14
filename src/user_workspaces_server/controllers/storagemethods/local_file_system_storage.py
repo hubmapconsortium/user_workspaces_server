@@ -24,9 +24,7 @@ class LocalFileSystemStorage(AbstractStorage):
         if not os.path.commonpath([abs_root_dir]) == os.path.commonpath(
             [abs_root_dir, workspace_path]
         ):
-            logger.error(
-                f"Workspace path {workspace_path} is not a child of the root_dir"
-            )
+            logger.error(f"Workspace path {workspace_path} is not a child of the root_dir")
             return False
         elif workspace_path == abs_root_dir:
             logger.error(f"Workspace path {workspace_path} is equal to root_dir")
@@ -115,9 +113,7 @@ class LocalFileSystemStorage(AbstractStorage):
         symlink_name = symlink_path_list[-1]
         symlink_dest_path = symlink_path_list[:-1]
 
-        symlink_full_dest_path = os.path.join(
-            self.root_dir, path, "/".join(symlink_dest_path)
-        )
+        symlink_full_dest_path = os.path.join(self.root_dir, path, "/".join(symlink_dest_path))
 
         if not self.is_valid_path(os.path.join(path, symlink_name)):
             logger.error(f"Symlink {symlink_name} cannot be created in {path}.")
@@ -130,9 +126,7 @@ class LocalFileSystemStorage(AbstractStorage):
         if os.path.exists(symlink_source_path):
             if os.path.exists(os.path.join(symlink_full_dest_path, symlink_name)):
                 os.remove(os.path.join(symlink_full_dest_path, symlink_name))
-            os.symlink(
-                symlink_source_path, os.path.join(symlink_full_dest_path, symlink_name)
-            )
+            os.symlink(symlink_source_path, os.path.join(symlink_full_dest_path, symlink_name))
         else:
             raise NotADirectoryError
 
@@ -145,9 +139,7 @@ class LocalFileSystemStorage(AbstractStorage):
             logger.error(f"File {file.name} cannot be created in {path}")
             raise WorkspaceClientException(f"Invalid file path specified {file.name}")
 
-        file_full_dest_path = os.path.join(
-            self.root_dir, path, "/".join(file_dest_path)
-        )
+        file_full_dest_path = os.path.join(self.root_dir, path, "/".join(file_dest_path))
 
         os.makedirs(file_full_dest_path, exist_ok=True)
 

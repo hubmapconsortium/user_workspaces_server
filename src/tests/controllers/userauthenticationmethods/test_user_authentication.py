@@ -38,14 +38,10 @@ class TestUserAuthentication(AbstractUserAuthentication):
             raise ParseError(repr(e))
 
         if "client_token" not in body:
-            raise ParseError(
-                "Missing client_token. Please have admin generate a token for you."
-            )
+            raise ParseError("Missing client_token. Please have admin generate a token for you.")
 
         if "user_info" not in body:
-            raise ParseError(
-                "Missing user_info. Please provide user_info to get user_token."
-            )
+            raise ParseError("Missing user_info. Please provide user_info to get user_token.")
 
         try:
             client_token = body["client_token"]

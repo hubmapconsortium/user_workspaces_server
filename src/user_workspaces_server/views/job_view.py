@@ -21,17 +21,13 @@ class JobView(APIView):
         if job_id:
             job = job.filter(id=job_id)
         elif params := request.GET:
-            for key in set(params.keys()).intersection(
-                set(models.Job.get_query_param_fields())
-            ):
+            for key in set(params.keys()).intersection(set(models.Job.get_query_param_fields())):
                 job = job.filter(**{key: params[key]})
 
         job = list(job.all().values(*models.Job.get_dict_fields()))
 
         if job:
-            return JsonResponse(
-                {"message": "Successful.", "success": True, "data": {"jobs": job}}
-            )
+            return JsonResponse({"message": "Successful.", "success": True, "data": {"jobs": job}})
         else:
             raise NotFound("Job matching given parameters could not be found.")
 

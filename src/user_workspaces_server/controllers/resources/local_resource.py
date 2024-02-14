@@ -28,9 +28,7 @@ class LocalResource(AbstractResource):
         return status_list[status]
 
     def launch_job(self, job, workspace):
-        workspace_full_path = os.path.join(
-            self.resource_storage.root_dir, workspace.file_path
-        )
+        workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
         job_full_path = os.path.join(workspace_full_path, f'.{job.job_details["id"]}')
         script_name = f"{str(time.time())}.sh"
         script_path = os.path.join(job_full_path, script_name)
@@ -76,9 +74,7 @@ class LocalResource(AbstractResource):
     def get_job_core_hours(self, job):
         datetime_running = job.datetime_end - job.datetime_start
         return (
-            datetime_running.total_seconds() / 3600
-            if datetime_running.total_seconds() != 0
-            else 0
+            datetime_running.total_seconds() / 3600 if datetime_running.total_seconds() != 0 else 0
         )
 
     def stop_job(self, job):

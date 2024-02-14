@@ -18,9 +18,7 @@ class UserWorkspacesServerConfig(AppConfig):
     available_job_types = {}
 
     def ready(self):
-        config_user_authentication = settings.UWS_CONFIG[
-            "available_user_authentication"
-        ]
+        config_user_authentication = settings.UWS_CONFIG["available_user_authentication"]
         config_storage = settings.UWS_CONFIG["available_storage"]
         config_resource = settings.UWS_CONFIG["available_resources"]
         config_job_types = settings.UWS_CONFIG["available_job_types"]
@@ -38,9 +36,7 @@ class UserWorkspacesServerConfig(AppConfig):
             )
 
         for storage_name, storage_dict in config_storage.items():
-            self.available_storage_methods[
-                storage_name
-            ] = utils.generate_controller_object(
+            self.available_storage_methods[storage_name] = utils.generate_controller_object(
                 storage_dict["storage_type"],
                 "storagemethods",
                 {
@@ -57,9 +53,7 @@ class UserWorkspacesServerConfig(AppConfig):
                 "resources",
                 {
                     "config": resource_dict,
-                    "resource_storage": self.available_storage_methods[
-                        resource_dict["storage"]
-                    ],
+                    "resource_storage": self.available_storage_methods[resource_dict["storage"]],
                     "resource_user_authentication": self.available_user_authentication_methods[
                         resource_dict["user_authentication"]
                     ],
@@ -72,13 +66,9 @@ class UserWorkspacesServerConfig(AppConfig):
             settings.UWS_CONFIG["api_user_authentication"]
         ]
 
-        self.main_storage = self.available_storage_methods[
-            settings.UWS_CONFIG["main_storage"]
-        ]
+        self.main_storage = self.available_storage_methods[settings.UWS_CONFIG["main_storage"]]
 
-        self.main_resource = self.available_resources[
-            settings.UWS_CONFIG["main_resource"]
-        ]
+        self.main_resource = self.available_resources[settings.UWS_CONFIG["main_resource"]]
 
         if os.environ.get("SUBCOMMAND", None) != "qcluster":
             return

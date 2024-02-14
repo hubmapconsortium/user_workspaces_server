@@ -60,9 +60,7 @@ class WorkspaceView(APIView):
             raise ParseError("Workspace details not JSON.")
 
         request_workspace_details = {
-            "files": [
-                {"name": file["name"]} for file in workspace_details.get("files", [])
-            ],
+            "files": [{"name": file["name"]} for file in workspace_details.get("files", [])],
             "symlinks": workspace_details.get("symlinks", []),
         }
 
@@ -116,9 +114,7 @@ class WorkspaceView(APIView):
             main_storage.set_ownership(
                 external_user_mapping.external_username, external_user_mapping
             )
-            main_storage.set_ownership(
-                workspace.file_path, external_user_mapping, recursive=True
-            )
+            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             workspace.save()
         except Exception:
@@ -134,9 +130,7 @@ class WorkspaceView(APIView):
                 "message": "Successful.",
                 "success": True,
                 "data": {
-                    "workspace": model_to_dict(
-                        workspace, models.Workspace.get_dict_fields()
-                    )
+                    "workspace": model_to_dict(workspace, models.Workspace.get_dict_fields())
                 },
             }
         )
@@ -154,9 +148,7 @@ class WorkspaceView(APIView):
             )
 
         try:
-            workspace = models.Workspace.objects.get(
-                id=workspace_id, user_id=request.user
-            )
+            workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
         except models.Workspace.DoesNotExist:
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
@@ -183,9 +175,7 @@ class WorkspaceView(APIView):
                     workspace.file_path, external_user_mapping, recursive=True
                 )
             except Exception:
-                logger.exception(
-                    "Failure when creating symlink/files or setting ownership."
-                )
+                logger.exception("Failure when creating symlink/files or setting ownership.")
                 raise
 
             async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
@@ -283,9 +273,7 @@ class WorkspaceView(APIView):
             for file_index, file in request.FILES.items():
                 main_storage.create_file(workspace.file_path, file)
 
-            main_storage.set_ownership(
-                workspace.file_path, external_user_mapping, recursive=True
-            )
+            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
 
@@ -295,9 +283,7 @@ class WorkspaceView(APIView):
 
     def delete(self, request, workspace_id):
         try:
-            workspace = models.Workspace.objects.get(
-                user_id=request.user, id=workspace_id
-            )
+            workspace = models.Workspace.objects.get(user_id=request.user, id=workspace_id)
         except models.Workspace.DoesNotExist:
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
@@ -319,9 +305,7 @@ class WorkspaceView(APIView):
             )
 
         if not main_storage.is_valid_path(workspace.file_path):
-            logger.error(
-                f"Workspace {workspace_id} deletion failed due to invalid path"
-            )
+            logger.error(f"Workspace {workspace_id} deletion failed due to invalid path")
             workspace.status = models.Workspace.Status.ERROR
             workspace.save()
             raise APIException(
