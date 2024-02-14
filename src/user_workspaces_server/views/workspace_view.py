@@ -56,6 +56,15 @@ class WorkspaceView(APIView):
 
         workspace_details = body.get("workspace_details", {})
 
+        if default_job_type := body.get("default_job_type"):
+            if (
+                default_job_type
+                not in apps.get_app_config("user_workspaces_server").available_job_types
+            ):
+                raise WorkspaceClientException(
+                    f"{default_job_type} is not in the list of available job types."
+                )
+
         if not isinstance(workspace_details, dict):
             raise ParseError("Workspace details not JSON.")
 
@@ -75,6 +84,7 @@ class WorkspaceView(APIView):
                 "current_workspace_details": {"files": [], "symlinks": []},
             },
             "status": "idle",
+            "default_job_type": default_job_type,
         }
 
         main_storage = apps.get_app_config("user_workspaces_server").main_storage
@@ -193,8 +203,16 @@ class WorkspaceView(APIView):
             except Exception as e:
                 raise ParseError(f"Invalid JSON: {str(e)}")
 
-            if "job_type" not in body:
-                raise ParseError("Missing job_type.")
+            if (job_type := body.get("job_type")) is None:
+                if not workspace.default_job_type:
+                    raise ParseError("Missing job_type and no default job type set on workspace.")
+                else:
+                    job_type = workspace.default_job_type
+
+            if job_type not in apps.get_app_config("user_workspaces_server").available_job_types:
+                raise WorkspaceClientException(
+                    f"{job_type} is not in the list of available job types."
+                )
 
             job_details = body.get("job_details", {})
 
@@ -209,7 +227,7 @@ class WorkspaceView(APIView):
             job_data = {
                 "user_id": workspace.user_id,
                 "workspace_id": workspace,
-                "job_type": body["job_type"],
+                "job_type": job_type,
                 "datetime_created": datetime.now(),
                 "job_details": {
                     "metrics": {},
@@ -229,7 +247,7 @@ class WorkspaceView(APIView):
             try:
                 job_type_config = apps.get_app_config(
                     "user_workspaces_server"
-                ).available_job_types.get(body["job_type"])
+                ).available_job_types.get(job_type)
 
                 job_to_launch = utils.generate_controller_object(
                     job_type_config["job_type"],
