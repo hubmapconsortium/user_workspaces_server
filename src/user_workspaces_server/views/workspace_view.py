@@ -171,6 +171,17 @@ class WorkspaceView(APIView):
             workspace.name = body.get("name", workspace.name)
             workspace.description = body.get("description", workspace.description)
 
+            workspace.default_job_type = body.get("default_job_type", workspace.default_job_type)
+
+            if workspace.default_job_type:
+                if (
+                    workspace.default_job_type
+                    not in apps.get_app_config("user_workspaces_server").available_job_types
+                ):
+                    raise WorkspaceClientException(
+                        f"{workspace.default_job_type} is not in the list of available job types."
+                    )
+
             workspace.save()
 
             workspace_details = body.get("workspace_details", {})
