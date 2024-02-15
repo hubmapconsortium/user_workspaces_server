@@ -159,10 +159,6 @@ class WorkspaceGETAPITests(WorkspaceAPITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse("workspaces_with_id", args=[self.workspace.id]))
         self.assertValidResponse(response, status.HTTP_200_OK, success=True)
-        # parsed_content = json.loads(response.content)
-        # workspace_to_check = Workspace.objects.filter(id=self.workspace.id).values(*Workspace.get_dict_fields()).get()
-        # print(workspace_to_check)
-        # self.assertDictEqual(parsed_content['data']['workspaces'][0], workspace_to_check)
 
     def test_workspace_query_param_name_get(self):
         self.client.force_authenticate(user=self.user)
@@ -230,6 +226,44 @@ class WorkspacePOSTAPITests(WorkspaceAPITestCase):
         response = self.client.post(self.workspaces_url, body)
         self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
         # TODO: Check body
+
+    def test_invalid_job_type_post(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {},
+            "default_job_type": "invalid",
+        }
+        response = self.client.post(self.workspaces_url, body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="invalid is not in the list of available job types.",
+        )
+
+    def test_empty_job_type_post(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {},
+            "default_job_type": "",
+        }
+        response = self.client.post(self.workspaces_url, body)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+
+    def test_valid_job_type_post(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {},
+            "default_job_type": "test_job",
+        }
+        response = self.client.post(self.workspaces_url, body)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
 
     def test_invalid_symlinks_structure_post(self):
         self.client.force_authenticate(user=self.user)
