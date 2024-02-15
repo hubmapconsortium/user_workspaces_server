@@ -34,7 +34,9 @@ class SlurmAPIResource(AbstractResource):
 
     def launch_job(self, job, workspace):
         # Need to generate a SLURM token (as a user) to launch a job
-        workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
+        workspace_full_path = os.path.join(
+            self.resource_storage.root_dir, workspace.file_path
+        )
         job_full_path = os.path.join(workspace_full_path, f'.{job.job_details["id"]}')
 
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
@@ -169,7 +171,9 @@ class SlurmAPIResource(AbstractResource):
             return 0
 
     def stop_job(self, job):
-        user_info = self.resource_user_authentication.has_permission(job.workspace_id.user_id)
+        user_info = self.resource_user_authentication.has_permission(
+            job.workspace_id.user_id
+        )
 
         token = self.get_user_token(user_info)
 

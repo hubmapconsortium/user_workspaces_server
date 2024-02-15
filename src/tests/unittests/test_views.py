@@ -66,9 +66,9 @@ class UserWorkspacesAPITestCase(APITestCase):
         apps.get_app_config("user_workspaces_server").available_resources = {
             "test_resource": test_resource
         }
-        apps.get_app_config(
-            "user_workspaces_server"
-        ).api_user_authentication = test_user_auth
+        apps.get_app_config("user_workspaces_server").api_user_authentication = (
+            test_user_auth
+        )
         apps.get_app_config("user_workspaces_server").main_storage = test_storage
         apps.get_app_config("user_workspaces_server").main_resource = test_resource
         cls.user = User.objects.create_user("test", email="test@test.com")
