@@ -54,6 +54,7 @@ class SlurmAPIResource(AbstractResource):
         }
 
         time_limit = job.config.get("time_limit", "30")
+        partition = self.config.get("partition", "")
 
         body = {
             "script": job.get_script({"workspace_full_path": workspace_full_path}),
@@ -74,6 +75,7 @@ class SlurmAPIResource(AbstractResource):
                 },
                 "time_limit": time_limit,
                 "requeue": False,
+                "partition": partition,
             },
         }
 
@@ -86,7 +88,13 @@ class SlurmAPIResource(AbstractResource):
         if slurm_response.status_code != 200:
             raise APIException(slurm_response.text)
 
-        slurm_response = slurm_response.json()
+        try:
+            slurm_response = slurm_response.json()
+        except Exception:
+            logger.info(slurm_response.text)
+            raise APIException(
+                f"Slurm response for {job.id} could not be deciphered: {slurm_response.text}"
+            )
 
         if len(slurm_response["errors"]):
             raise APIException(slurm_response["errors"], code=500)
