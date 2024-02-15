@@ -203,7 +203,7 @@ class WorkspaceView(APIView):
             except Exception as e:
                 raise ParseError(f"Invalid JSON: {str(e)}")
 
-            if (job_type := body.get("job_type")) is None:
+            if not (job_type := body.get("job_type")):
                 if not workspace.default_job_type:
                     raise ParseError("Missing job_type and no default job type set on workspace.")
                 else:
