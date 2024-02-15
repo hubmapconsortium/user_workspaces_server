@@ -88,8 +88,8 @@ class SlurmAPIResource(AbstractResource):
 
         try:
             slurm_response = slurm_response.json()
-        except Exception as e:
-            print(slurm_response.text)
+        except Exception:
+            logger.info(slurm_response.text)
             raise APIException(
                 f"Slurm response for {job.id} could not be deciphered: {slurm_response.text}"
             )
