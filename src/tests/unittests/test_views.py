@@ -368,6 +368,57 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             message="'files' index must contain a list.",
         )
 
+    def test_workspace_data_update_invalid_job_type_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {},
+            "default_job_type": "fake_job",
+        }
+
+        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="fake_job is not in the list of available job types.",
+        )
+
+    def test_workspace_data_update_empty_job_type_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {},
+            "default_job_type": "",
+        }
+
+        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Update successful.",
+        )
+
+    def test_workspace_data_update_valid_job_type_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "name": "Test",
+            "description": "Test",
+            "workspace_details": {},
+            "default_job_type": "test_job",
+        }
+
+        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Update successful.",
+        )
+
     def test_workspace_data_update_minimum_valid_put(self):
         self.client.force_authenticate(user=self.user)
         body = {
@@ -402,9 +453,9 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
         )
         self.assertValidResponse(response, status.HTTP_400_BAD_REQUEST, success=False)
 
-    def test_workspace_start_missing_job_type_put(self):
+    def test_workspace_start_missing_job_type_no_workspace_default_job_type_put(self):
         self.client.force_authenticate(user=self.user)
-        body = {}
+        body = {"job_details": {}}
         response = self.client.put(
             reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
         )
@@ -413,6 +464,34 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             status.HTTP_400_BAD_REQUEST,
             success=False,
             message="Missing job_type and no default job type set on workspace.",
+        )
+
+    def test_workspace_start_invalid_job_type_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {"job_type": "fake_job", "job_details": ""}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="fake_job is not in the list of available job types.",
+        )
+
+    def test_workspace_start_missing_job_type_workspace_default_job_type_put(self):
+        self.client.force_authenticate(user=self.user)
+        self.workspace.default_job_type = "test_job"
+        self.workspace.save()
+        body = {"job_details": {}}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Successful start.",
         )
 
     def test_workspace_start_invalid_job_details_put(self):
@@ -432,7 +511,7 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
         self.client.force_authenticate(user=self.user)
         self.workspace.file_path = "."
         self.workspace.save()
-        body = {"job_type": "test", "job_details": {}}
+        body = {"job_type": "test_job", "job_details": {}}
         response = self.client.put(
             reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
         )
@@ -444,7 +523,6 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "the workspace directory that will not allow for jobs to be created.",
         )
 
-    # TODO: Update this test once we allow for passing job types
     def test_workspace_start_minimum_valid_put(self):
         self.client.force_authenticate(user=self.user)
         body = {"job_type": "test_job", "job_details": {}}
