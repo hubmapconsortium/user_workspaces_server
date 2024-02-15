@@ -54,6 +54,7 @@ class SlurmAPIResource(AbstractResource):
         }
 
         time_limit = job.config.get("time_limit", "30")
+        partition = self.config.get("partition", "")
 
         body = {
             "script": job.get_script({"workspace_full_path": workspace_full_path}),
@@ -74,6 +75,7 @@ class SlurmAPIResource(AbstractResource):
                 },
                 "time_limit": time_limit,
                 "requeue": False,
+                "partition": partition,
             },
         }
 
