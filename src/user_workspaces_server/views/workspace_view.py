@@ -196,6 +196,7 @@ class WorkspaceView(APIView):
 
             workspace.save()
 
+            logger.info(workspace.workspace_details)
             async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
 
             return JsonResponse({"message": "Update successful.", "success": True})
