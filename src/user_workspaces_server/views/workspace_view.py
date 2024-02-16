@@ -176,16 +176,23 @@ class WorkspaceView(APIView):
                 logger.exception("Failure when creating symlink/files or setting ownership.")
                 raise
 
-            # How do we ensure that the files/symlinks that are listed here are unique?
-            # Does it matter? We might see duplicates temporarily, but they'll be updated
-            # eventually as part of the async_task
-            workspace.workspace_details["current_workspace_details"]["files"].extend(
-                [{"name": file["name"]} for file in workspace_details.get("files", [])]
-            )
+            workspace.workspace_details["current_workspace_details"]["files"] = [
+                {"name": file_name}
+                for file_name in {
+                    file["name"]
+                    for file in workspace_details.get("files", [])
+                    + workspace.workspace_details["current_workspace_details"]["files"]
+                }
+            ]
 
-            workspace.workspace_details["current_workspace_details"]["symlinks"].extend(
-                workspace_details.get("symlinks", [])
-            )
+            workspace.workspace_details["current_workspace_details"]["symlinks"] = [
+                {"name": symlink_name}
+                for symlink_name in {
+                    symlink["name"]
+                    for symlink in workspace_details.get("symlinks", [])
+                    + workspace.workspace_details["current_workspace_details"]["symlinks"]
+                }
+            ]
 
             workspace.save()
 
