@@ -179,7 +179,7 @@ class WorkspaceView(APIView):
             workspace.workspace_details["current_workspace_details"]["files"] = [
                 {"name": file_name}
                 for file_name in {
-                    file["name"]
+                    (file["name"] if file["name"][0] == "/" else f"/{file['name']}")
                     for file in workspace_details.get("files", [])
                     + workspace.workspace_details["current_workspace_details"]["files"]
                 }
@@ -188,7 +188,7 @@ class WorkspaceView(APIView):
             workspace.workspace_details["current_workspace_details"]["symlinks"] = [
                 {"name": symlink_name}
                 for symlink_name in {
-                    symlink["name"]
+                    (symlink["name"] if symlink["name"][0] == "/" else f"/{symlink['name']}")
                     for symlink in workspace_details.get("symlinks", [])
                     + workspace.workspace_details["current_workspace_details"]["symlinks"]
                 }
