@@ -182,8 +182,6 @@ class WorkspaceView(APIView):
                         f"{workspace.default_job_type} is not in the list of available job types."
                     )
 
-            workspace.save()
-
             workspace_details = body.get("workspace_details", {})
 
             if not isinstance(workspace_details, dict):
@@ -199,6 +197,27 @@ class WorkspaceView(APIView):
                 logger.exception("Failure when creating symlink/files or setting ownership.")
                 raise
 
+            workspace.workspace_details["current_workspace_details"]["files"] = [
+                {"name": file_name}
+                for file_name in {
+                    (file["name"] if file["name"][0] == "/" else f"/{file['name']}")
+                    for file in workspace_details.get("files", [])
+                    + workspace.workspace_details["current_workspace_details"]["files"]
+                }
+            ]
+
+            workspace.workspace_details["current_workspace_details"]["symlinks"] = [
+                {"name": symlink_name}
+                for symlink_name in {
+                    (symlink["name"] if symlink["name"][0] == "/" else f"/{symlink['name']}")
+                    for symlink in workspace_details.get("symlinks", [])
+                    + workspace.workspace_details["current_workspace_details"]["symlinks"]
+                }
+            ]
+
+            workspace.save()
+
+            logger.info(workspace.workspace_details)
             async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
 
             return JsonResponse({"message": "Update successful.", "success": True})
