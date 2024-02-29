@@ -21,11 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent
 UWS_CONFIG = json.load(
     open(
         BASE_DIR
-        / (
-            "github_test_config.json"
-            if os.environ.get("GITHUB_WORKFLOW")
-            else "test_config.json"
-        )
+        / ("github_test_config.json" if os.environ.get("GITHUB_WORKFLOW") else "test_config.json")
     )
 )
 
@@ -41,9 +37,7 @@ DJANGO_CONFIG = json.load(
 )
 
 SECRET_KEY = (
-    get_random_string(12)
-    if not DJANGO_CONFIG["SECRET_KEY"]
-    else DJANGO_CONFIG["SECRET_KEY"]
+    get_random_string(12) if not DJANGO_CONFIG["SECRET_KEY"] else DJANGO_CONFIG["SECRET_KEY"]
 )
 
 DEBUG = DJANGO_CONFIG["DEBUG"]
@@ -93,12 +87,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "user_workspaces_server_project.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = DJANGO_CONFIG["DATABASES"]
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -118,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -131,7 +122,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

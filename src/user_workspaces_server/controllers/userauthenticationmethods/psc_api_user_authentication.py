@@ -16,9 +16,7 @@ logger = logging.getLogger(__name__)
 class PSCAPIUserAuthentication(AbstractUserAuthentication):
     def __init__(self, config):
         super().__init__(config)
-        self.create_external_users = self.connection_details.get(
-            "create_external_users", False
-        )
+        self.create_external_users = self.connection_details.get("create_external_users", False)
         self.root_url = self.connection_details.get("root_url", "")
         self.jwt_token = self.connection_details.get("jwt_token", "")
         self.grant_number = self.connection_details.get("grant_number", "")
@@ -33,18 +31,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             # If the mapping does not exist, we have to try to "find" an external use
             # based on the info we have from the internal user
             for option in ["username", "email"]:
-                external_user = self.get_external_user(
-                    {option: getattr(internal_user, option)}
-                )
+                external_user = self.get_external_user({option: getattr(internal_user, option)})
                 if external_user:
                     break
 
             if not external_user:
                 # No user found, return false
                 if self.create_external_users:
-                    external_user = self.create_external_user(
-                        model_to_dict(internal_user)
-                    )
+                    external_user = self.create_external_user(model_to_dict(internal_user))
                     if not external_user:
                         return False
                 else:
@@ -78,14 +72,10 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             raise ParseError(repr(e))
 
         if "client_token" not in body:
-            raise ParseError(
-                "Missing client_token. Please have admin generate a token for you."
-            )
+            raise ParseError("Missing client_token. Please have admin generate a token for you.")
 
         if "user_info" not in body:
-            raise ParseError(
-                "Missing user_info. Please provide user_info to get user_token."
-            )
+            raise ParseError("Missing user_info. Please provide user_info to get user_token.")
 
         try:
             client_token = body["client_token"]

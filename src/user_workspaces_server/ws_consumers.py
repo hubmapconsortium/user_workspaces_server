@@ -13,9 +13,7 @@ class PassthroughConsumer(WebsocketConsumer):
         hostname = self.scope["url_route"]["kwargs"]["hostname"]
         job_id = self.scope["url_route"]["kwargs"]["job_id"]
         job_model = models.Job.objects.get(pk=job_id)
-        connection_details = job_model.job_details["current_job_details"].get(
-            "proxy_details", {}
-        )
+        connection_details = job_model.job_details["current_job_details"].get("proxy_details", {})
         port = connection_details.get("port", "")
         headers = {}
         for item in self.scope["headers"]:
@@ -50,15 +48,11 @@ class JobStatusConsumer(WebsocketConsumer):
         job_id = self.scope["url_route"]["kwargs"]["job_id"]
         self.room_group_name = f"job_status_{job_id}"
 
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name, self.channel_name
-        )
+        async_to_sync(self.channel_layer.group_add)(self.room_group_name, self.channel_name)
         self.accept()
 
     def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name, self.channel_name
-        )
+        async_to_sync(self.channel_layer.group_discard)(self.room_group_name, self.channel_name)
 
     # Receive message from WebSocket
     def receive(self, text_data=None, bytes_data=None):

@@ -5,11 +5,11 @@ from user_workspaces_server.models import Job, Workspace
 
 class WorkspaceModelTests(TestCase):
     def test_get_workspace_query_param_fields(self):
-        """Animals that can speak are correctly identified"""
+        """Check Workspace query parameters"""
         assert Workspace.get_query_param_fields() == ["name", "description", "status"]
 
     def test_get_workspace_dict_fields(self):
-        """Animals that can speak are correctly identified"""
+        """Check Workspace dictionary fields"""
         assert Workspace.get_dict_fields() == [
             "id",
             "name",
@@ -18,12 +18,13 @@ class WorkspaceModelTests(TestCase):
             "datetime_created",
             "workspace_details",
             "status",
+            "default_job_type",
         ]
 
 
 class JobModelTests(TestCase):
     def test_get_workspace_query_param_fields(self):
-        """Animals that can speak are correctly identified"""
+        """Check Job query parameters"""
         assert Job.get_query_param_fields() == [
             "workspace_id",
             "resource_job_id",
@@ -32,7 +33,7 @@ class JobModelTests(TestCase):
         ]
 
     def test_get_workspace_dict_fields(self):
-        """Animals that can speak are correctly identified"""
+        """Check Job dictionary fields"""
         assert Job.get_dict_fields() == [
             "id",
             "workspace_id",
