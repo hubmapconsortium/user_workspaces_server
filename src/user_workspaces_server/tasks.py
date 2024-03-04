@@ -7,6 +7,7 @@ from channels.layers import get_channel_layer
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Sum
+from django.forms.models import model_to_dict
 from django_q.tasks import async_task
 
 from . import models, utils
@@ -63,7 +64,7 @@ def update_job_status(job_id):
                 "config": job_type_config["environment_details"][
                     settings.UWS_CONFIG["main_resource"]
                 ],
-                "job_details": job,
+                "job_details": model_to_dict(job),
             },
         )
     except Exception:
