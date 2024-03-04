@@ -290,7 +290,7 @@ class WorkspaceView(APIView):
                     },
                 )
             except Exception:
-                job.status = 'failed'
+                job.status = "failed"
                 job.save()
                 raise WorkspaceClientException("Invalid job type specified")
 
