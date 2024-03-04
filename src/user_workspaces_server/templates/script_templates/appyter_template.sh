@@ -96,4 +96,4 @@ PORT=$(find_port)
 
 # Launch the Jupyter Notebook Server
 set -x
-python -m appyter --port ${PORT} --proxy true --host $(uname -n) &> "$(pwd)/AppyterJob_{{ job_id }}_output.log"
+python -m appyter --port ${PORT} --proxy true --host $(uname -n) {{ notebook_path }}&> "$(pwd)/AppyterJob_{{ job_id }}_output.log"
