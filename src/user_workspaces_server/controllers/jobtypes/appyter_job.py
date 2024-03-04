@@ -75,7 +75,7 @@ class AppyterJob(AbstractJob):
         port = url.port
         hostname = url.hostname
 
-        connection_string = f"{url.path}"
+        connection_string = f"/passthrough/{hostname}/{job_model.id}"
 
         time_init = (
             datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
