@@ -65,8 +65,8 @@ class AppyterJob(AbstractJob):
         url = ""
 
         for line in log_file:
-            if "http" in line:
-                url = parse.urlparse(line.split("] ")[1])
+            if "Starting server on http:" in line:
+                url = parse.urlparse(line.split("Starting server on ")[1])
                 break
 
         if not url:
@@ -75,13 +75,7 @@ class AppyterJob(AbstractJob):
         port = url.port
         hostname = url.hostname
 
-        try:
-            token = parse.parse_qs(url.query)["token"][0].strip()
-        except KeyError:
-            logger.warning("Token missing in Appyter output.")
-            return {"current_job_details": {"message": "Token undefined."}}
-
-        connection_string = f"{url.path}?token={token}"
+        connection_string = f"{url.path}"
 
         time_init = (
             datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
