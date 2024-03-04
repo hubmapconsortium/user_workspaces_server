@@ -16,10 +16,15 @@ class AppyterJob(AbstractJob):
     def __init__(self, config, job_details):
         super().__init__(config, job_details)
         self.script_template_name = "appyter_template.sh"
-        # Check to see whether job_details contains a notebook path
+        self.notebook_path = self.job_details["job_details"]["request_job_details"].get(
+            "notebook_path", "appyter.ipynb"
+        )
 
     def get_script(self, template_params=None):
-        template_config = {"job_id": self.job_details["id"]}
+        template_config = {"job_id": self.job_details["id"], "notebook_path": self.notebook_path}
+
+        logger.info(self.notebook_path)
+
         template_config.update(self.config)
         template_config.update(template_params)
 
