@@ -16,7 +16,7 @@ class AppyterJob(AbstractJob):
     def __init__(self, config, job_details):
         super().__init__(config, job_details)
         self.script_template_name = "appyter_template.sh"
-        self.notebook_path = self.job_details["job_details"]["request_job_details"].get(
+        self.notebook_path = job_details["job_details"]["request_job_details"].get(
             "notebook_path", "appyter.ipynb"
         )
 
