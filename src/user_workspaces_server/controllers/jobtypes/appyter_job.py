@@ -34,7 +34,6 @@ class AppyterJob(AbstractJob):
         return script
 
     def status_check(self, job_model):
-        output_file_name = f"AppyterJob_{job_model.id}_output.log"
         resource = apps.get_app_config("user_workspaces_server").main_resource
 
         if job_model.status == models.Job.Status.FAILED:
@@ -52,30 +51,26 @@ class AppyterJob(AbstractJob):
                     resource.resource_storage.root_dir,
                     job_model.workspace_id.file_path,
                     f".{job_model.id}",
-                    output_file_name,
+                    ".env",
                 )
             ) as f:
-                log_file = f.readlines()
+                env_file = f.readlines()
         except FileNotFoundError:
             logger.warning(
                 f"Appyter output file {job_model.workspace_id.file_path}/.{job_model.id} missing."
             )
             return {"current_job_details": {"message": "Webserver not ready."}}
 
-        url = ""
+        env = {}
 
-        for line in log_file:
-            if "Starting server on http:" in line:
-                url = parse.urlparse(line.split("Starting server on ")[1])
-                break
+        for line in env_file:
+            line_split = line.split("=")
+            # 7 is the magic number since it's the length of 'APPYTER'
+            env[line_split[0][7:]] = env[line_split[1]]
 
-        if not url:
-            return {"current_job_details": {"message": "No url found."}}
-
-        port = url.port
-        hostname = url.hostname
-
-        connection_string = f"/passthrough/{hostname}/{job_model.id}"
+        port = env["PORT"]
+        hostname = env["HOST"]
+        connection_string = env["PREFIX"]
 
         time_init = (
             datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
