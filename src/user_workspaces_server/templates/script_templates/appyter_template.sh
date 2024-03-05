@@ -107,4 +107,4 @@ EOL
 
 # Launch the Jupyter Notebook Server
 set -x
-python -m appyter --proxy true --cwd "{{ workspace_full_path }}" "{{ notebook_path }}"
+python -m appyter --prefix "/passthrough/${HOST}/{{ job_id }}" --port ${PORT} --host ${HOST} --proxy true --cwd "{{ workspace_full_path }}" "{{ notebook_path }}"

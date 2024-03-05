@@ -1,7 +1,6 @@
 import logging
 import os
 from datetime import datetime
-from urllib import parse
 
 from django.apps import apps
 from django.template import loader
