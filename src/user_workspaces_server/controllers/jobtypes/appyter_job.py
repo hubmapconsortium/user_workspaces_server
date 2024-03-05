@@ -65,8 +65,8 @@ class AppyterJob(AbstractJob):
 
         for line in env_file:
             line_split = line.split("=")
-            # 7 is the magic number since it's the length of 'APPYTER'
-            env[line_split[0][7:].strip()] = line_split[1].strip()
+            # 7 is the magic number since it's the length of 'APPYTER_'
+            env[line_split[0][8:].strip()] = line_split[1].strip()
 
         port = env["PORT"]
         hostname = env["HOST"]
