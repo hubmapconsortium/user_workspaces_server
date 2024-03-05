@@ -100,11 +100,11 @@ umask 077
 cat > "$(pwd)/.env" << EOL
 APPYTER_PORT=${PORT}
 APPYTER_HOST=${HOST}
-APPYTER_PREFIX="/passthrough/${HOST}/{{ job_id }}"
+APPYTER_PREFIX=/passthrough/${HOST}/{{ job_id }}
 EOL
 )
 
 
 # Launch the Jupyter Notebook Server
 set -x
-python -m appyter --debug false --proxy true --cwd "{{ workspace_full_path }}" "{{ notebook_path }}"
+python -m appyter --proxy true --cwd "{{ workspace_full_path }}" "{{ notebook_path }}"
