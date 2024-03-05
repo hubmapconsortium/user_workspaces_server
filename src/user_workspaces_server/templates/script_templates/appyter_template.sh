@@ -97,4 +97,4 @@ HOST=$(uname -n)
 
 # Launch the Jupyter Notebook Server
 set -x
-python -m appyter --prefix "/passthrough/${HOST}/{{ job_id }}" --port ${PORT} --proxy true --host ${HOST} --cwd "{{ workspace_full_path }}" "{{ notebook_path }}" &> "$(pwd)/AppyterJob_{{ job_id }}_output.log"
+python -m appyter --debug false --prefix "/passthrough/${HOST}/{{ job_id }}" --port ${PORT} --proxy true --host ${HOST} --cwd "{{ workspace_full_path }}" "{{ notebook_path }}" &> "$(pwd)/AppyterJob_{{ job_id }}_output.log"
