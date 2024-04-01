@@ -34,9 +34,7 @@ class SlurmAPIResource(AbstractResource):
 
     def launch_job(self, job, workspace):
         # Need to generate a SLURM token (as a user) to launch a job
-        workspace_full_path = os.path.join(
-            self.resource_storage.root_dir, workspace.file_path
-        )
+        workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
         job_full_path = os.path.join(workspace_full_path, f'.{job.job_details["id"]}')
 
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
@@ -54,6 +52,7 @@ class SlurmAPIResource(AbstractResource):
         }
 
         time_limit = job.config.get("time_limit", "30")
+        partition = self.config.get("partition", "")
 
         body = {
             "script": job.get_script({"workspace_full_path": workspace_full_path}),
@@ -74,6 +73,7 @@ class SlurmAPIResource(AbstractResource):
                 },
                 "time_limit": time_limit,
                 "requeue": False,
+                "partition": partition,
             },
         }
 
@@ -86,7 +86,13 @@ class SlurmAPIResource(AbstractResource):
         if slurm_response.status_code != 200:
             raise APIException(slurm_response.text)
 
-        slurm_response = slurm_response.json()
+        try:
+            slurm_response = slurm_response.json()
+        except Exception:
+            logger.info(slurm_response.text)
+            raise APIException(
+                f"Slurm response for {job.id} could not be deciphered: {slurm_response.text}"
+            )
 
         if len(slurm_response["errors"]):
             raise APIException(slurm_response["errors"], code=500)
@@ -163,9 +169,7 @@ class SlurmAPIResource(AbstractResource):
             return 0
 
     def stop_job(self, job):
-        user_info = self.resource_user_authentication.has_permission(
-            job.workspace_id.user_id
-        )
+        user_info = self.resource_user_authentication.has_permission(job.workspace_id.user_id)
 
         token = self.get_user_token(user_info)
 

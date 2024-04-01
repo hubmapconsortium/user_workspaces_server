@@ -22,9 +22,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
         self.authentication_type = self.connection_details["authentication_type"]
         self.oauth = globus_sdk.ConfidentialAppAuthClient(client_id, client_secret)
         if not AuthHelper.isInitialized():
-            self.auth_helper = AuthHelper.create(
-                clientId=client_id, clientSecret=client_secret
-            )
+            self.auth_helper = AuthHelper.create(clientId=client_id, clientSecret=client_secret)
         else:
             self.auth_helper = AuthHelper.instance()
 

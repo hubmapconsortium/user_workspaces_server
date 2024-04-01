@@ -28,7 +28,9 @@
     "default": {
       "BACKEND": "channels_redis.core.RedisChannelLayer",
       "CONFIG": {
-        "hosts": ["redis://127.0.0.1:6379/0?"]
+        "hosts": [
+          "redis://127.0.0.1:6379/0?"
+        ]
       }
     }
   },
@@ -41,47 +43,52 @@
   "LOGGING": {
     "version": 1,
     "formatters": {
-        "django-q": {
-            "format": "{asctime} [Q] {levelname} {message}",
-            "style": "{"
-        },
-        "user_workspaces_server": {
-            "format": "{asctime} [UWS] {levelname} {message}",
-            "style": "{"
-        }
+      "django-q": {
+        "format": "{asctime} [Q] {levelname} {message}",
+        "style": "{"
+      },
+      "user_workspaces_server": {
+        "format": "{asctime} [UWS] {levelname} {message}",
+        "style": "{"
+      }
     },
     "handlers": {
-        "discard": {
-            "class": "logging.NullHandler"
-        },
-        "django-q-console": {
-            "class": "logging.StreamHandler",
-            "formatter": "django-q"
-        },
-        "user_workspaces_server_console": {
-            "class": "logging.StreamHandler",
-            "formatter": "user_workspaces_server"
-        },
-        "mail": {
-            "class": "user_workspaces_server.logging.AsyncEmailHandler",
-            "formatter": "user_workspaces_server",
-            "level": "ERROR",
-            "subject": "UWS Log",
-            "from_email": "noreply@noreply.com",
-            "email_list": []
-        }
+      "discard": {
+        "class": "logging.NullHandler"
+      },
+      "django-q-console": {
+        "class": "logging.StreamHandler",
+        "formatter": "django-q"
+      },
+      "user_workspaces_server_console": {
+        "class": "logging.StreamHandler",
+        "formatter": "user_workspaces_server"
+      },
+      "mail": {
+        "class": "user_workspaces_server.logging.AsyncEmailHandler",
+        "formatter": "user_workspaces_server",
+        "level": "ERROR",
+        "subject": "UWS Log",
+        "from_email": "noreply@noreply.com",
+        "email_list": []
+      }
     },
     "loggers": {
-        "django-q": {
-            "level": "INFO",
-            "propagate": true,
-            "handlers": ["django-q-console"]
-        },
-        "user_workspaces_server": {
-            "level": "DEBUG",
-            "propagate": false,
-            "handlers": ["user_workspaces_server_console", "mail"]
-        }
+      "django-q": {
+        "level": "INFO",
+        "propagate": true,
+        "handlers": [
+          "django-q-console"
+        ]
+      },
+      "user_workspaces_server": {
+        "level": "DEBUG",
+        "propagate": false,
+        "handlers": [
+          "user_workspaces_server_console",
+          "mail"
+        ]
+      }
     }
   }
 }

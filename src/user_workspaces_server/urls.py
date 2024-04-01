@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.urls import include, path
 
 from . import ws_consumers
@@ -50,9 +51,7 @@ workspace_view_patterns = [
 job_view_patterns = [
     path("", job_view.JobView.as_view(), name="jobs"),
     path("<int:job_id>/", job_view.JobView.as_view(), name="jobs_with_id"),
-    path(
-        "<int:job_id>/<str:put_type>/", job_view.JobView.as_view(), name="jobs_put_type"
-    ),
+    path("<int:job_id>/<str:put_type>/", job_view.JobView.as_view(), name="jobs_put_type"),
 ]
 
 job_type_view_patterns = [

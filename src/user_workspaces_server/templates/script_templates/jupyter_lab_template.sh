@@ -1,11 +1,18 @@
 #!/bin/bash
-VENV_PATH="{{ workspace_full_path }}/.JupyterLabJob_venv"
+[[ {{ environment_name }} == .* ]] && ENV_NAME="{{ environment_name }}" || ENV_NAME=".{{ environment_name }}"
+VENV_PATH="{{ workspace_full_path }}/${ENV_NAME}_venv"
 
+echo "STARTED @ $(date)"
 ### Environment initialization
 {% if module_manager == "tar" %}
   if [ ! -d "$VENV_PATH" ]; then
     mkdir -p "$VENV_PATH"
-    tar -xzf {{ tar_file_path }} -C "$VENV_PATH"
+    tar -xf {{ tar_file_path }} -C "$VENV_PATH"
+    echo "VENV COPIED @ $(date)"
+    source "$VENV_PATH/bin/activate"
+    conda-unpack
+    echo "VENV UNPACKED @ $(date)"
+    source "$VENV_PATH/bin/deactivate"
   fi
   source "$VENV_PATH/bin/activate"
 {% endif %}
@@ -117,4 +124,5 @@ EOL
 
 # Launch the Jupyter Notebook Server
 set -x
+export JUPYTER_DATA_DIR="$VENV_PATH/share/jupyter"
 python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"

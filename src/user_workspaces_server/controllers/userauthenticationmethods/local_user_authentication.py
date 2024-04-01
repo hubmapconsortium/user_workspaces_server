@@ -16,12 +16,8 @@ logger = logging.getLogger(__name__)
 class LocalUserAuthentication(AbstractUserAuthentication):
     def __init__(self, config):
         super().__init__(config)
-        self.create_external_users = self.connection_details.get(
-            "create_external_users", False
-        )
-        self.operating_system = self.connection_details.get(
-            "operating_system", ""
-        ).lower()
+        self.create_external_users = self.connection_details.get("create_external_users", False)
+        self.operating_system = self.connection_details.get("operating_system", "").lower()
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping(
@@ -36,9 +32,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             if not external_user:
                 # No user found, return false
                 if self.create_external_users:
-                    external_user = self.create_external_user(
-                        {"username": internal_user.username}
-                    )
+                    external_user = self.create_external_user({"username": internal_user.username})
                     if not external_user:
                         return False
                 else:
@@ -72,14 +66,10 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             raise ParseError(repr(e))
 
         if "client_token" not in body:
-            raise ParseError(
-                "Missing client_token. Please have admin generate a token for you."
-            )
+            raise ParseError("Missing client_token. Please have admin generate a token for you.")
 
         if "user_info" not in body:
-            raise ParseError(
-                "Missing user_info. Please provide user_info to get user_token."
-            )
+            raise ParseError("Missing user_info. Please provide user_info to get user_token.")
 
         try:
             client_token = body["client_token"]
@@ -125,9 +115,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
 
     def create_external_user(self, user_info):
         if self.operating_system == "linux":
-            output = subprocess.run(
-                ["useradd", user_info["username"]], capture_output=True
-            )
+            output = subprocess.run(["useradd", user_info["username"]], capture_output=True)
             if output.returncode == 0:
                 external_user = pwd.getpwnam(user_info["username"])
             else:
@@ -155,9 +143,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             if "username" in external_user_info:
                 external_user = pwd.getpwnam(external_user_info["username"])
             elif "external_user_id" in external_user_info:
-                external_user = pwd.getpwuid(
-                    int(external_user_info["external_user_id"])
-                )
+                external_user = pwd.getpwuid(int(external_user_info["external_user_id"]))
             else:
                 external_user = False
             return (

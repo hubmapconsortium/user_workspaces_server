@@ -56,13 +56,20 @@ class WorkspaceView(APIView):
 
         workspace_details = body.get("workspace_details", {})
 
+        if default_job_type := body.get("default_job_type"):
+            if (
+                default_job_type
+                not in apps.get_app_config("user_workspaces_server").available_job_types
+            ):
+                raise WorkspaceClientException(
+                    f"{default_job_type} is not in the list of available job types."
+                )
+
         if not isinstance(workspace_details, dict):
             raise ParseError("Workspace details not JSON.")
 
         request_workspace_details = {
-            "files": [
-                {"name": file["name"]} for file in workspace_details.get("files", [])
-            ],
+            "files": [{"name": file["name"]} for file in workspace_details.get("files", [])],
             "symlinks": workspace_details.get("symlinks", []),
         }
 
@@ -77,6 +84,7 @@ class WorkspaceView(APIView):
                 "current_workspace_details": {"files": [], "symlinks": []},
             },
             "status": "idle",
+            "default_job_type": default_job_type,
         }
 
         main_storage = apps.get_app_config("user_workspaces_server").main_storage
@@ -116,9 +124,7 @@ class WorkspaceView(APIView):
             main_storage.set_ownership(
                 external_user_mapping.external_username, external_user_mapping
             )
-            main_storage.set_ownership(
-                workspace.file_path, external_user_mapping, recursive=True
-            )
+            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             workspace.save()
         except Exception:
@@ -134,9 +140,7 @@ class WorkspaceView(APIView):
                 "message": "Successful.",
                 "success": True,
                 "data": {
-                    "workspace": model_to_dict(
-                        workspace, models.Workspace.get_dict_fields()
-                    )
+                    "workspace": model_to_dict(workspace, models.Workspace.get_dict_fields())
                 },
             }
         )
@@ -154,9 +158,7 @@ class WorkspaceView(APIView):
             )
 
         try:
-            workspace = models.Workspace.objects.get(
-                id=workspace_id, user_id=request.user
-            )
+            workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
         except models.Workspace.DoesNotExist:
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
@@ -169,7 +171,16 @@ class WorkspaceView(APIView):
             workspace.name = body.get("name", workspace.name)
             workspace.description = body.get("description", workspace.description)
 
-            workspace.save()
+            workspace.default_job_type = body.get("default_job_type", workspace.default_job_type)
+
+            if workspace.default_job_type:
+                if (
+                    workspace.default_job_type
+                    not in apps.get_app_config("user_workspaces_server").available_job_types
+                ):
+                    raise WorkspaceClientException(
+                        f"{workspace.default_job_type} is not in the list of available job types."
+                    )
 
             workspace_details = body.get("workspace_details", {})
 
@@ -183,11 +194,30 @@ class WorkspaceView(APIView):
                     workspace.file_path, external_user_mapping, recursive=True
                 )
             except Exception:
-                logger.exception(
-                    "Failure when creating symlink/files or setting ownership."
-                )
+                logger.exception("Failure when creating symlink/files or setting ownership.")
                 raise
 
+            workspace.workspace_details["current_workspace_details"]["files"] = [
+                {"name": file_name}
+                for file_name in {
+                    (file["name"] if file["name"][0] == "/" else f"/{file['name']}")
+                    for file in workspace_details.get("files", [])
+                    + workspace.workspace_details["current_workspace_details"]["files"]
+                }
+            ]
+
+            workspace.workspace_details["current_workspace_details"]["symlinks"] = [
+                {"name": symlink_name}
+                for symlink_name in {
+                    (symlink["name"] if symlink["name"][0] == "/" else f"/{symlink['name']}")
+                    for symlink in workspace_details.get("symlinks", [])
+                    + workspace.workspace_details["current_workspace_details"]["symlinks"]
+                }
+            ]
+
+            workspace.save()
+
+            logger.info(workspace.workspace_details)
             async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
 
             return JsonResponse({"message": "Update successful.", "success": True})
@@ -203,8 +233,16 @@ class WorkspaceView(APIView):
             except Exception as e:
                 raise ParseError(f"Invalid JSON: {str(e)}")
 
-            if "job_type" not in body:
-                raise ParseError("Missing job_type.")
+            if not (job_type := body.get("job_type")):
+                if not workspace.default_job_type:
+                    raise ParseError("Missing job_type and no default job type set on workspace.")
+                else:
+                    job_type = workspace.default_job_type
+
+            if job_type not in apps.get_app_config("user_workspaces_server").available_job_types:
+                raise WorkspaceClientException(
+                    f"{job_type} is not in the list of available job types."
+                )
 
             job_details = body.get("job_details", {})
 
@@ -219,7 +257,7 @@ class WorkspaceView(APIView):
             job_data = {
                 "user_id": workspace.user_id,
                 "workspace_id": workspace,
-                "job_type": body["job_type"],
+                "job_type": job_type,
                 "datetime_created": datetime.now(),
                 "job_details": {
                     "metrics": {},
@@ -239,7 +277,7 @@ class WorkspaceView(APIView):
             try:
                 job_type_config = apps.get_app_config(
                     "user_workspaces_server"
-                ).available_job_types.get(body["job_type"])
+                ).available_job_types.get(job_type)
 
                 job_to_launch = utils.generate_controller_object(
                     job_type_config["job_type"],
@@ -283,9 +321,7 @@ class WorkspaceView(APIView):
             for file_index, file in request.FILES.items():
                 main_storage.create_file(workspace.file_path, file)
 
-            main_storage.set_ownership(
-                workspace.file_path, external_user_mapping, recursive=True
-            )
+            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
 
@@ -295,9 +331,7 @@ class WorkspaceView(APIView):
 
     def delete(self, request, workspace_id):
         try:
-            workspace = models.Workspace.objects.get(
-                user_id=request.user, id=workspace_id
-            )
+            workspace = models.Workspace.objects.get(user_id=request.user, id=workspace_id)
         except models.Workspace.DoesNotExist:
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
@@ -319,9 +353,7 @@ class WorkspaceView(APIView):
             )
 
         if not main_storage.is_valid_path(workspace.file_path):
-            logger.error(
-                f"Workspace {workspace_id} deletion failed due to invalid path"
-            )
+            logger.error(f"Workspace {workspace_id} deletion failed due to invalid path")
             workspace.status = models.Workspace.Status.ERROR
             workspace.save()
             raise APIException(

@@ -16,9 +16,8 @@ class Workspace(models.Model):
     disk_space = models.IntegerField(default=0)
     datetime_created = models.DateTimeField()
     workspace_details = models.JSONField()
-    status = models.CharField(
-        max_length=64, default=Status.IDLE, choices=Status.choices
-    )
+    status = models.CharField(max_length=64, default=Status.IDLE, choices=Status.choices)
+    default_job_type = models.CharField(max_length=64, null=True)
 
     def __str__(self):
         return f"{self.id}: {self.user_id.username} - {self.status}"
@@ -37,6 +36,7 @@ class Workspace(models.Model):
             "datetime_created",
             "workspace_details",
             "status",
+            "default_job_type",
         ]
 
 
@@ -53,9 +53,7 @@ class Job(models.Model):
     resource_job_id = models.IntegerField()
     job_type = models.CharField(max_length=64)
     resource_name = models.CharField(max_length=64)
-    status = models.CharField(
-        max_length=64, default=Status.PENDING, choices=Status.choices
-    )
+    status = models.CharField(max_length=64, default=Status.PENDING, choices=Status.choices)
     datetime_created = models.DateTimeField()
     datetime_start = models.DateTimeField(null=True)
     datetime_end = models.DateTimeField(null=True)
