@@ -12,7 +12,7 @@ class StatusView(APIView):
     permission_classes = []
 
     def get(self, request):
-        base_dir = Path(__file__).resolve().parent.parent
+        base_dir = Path(__file__).resolve().parent.parent.parent
         version_file_path = os.path.join(base_dir, "VERSION")
         build_file_path = os.path.join(base_dir, "BUILD")
 
