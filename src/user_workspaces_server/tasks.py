@@ -38,6 +38,15 @@ def update_job_status(job_id):
         job.job_details["metrics"]["time_pending"] = time_pending
     elif current_job_status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         job.datetime_end = datetime.datetime.now()
+    elif current_job_status == models.Job.Status.PENDING:
+        current_time_pending = (
+            datetime.datetime.now(job.datetime_created.tzinfo) - job.datetime_created
+        ).total_seconds()
+        time_pending_catch = resource.config.get("time_pending_catch")
+        if int(time_pending_catch) and current_time_pending > time_pending_catch:
+            logger.error(
+                f"Job {job_id} for user {job.user_id.username} has been pending more than {time_pending_catch}"
+            )
 
     if current_job_status == models.Job.Status.FAILED:
         logger.error(f"Job {job_id} for user {job.user_id.username} has failed.")
