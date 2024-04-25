@@ -32,7 +32,6 @@ class JobView(APIView):
             response["data"]["jobs"] = jobs
         else:
             response["message"] = "Job matching given parameters could not be found."
-            response["success"] = False
 
         return JsonResponse(response)
 

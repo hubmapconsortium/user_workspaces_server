@@ -40,7 +40,6 @@ class WorkspaceView(APIView):
             response["data"]["workspaces"] = workspaces
         else:
             response["message"] = "Workspace matching given parameters could not be found."
-            response["success"] = False
 
         return JsonResponse(response)
 
