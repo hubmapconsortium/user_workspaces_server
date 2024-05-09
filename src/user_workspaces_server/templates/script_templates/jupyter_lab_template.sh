@@ -125,4 +125,5 @@ EOL
 # Launch the Jupyter Notebook Server
 set -x
 export JUPYTER_DATA_DIR="$VENV_PATH/share/jupyter"
+export SSL_CERT_FILE="$VENV_PATH/ssl/cert.pem"
 python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
