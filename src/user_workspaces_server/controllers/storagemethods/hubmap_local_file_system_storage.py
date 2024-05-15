@@ -37,7 +37,12 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
                 )
             )
 
-        if not (symlinks := workspace_details.get("symlinks", [])):
+        symlinks = workspace_details.get("symlinks", [])
+
+        if type(symlinks) != list:
+            raise ParseError("'symlinks' index must contain a list.")
+
+        if not symlinks:
             return
 
         # Let's check here to see if there are any failure states, IE if there is an uuid but no token
