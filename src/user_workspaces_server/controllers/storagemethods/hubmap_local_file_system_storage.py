@@ -1,12 +1,7 @@
-import logging
-import os
-
 import requests as http_r
 from rest_framework.exceptions import (
     APIException,
-    NotFound,
     ParseError,
-    PermissionDenied,
 )
 
 from user_workspaces_server.controllers.storagemethods.local_file_system_storage import (
