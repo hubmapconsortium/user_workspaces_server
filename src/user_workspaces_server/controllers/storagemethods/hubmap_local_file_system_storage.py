@@ -56,7 +56,7 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
             abs_path_response = http_r.post(
                 f"{self.root_url}/datasets/file-system-abs-path",
                 headers={"Authorization": f"Bearer {globus_groups_token}"},
-                json=dataset_uuids.keys(),
+                json=list(dataset_uuids.keys()),
             )
 
             if abs_path_response.status_code == 500:
