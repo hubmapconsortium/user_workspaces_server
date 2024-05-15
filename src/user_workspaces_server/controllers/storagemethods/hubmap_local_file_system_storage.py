@@ -34,7 +34,7 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
 
         symlinks = workspace_details.get("symlinks", [])
 
-        if type(symlinks) != list:
+        if not isinstance(symlinks, list):
             raise ParseError("'symlinks' index must contain a list.")
 
         if not symlinks:

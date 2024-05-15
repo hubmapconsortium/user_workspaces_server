@@ -13,7 +13,7 @@ class AbstractStorage(ABC):
     def create_symlinks(self, workspace, workspace_details):
         symlinks = workspace_details.get("symlinks", [])
 
-        if type(symlinks) != list:
+        if not isinstance(symlinks, list):
             raise ParseError("'symlinks' index must contain a list.")
 
         if not symlinks:
@@ -27,7 +27,7 @@ class AbstractStorage(ABC):
     def create_files(self, workspace, workspace_details):
         files = workspace_details.get("files", [])
 
-        if type(files) != list:
+        if not isinstance(files, list):
             raise ParseError("'files' index must contain a list.")
 
         if not files:
