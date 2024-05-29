@@ -5,6 +5,7 @@ import pwd
 import shutil
 
 from django.forms import model_to_dict
+from rest_framework.exceptions import APIException
 
 from user_workspaces_server.controllers.storagemethods.abstract_storage import (
     AbstractStorage,
@@ -128,7 +129,7 @@ class LocalFileSystemStorage(AbstractStorage):
                 os.remove(os.path.join(symlink_full_dest_path, symlink_name))
             os.symlink(symlink_source_path, os.path.join(symlink_full_dest_path, symlink_name))
         else:
-            raise NotADirectoryError
+            raise APIException(f"Symlink path not found: {symlink_source_path}")
 
     def create_file(self, path, file):
         file_path_list = file.name.split("/")

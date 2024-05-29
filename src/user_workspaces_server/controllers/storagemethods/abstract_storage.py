@@ -11,17 +11,29 @@ class AbstractStorage(ABC):
         self.root_dir = config["root_dir"]
 
     def create_symlinks(self, workspace, workspace_details):
-        if type(workspace_details.get("symlinks", [])) != list:
+        symlinks = workspace_details.get("symlinks", [])
+
+        if not isinstance(symlinks, list):
             raise ParseError("'symlinks' index must contain a list.")
-        for symlink in workspace_details.get("symlinks", []):
+
+        if not symlinks:
+            return
+
+        for symlink in symlinks:
             if ".." in symlink.get("name", ""):
                 raise ParseError("Symlink name cannot contain double dots.")
             self.create_symlink(workspace.file_path, symlink)
 
     def create_files(self, workspace, workspace_details):
-        if type(workspace_details.get("files", [])) != list:
+        files = workspace_details.get("files", [])
+
+        if not isinstance(files, list):
             raise ParseError("'files' index must contain a list.")
-        for file in workspace_details.get("files", []):
+
+        if not files:
+            return
+
+        for file in files:
             # Create a file object here
             content_file = ContentFile(
                 bytes(file.get("content", ""), "utf-8"), name=file.get("name")
