@@ -243,12 +243,21 @@ class WorkspaceView(APIView):
                 )
 
             job_details = body.get("job_details", {})
+            resource_options = body.get("resource_options", {})
 
             if not isinstance(job_details, dict):
                 raise ParseError("Job details not JSON.")
+            if not isinstance(resource_options, dict):
+                raise ParseError("Resource options not JSON.")
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
             resource = apps.get_app_config("user_workspaces_server").main_resource
+
+            # TODO: GPU support "gpu_enabled": true,
+            # {"num_cpus": 0, "memory_mb": 0, "time_limit_min": 30}
+
+            if not resource.validate_options(resource_options):
+                raise ParseError("Invalid resource options found.")
 
             # TODO: Check whether user has permission for this resource (and resource storage).
 
@@ -262,6 +271,7 @@ class WorkspaceView(APIView):
                     "request_job_details": job_details,
                     "current_job_details": {},
                 },
+                "resource_options": resource_options,
                 "resource_name": type(resource).__name__,
                 "status": "pending",
                 "resource_job_id": -1,
