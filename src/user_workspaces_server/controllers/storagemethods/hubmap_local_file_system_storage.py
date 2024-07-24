@@ -1,13 +1,5 @@
-import logging
-import os
-
 import requests as http_r
-from rest_framework.exceptions import (
-    APIException,
-    NotFound,
-    ParseError,
-    PermissionDenied,
-)
+from rest_framework.exceptions import APIException, ParseError
 
 from user_workspaces_server.controllers.storagemethods.local_file_system_storage import (
     LocalFileSystemStorage,
@@ -37,62 +29,56 @@ class HubmapLocalFileSystemStorage(LocalFileSystemStorage):
                 )
             )
 
+        symlinks = workspace_details.get("symlinks", [])
+
+        if not isinstance(symlinks, list):
+            raise ParseError("'symlinks' index must contain a list.")
+
+        if not symlinks:
+            return
+
         # Let's check here to see if there are any failure states, IE if there is an uuid but no token
-        for symlink in workspace_details.get("symlinks", []):
-            if "dataset_uuid" in symlink and not globus_groups_token:
-                raise ParseError("No globus_groups_token passed when trying to use dataset_uuid.")
+        dataset_uuids = {}
+        for symlink in symlinks:
+            if "dataset_uuid" in symlink:
+                if not globus_groups_token:
+                    raise ParseError(
+                        "No globus_groups_token passed when trying to use dataset_uuid."
+                    )
+                else:
+                    # Build the dataset_uuids dictionary while we're in here to avoid iterating again
+                    dataset_uuids[symlink.get("dataset_uuid")] = symlink
             if ".." in symlink.get("name", ""):
                 raise ParseError("Symlink name cannot contain double dots.")
 
-        for symlink in workspace_details.get("symlinks", []):
-            self.create_symlink(workspace.file_path, symlink, globus_groups_token)
-
-    def create_symlink(self, path, symlink, globus_groups_token=None):
-        # If dataset_uuid is not in there, just create a "normal" symlink
-        if "dataset_uuid" not in symlink:
-            super().create_symlink(path, symlink)
-        else:
-            symlink_dataset_uuid = symlink.get("dataset_uuid", -1)
-            symlink_name = symlink.get("name", "")
-            symlink_path_list = symlink_name.split("/")
-            symlink_name = symlink_path_list[-1]
-            symlink_dest_path = symlink_path_list[:-1]
-
-            if not self.is_valid_path(os.path.join(path, symlink_name)):
-                logging.error(f"Symlink {symlink_name} cannot be created in {path}.")
-                raise ParseError(f"Invalid symlink destination path specified {symlink_name}")
-
-            symlink_full_dest_path = os.path.join(self.root_dir, path, "/".join(symlink_dest_path))
-            os.makedirs(symlink_full_dest_path, exist_ok=True)
-
-            # {root_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path
-            abs_path_response = http_r.get(
-                f"{self.root_url}/datasets/{symlink_dataset_uuid}/file-system-abs-path",
+        if dataset_uuids:
+            # If there are dataset_uuids passed, grab all the abs-paths
+            abs_path_response = http_r.post(
+                f"{self.root_url}/datasets/file-system-abs-path",
                 headers={"Authorization": f"Bearer {globus_groups_token}"},
+                json=list(dataset_uuids.keys()),
             )
-            if abs_path_response.status_code == 401:
-                raise PermissionDenied(
-                    f"User does not have authorization for dataset {symlink_dataset_uuid} based on token {globus_groups_token}"
-                )
-            elif abs_path_response.status_code == 400:
-                raise ParseError(
-                    f"Error when attempting to get dataset path: {abs_path_response.text}"
-                )
-            elif abs_path_response.status_code == 404:
-                raise NotFound(f"Dataset {symlink_dataset_uuid} could not be found.")
+
             if abs_path_response.status_code == 500:
                 raise APIException(f"Server side error: {abs_path_response.text}", code=500)
 
-            abs_path_response = abs_path_response.json()
-            symlink_source_path = abs_path_response.get("path")
-
-            # Detect the relative path from symlink name so that it more closely mirrors the file name functionality
-            if os.path.exists(symlink_source_path):
-                if os.path.exists(os.path.join(symlink_full_dest_path, symlink_name)):
-                    os.remove(os.path.join(symlink_full_dest_path, symlink_name))
-                os.symlink(
-                    symlink_source_path,
-                    os.path.join(symlink_full_dest_path, symlink_name),
+            abs_path_errors = []
+            for abs_path in abs_path_response.json():
+                uuid = abs_path.get("uuid")
+                if "error" in abs_path:
+                    abs_path_errors.append(abs_path)
+                    dataset_uuids.pop(uuid)
+                else:
+                    dataset_uuids[uuid].update({"source_path": abs_path.get("path")})
+            if abs_path_errors:
+                raise APIException(
+                    f"Errors encountered when attempting to gather UUID information: {abs_path_errors}",
+                    code=500,
                 )
-            else:
-                raise APIException(f"Symlink path not found: {symlink_source_path}")
+
+        for symlink in symlinks:
+            if "dataset_uuid" not in symlink:
+                super().create_symlink(workspace.file_path, symlink)
+
+        for symlink in dataset_uuids.values():
+            super().create_symlink(workspace.file_path, symlink)
