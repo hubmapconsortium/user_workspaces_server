@@ -77,7 +77,11 @@ class SlurmAPIResource(AbstractResource):
             },
         }
 
+        body_job_environment_copy = body["job"]["environment"].copy()
+
         body["job"].update(self.translate_options(resource_options))
+
+        body["job"]["environment"].update(body_job_environment_copy)
 
         slurm_response = http_r.post(
             f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/',
@@ -236,6 +240,6 @@ class SlurmAPIResource(AbstractResource):
         gpu_enabled = resource_options.get("gpu_enabled", False)
 
         if isinstance(gpu_enabled, bool) and gpu_enabled:
-            updated_options["argv"] = ["--gpus", "1"]
+            updated_options["environment"] = {"SBATCH_GPUS": "1"}
 
         return updated_options
