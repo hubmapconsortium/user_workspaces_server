@@ -77,7 +77,7 @@ class SlurmAPIResource(AbstractResource):
             },
         }
 
-        body["job"] |= self.translate_options(resource_options)
+        body["job"].update(self.translate_options(resource_options))
 
         slurm_response = http_r.post(
             f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/',
@@ -224,14 +224,14 @@ class SlurmAPIResource(AbstractResource):
             "time_limit_minutes": "time_limit",
         }
 
-        return option_list[option]
+        return option_list.get(option)
 
     def translate_options(self, resource_options):
         # Should translate the options into a format that can be used by the resource
-        updated_options = {
-            self.translate_option_name(option_name): option_value
-            for option_name, option_value in resource_options.items()
-        }
+        updated_options = {}
+        for option_name, option_value in resource_options.items():
+            if updated_option_name := self.translate_option_name(option_name):
+                updated_options[updated_option_name] = option_value
 
         gpu_enabled = resource_options.get("gpu_enabled", False)
 

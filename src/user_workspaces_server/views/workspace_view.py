@@ -300,7 +300,7 @@ class WorkspaceView(APIView):
             except Exception:
                 raise WorkspaceClientException("Invalid job type specified")
 
-            resource_job_id = resource.launch_job(job_to_launch, workspace)
+            resource_job_id = resource.launch_job(job_to_launch, workspace, resource_options)
 
             job.resource_job_id = resource_job_id
             job.save()
