@@ -237,9 +237,9 @@ class SlurmAPIResource(AbstractResource):
             if updated_option_name := self.translate_option_name(option_name):
                 updated_options[updated_option_name] = option_value
 
-        gpu_enabled = resource_options.get("gpu_enabled", False)
-
-        if isinstance(gpu_enabled, bool) and gpu_enabled:
-            updated_options["environment"] = {"SBATCH_GPUS": "1"}
+        # TODO: Re-enable gpu support after its clear what has to be done to support it.
+        #        gpu_enabled = resource_options.get("gpu_enabled", False)
+        #        if isinstance(gpu_enabled, bool) and gpu_enabled:
+        #            updated_options["environment"] = {"SBATCH_GPUS": "1"}
 
         return updated_options
