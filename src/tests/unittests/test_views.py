@@ -619,7 +619,7 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
             "status": Job.Status.PENDING,
             "resource_job_id": -1,
             "core_hours": 0,
-            "resource_options": {}
+            "resource_options": {},
         }
         job = Job(**job_data)
         job.save()
@@ -675,7 +675,7 @@ class JobAPITestCase(UserWorkspacesAPITestCase):
             "status": Job.Status.PENDING,
             "resource_job_id": -1,
             "core_hours": 0,
-            "resource_options": {}
+            "resource_options": {},
         }
         cls.job = Job(**job_data)
         cls.job.save()
