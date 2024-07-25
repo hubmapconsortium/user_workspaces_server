@@ -38,6 +38,12 @@ services:
     environment:
       - POSTGRES_PASSWORD=blank
       - POSTGRES_USER=blank
+      - GRAFANA_PASSWORD=grafanareader
+      - GRAFANA_USER=grafanareader
     depends_on:
       - redis
       - postgres
+  grafana:
+    build:
+      context: ./grafana_dir
+    container_name: grafana

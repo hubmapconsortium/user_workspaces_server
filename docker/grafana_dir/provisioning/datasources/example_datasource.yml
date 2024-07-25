@@ -1,0 +1,14 @@
+apiVersion: 1
+
+datasources:
+-  name: Postgres                        # name of the datasource
+   uid: user_workspaces_postgres
+   type: postgres                      # type of the data source
+   url: postgres:5432       # url of the prom instance
+   user: <grafana_postgresjuser>
+   secureJsonData:
+     password: '<grafana_postgres_pw>'
+   jsonData:
+     database: postgres
+     # TODO: probably not optimal?
+     sslmode: 'disable' # disable/require/verify-ca/verify-full

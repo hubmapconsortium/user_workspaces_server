@@ -1,0 +1,143 @@
+{
+  "id": null,
+  "uid": "cLV5GDCkz",
+  "title": "New dashboard",
+  "tags": [],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "time_options": [],
+    "refresh_intervals": []
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "5s",
+  "schemaVersion": 17,
+  "version": 0,
+  "links": [],
+  "panels": [
+{
+  "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 8
+  },
+  "id": 5,
+  "title": "Users",
+  "type": "barchart",
+  "targets": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "user_workspaces_postgres"
+      },
+      "refId": "A",
+      "format": "table",
+      "rawSql": "SELECT username, count(*) FROM auth_user GROUP BY username",
+      "editorMode": "code",
+      "sql": {
+        "columns": [
+          {
+            "type": "function",
+            "parameters": [
+              {
+                "type": "functionParameter",
+                "name": "username"
+              }
+            ]
+          }
+        ],
+        "groupBy": [],
+        "limit": 50
+      },
+      "table": "auth_user",
+      "rawQuery": true
+    }
+  ],
+  "options": {
+    "orientation": "auto",
+    "xTickLabelRotation": 0,
+    "xTickLabelSpacing": 0,
+    "showValue": "auto",
+    "stacking": "none",
+    "groupWidth": 0.7,
+    "barWidth": 0.97,
+    "barRadius": 0,
+    "fullHighlight": false,
+    "tooltip": {
+      "mode": "single",
+      "sort": "none"
+    },
+    "legend": {
+      "showLegend": true,
+      "displayMode": "list",
+      "placement": "bottom",
+      "calcs": []
+    }
+  },
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "lineWidth": 1,
+        "fillOpacity": 80,
+        "gradientMode": "none",
+        "axisPlacement": "auto",
+        "axisLabel": "",
+        "axisColorMode": "text",
+        "axisBorderShow": false,
+        "scaleDistribution": {
+          "type": "linear"
+        },
+        "axisCenteredZero": false,
+        "hideFrom": {
+          "tooltip": false,
+          "viz": false,
+          "legend": false
+        },
+        "thresholdsStyle": {
+          "mode": "off"
+        }
+      },
+      "color": {
+        "mode": "thresholds"
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "percentage",
+        "steps": [
+          {
+            "value": null,
+            "color": "green"
+          },
+          {
+            "value": 70,
+            "color": "orange"
+          },
+          {
+            "value": 85,
+            "color": "red"
+          }
+        ]
+      }
+    },
+    "overrides": []
+  },
+  "datasource": {
+    "uid": "user_workspaces_postgres",
+    "type": "grafana-postgresql-datasource"
+  },
+  "pluginVersion": "11.1.0"
+}
+  ]
+}

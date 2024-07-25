@@ -1,0 +1,14 @@
+apiVersion: 1
+
+providers:
+- name: 'User Workspaces Server Dashboard'
+  orgId: 1
+  timezone: "browser"
+  editable: false
+  folder: ''
+  type: file
+  disableDeletion: true
+  updateIntervalSeconds: 10
+  options:
+    path: "/etc/grafana/dashboards"
+    foldersFromFilesStructure: false
