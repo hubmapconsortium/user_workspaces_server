@@ -84,7 +84,6 @@ class Job(models.Model):
             "datetime_end",
             "core_hours",
             "job_details",
-            "resource_options",
         ]
 
 
