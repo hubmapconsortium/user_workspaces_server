@@ -5,7 +5,7 @@ datasources:
    uid: user_workspaces_postgres
    type: postgres                      # type of the data source
    url: postgres:5432       # url of the prom instance
-   user: <grafana_postgresjuser>
+   user: <grafana_postgres_user>
    secureJsonData:
      password: '<grafana_postgres_pw>'
    jsonData:
