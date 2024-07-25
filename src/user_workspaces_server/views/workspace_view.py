@@ -254,7 +254,7 @@ class WorkspaceView(APIView):
             resource = apps.get_app_config("user_workspaces_server").main_resource
 
             # TODO: GPU support "gpu_enabled": true,
-            # {"num_cpus": 0, "memory_mb": 0, "time_limit_min": 30}
+            # {"num_cpus": 0, "memory_mb": 0, "time_limit_minutes": 30}
 
             if not resource.validate_options(resource_options):
                 raise ParseError("Invalid resource options found.")
