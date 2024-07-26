@@ -38,8 +38,8 @@ services:
     environment:
       - POSTGRES_PASSWORD=blank
       - POSTGRES_USER=blank
-      - GRAFANA_PASSWORD=grafanareader
-      - GRAFANA_USER=grafanareader
+      - GRAFANA_PASSWORD=blank
+      - GRAFANA_USER=blank
     depends_on:
       - redis
       - postgres
