@@ -1,7 +1,7 @@
 apiVersion: 1
 
 providers:
-- name: 'User Workspaces Server Dashboard'
+- name: 'Dashboard'
   orgId: 1
   timezone: "browser"
   editable: false
