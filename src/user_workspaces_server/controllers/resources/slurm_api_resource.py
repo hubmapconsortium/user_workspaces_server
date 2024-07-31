@@ -90,7 +90,9 @@ class SlurmAPIResource(AbstractResource):
         )
 
         if slurm_response.status_code != 200:
-            raise APIException(slurm_response.text)
+            raise APIException(slurm_response.text if slurm_response.text
+                               else "No error message returned from Slurm API, please contact "
+                                    "system administrator for more information.")
 
         try:
             slurm_response = slurm_response.json()
