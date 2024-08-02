@@ -1,33 +1,114 @@
 {
-  "id": null,
-  "uid": "cLV5GDCkz",
-  "title": "User Workspaces Server Stats",
-  "tags": [],
-  "timezone": "browser",
-  "editable": true,
-  "graphTooltip": 1,
-  "time": {
-    "from": "now-6h",
-    "to": "now"
-  },
-  "timepicker": {
-    "time_options": [],
-    "refresh_intervals": []
-  },
-  "templating": {
-    "list": []
-  },
   "annotations": {
-    "list": []
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
   },
-  "refresh": "5s",
-  "schemaVersion": 17,
-  "version": 0,
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
   "links": [],
   "panels": [
-{
-  "type": "barchart",
-  "title": "Workspaces created",
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "user_workspaces_postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "uniqueValues"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "user_workspaces_postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select distinct(auth_user.username) as unique_users, count(user_workspaces_server_workspace.id) from user_workspaces_server_workspace inner join auth_user on user_workspaces_server_workspace.user_id_id=auth_user.id group by unique_users order by count(user_workspaces_server_workspace.id) desc;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Workspaces by user",
+      "type": "bargauge"
+    },
+	{
+  "type": "stat",
+  "title": "Total workspaces created",
   "gridPos": {
     "x": 0,
     "y": 0,
@@ -38,7 +119,7 @@
     "uid": "user_workspaces_postgres",
     "type": "grafana-postgresql-datasource"
   },
-  "id": 6,
+  "id": 7,
   "targets": [
     {
       "datasource": {
@@ -47,78 +128,30 @@
       },
       "refId": "A",
       "format": "table",
-      "rawSql": "select count(id), extract(year from datetime_created) as a from user_workspaces_server_workspace GROUP BY extract(year from datetime_created) order by a;",
+      "rawSql": "select count(id) from user_workspaces_server_workspace ;",
       "editorMode": "code",
       "sql": {
         "columns": [
           {
             "type": "function",
-            "parameters": [
-              {
-                "type": "functionParameter",
-                "name": "datetime_created"
-              }
-            ]
-          },
-          {
-            "type": "function",
-            "name": "COUNT",
-            "parameters": [
-              {
-                "type": "functionParameter",
-                "name": "id"
-              }
-            ]
+            "parameters": []
           }
         ],
         "groupBy": [
           {
             "type": "groupBy",
             "property": {
-              "type": "string",
-              "name": "datetime_created"
-            }
-          },
-          {
-            "type": "groupBy",
-            "property": {
-              "type": "string",
-              "name": "id"
+              "type": "string"
             }
           }
         ],
         "limit": 50
       },
-      "rawQuery": true,
-      "table": "user_workspaces_server_workspace"
+      "rawQuery": true
     }
   ],
   "fieldConfig": {
     "defaults": {
-      "custom": {
-        "lineWidth": 1,
-        "fillOpacity": 80,
-        "gradientMode": "none",
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "thresholds"
-      },
       "mappings": [],
       "thresholds": {
         "mode": "absolute",
@@ -132,34 +165,197 @@
             "color": "red"
           }
         ]
+      },
+      "color": {
+        "mode": "thresholds"
       }
     },
     "overrides": []
   },
-  "pluginVersion": "11.1.3",
   "options": {
+    "reduceOptions": {
+      "values": false,
+      "calcs": [
+        "lastNotNull"
+      ],
+      "fields": ""
+    },
     "orientation": "auto",
-    "xTickLabelRotation": 0,
-    "xTickLabelSpacing": 0,
-    "showValue": "auto",
-    "stacking": "none",
-    "groupWidth": 0.7,
-    "barWidth": 0.97,
-    "barRadius": 0,
-    "fullHighlight": false,
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": false,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    },
-    "xField": "a"
+    "textMode": "auto",
+    "wideLayout": true,
+    "colorMode": "value",
+    "graphMode": "area",
+    "justifyMode": "auto",
+    "showPercentChange": false,
+    "percentChangeColorMode": "standard"
   },
-  "description": "Count of workspaces created by year."
-}
-  ]
+  "pluginVersion": "11.1.3"
+},
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 7,
+      "title": "Row title",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "user_workspaces_postgres"
+      },
+      "description": "Count of workspaces created by year.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 6,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "a",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "user_workspaces_postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select count(id), extract(year from datetime_created) as a from user_workspaces_server_workspace GROUP BY extract(year from datetime_created) order by a;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "datetime_created",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "datetime_created",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "id",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "user_workspaces_server_workspace"
+        }
+      ],
+      "title": "Workspaces created",
+      "type": "barchart"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [],
+    "time_options": []
+  },
+  "timezone": "browser",
+  "title": "User Workspaces Server Stats",
+  "uid": "cLV5GDCkz",
+  "version": 1,
+  "weekStart": ""
 }
