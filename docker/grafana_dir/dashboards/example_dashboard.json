@@ -4,7 +4,7 @@
   "title": "User Workspaces Server Stats",
   "tags": [],
   "timezone": "browser",
-  "editable": false,
+  "editable": true,
   "graphTooltip": 1,
   "time": {
     "from": "now-6h",
