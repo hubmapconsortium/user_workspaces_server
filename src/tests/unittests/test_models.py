@@ -23,7 +23,7 @@ class WorkspaceModelTests(TestCase):
 
 
 class JobModelTests(TestCase):
-    def test_get_workspace_query_param_fields(self):
+    def test_get_job_query_param_fields(self):
         """Check Job query parameters"""
         assert Job.get_query_param_fields() == [
             "workspace_id",
@@ -32,7 +32,7 @@ class JobModelTests(TestCase):
             "status",
         ]
 
-    def test_get_workspace_dict_fields(self):
+    def test_get_job_dict_fields(self):
         """Check Job dictionary fields"""
         assert Job.get_dict_fields() == [
             "id",
