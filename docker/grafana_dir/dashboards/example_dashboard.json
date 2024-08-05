@@ -333,7 +333,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "select count(*),\ncase when w.user_id_id is null then 'No workspaces' else '1 or more workspaces' end as has_workspace\nfrom  \nuser_workspaces_server_workspace w  \nright join auth_user a on w.user_id_id = a.id\ngroup by has_workspace;",
+          "rawSql": "select count(distinct(a.id)),\ncase when w.user_id_id is null then 'No workspaces' else '1 or more workspaces' end as has_workspace\nfrom  \nauth_user a \nfull outer join user_workspaces_server_workspace w on w.user_id_id = a.id\ngroup by has_workspace;",
           "refId": "A",
           "sql": {
             "columns": [
