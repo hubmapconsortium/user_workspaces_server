@@ -1,3 +1,4 @@
+# THIS RESOURCE IS MEANT TO SUPPORT v0.0.40 OF THE SLURM RESPONSE SCHEMAS
 import logging
 import os
 import time
@@ -119,13 +120,14 @@ class SlurmAPIResource(AbstractResource):
                 raise APIException(resource_job["errors"])
             resource_job = resource_job["jobs"][0]
 
-            if resource_job["job_state"] == "TIMEOUT":
+            resource_job_state = resource_job.get(["job_state"], [])[0]
+            if resource_job_state == "TIMEOUT":
                 logger.error(
                     f"Workspaces Job {job.id}/Slurm job {job.resource_job_id} has timed out."
                 )
 
-            resource_job["status"] = self.translate_status(resource_job["job_state"])
-            end_time = resource_job.get("end_time")
+            resource_job["status"] = self.translate_status(resource_job_state)
+            end_time = resource_job.get("end_time", {}).get("number")
             if end_time is not None:
                 time_left = max(0, end_time - time.time())
             else:
@@ -158,7 +160,9 @@ class SlurmAPIResource(AbstractResource):
                 raise APIException(resource_job["errors"])
 
             resource_job = resource_job["jobs"][0]
-            time_running = resource_job.get("end_time") - resource_job.get("start_time")
+            end_time = resource_job.get("end_time", {}).get("number", 0)
+            start_time = resource_job.get("start_time", {}).get("number", 0)
+            time_running = end_time - start_time
             num_cores = resource_job.get("job_resources", {}).get("allocated_cpus", 0)
             core_seconds = time_running * num_cores
 
