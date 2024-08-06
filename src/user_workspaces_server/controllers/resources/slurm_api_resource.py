@@ -120,7 +120,7 @@ class SlurmAPIResource(AbstractResource):
                 raise APIException(resource_job["errors"])
             resource_job = resource_job["jobs"][0]
 
-            resource_job_state = resource_job.get(["job_state"], [])[0]
+            resource_job_state = resource_job.get("job_state", [])[0]
             if resource_job_state == "TIMEOUT":
                 logger.error(
                     f"Workspaces Job {job.id}/Slurm job {job.resource_job_id} has timed out."
