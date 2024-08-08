@@ -89,3 +89,13 @@ class LocalResource(AbstractResource):
         except Exception as e:
             logger.error(repr(e))
             return False
+
+    def validate_options(self, resource_options):
+        # Should determine whether the requested options are valid for a resource
+        # Might be able to implement this at the abstract level once we've defined
+        #   a data model for resource options.
+        return True
+
+    def translate_options(self, resource_options):
+        # Should translate the options into a format that can be used by the resource
+        return {}

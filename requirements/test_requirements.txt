@@ -6,7 +6,7 @@ async-timeout==4.0.2
 attrs==22.1.0
 autobahn==22.7.1
 Automat==20.2.0
-backports.zoneinfo==0.2.1
+backports.zoneinfo==0.2.1;python_version<"3.9"
 blessed==1.19.1
 cachetools==5.2.0
 certifi==2023.7.22

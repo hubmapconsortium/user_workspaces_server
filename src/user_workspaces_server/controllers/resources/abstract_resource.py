@@ -14,7 +14,7 @@ class AbstractResource(ABC):
         pass
 
     @abstractmethod
-    def launch_job(self, job, workspace):
+    def launch_job(self, job, workspace, resource_options):
         # Should return resource_job_id
         pass
 
@@ -30,4 +30,17 @@ class AbstractResource(ABC):
 
     @abstractmethod
     def stop_job(self, job):
+        # Should stop the job on the resource
+        pass
+
+    @abstractmethod
+    def validate_options(self, resource_options):
+        # Should determine whether the requested options are valid for a resource
+        # Might be able to implement this at the abstract level once we've defined
+        #   a data model for resource options.
+        pass
+
+    @abstractmethod
+    def translate_options(self, resource_options):
+        # Should translate the options into a format that can be used by the resource
         pass

@@ -33,7 +33,7 @@ class SlurmAPIResource(AbstractResource):
 
         return status_list[status]
 
-    def launch_job(self, job, workspace):
+    def launch_job(self, job, workspace, resource_options):
         # Need to generate a SLURM token (as a user) to launch a job
         workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
         job_full_path = os.path.join(workspace_full_path, f'.{job.job_details["id"]}')
@@ -78,6 +78,12 @@ class SlurmAPIResource(AbstractResource):
             },
         }
 
+        body_job_environment_copy = body["job"]["environment"].copy()
+
+        body["job"].update(self.translate_options(resource_options))
+
+        body["job"]["environment"].update(body_job_environment_copy)
+
         slurm_response = http_r.post(
             f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/',
             json=body,
@@ -85,7 +91,12 @@ class SlurmAPIResource(AbstractResource):
         )
 
         if slurm_response.status_code != 200:
-            raise APIException(slurm_response.text)
+            raise APIException(
+                slurm_response.text
+                if slurm_response.text
+                else "No error message returned from Slurm API, please contact "
+                "system administrator for more information."
+            )
 
         try:
             slurm_response = slurm_response.json()

@@ -59,6 +59,7 @@ class Job(models.Model):
     datetime_end = models.DateTimeField(null=True)
     core_hours = models.DecimalField(max_digits=10, decimal_places=5)
     job_details = models.JSONField()
+    resource_options = models.JSONField()
 
     def __str__(self):
         return (
