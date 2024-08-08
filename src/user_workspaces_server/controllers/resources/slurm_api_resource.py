@@ -212,3 +212,31 @@ class SlurmAPIResource(AbstractResource):
 
         token = response.json()["slurm_token"]
         return token
+
+    def validate_options(self, resource_options):
+        # Should determine whether the requested options are valid for a resource
+        # Might be able to implement this at the abstract level once we've defined
+        #   a data model for resource options.
+        return True
+
+    def translate_option_name(self, option):
+        option_list = {
+            "num_cpus": "cpus_per_task",
+            "memory_mb": "memory_per_node",
+            "time_limit_minutes": "time_limit",
+        }
+
+        return option_list.get(option)
+
+    def translate_options(self, resource_options):
+        # Should translate the options into a format that can be used by the resource
+        updated_options = {}
+        for option_name, option_value in resource_options.items():
+            if updated_option_name := self.translate_option_name(option_name):
+                updated_options[updated_option_name] = option_value
+
+        gpu_enabled = resource_options.get("gpu_enabled", False)
+        if isinstance(gpu_enabled, bool) and gpu_enabled:
+            updated_options["tres_per_job"] = "gres/gpu=1"
+
+        return updated_options
