@@ -59,6 +59,21 @@ components:
           example: 'jupyter_lab'
         job_details:
           type: object
+        resource_options:
+          type: object
+          properties:
+            num_cpus:
+              type: integer
+              description: Number of CPUs to request
+            memory_mb:
+              type: integer
+              description: Amount of memory to request in megabytes.
+            time_limit_minutes:
+              type: integer
+              description: Amount of requested time for job, in minutes.
+            gpu_enabled:
+              type: boolean
+              description: Whether the user is requesting gpu support or not.
     WorkspaceDataResponse:
       type: object
       properties:
