@@ -44,6 +44,8 @@ services:
       - redis
       - postgres
   grafana:
+    image: grafana/grafana
     build:
       context: ./grafana_dir
-    container_name: grafana
+    ports:
+      - "3000:3000"
