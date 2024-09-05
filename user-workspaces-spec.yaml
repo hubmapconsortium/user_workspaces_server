@@ -71,6 +71,9 @@ components:
             time_limit_minutes:
               type: integer
               description: Amount of requested time for job, in minutes.
+            gpu_enabled:
+              type: boolean
+              description: Whether the user is requesting gpu support or not.
     WorkspaceDataResponse:
       type: object
       properties:
