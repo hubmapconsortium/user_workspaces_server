@@ -101,6 +101,10 @@ class LocalFileSystemStorage(AbstractStorage):
 
         if recursive:
             for dirpath, dirnames, filenames, dirfd in self.get_dir_tree(path):
+                # Ignore the venv environments
+                if "venv" in dirpath:
+                    continue
+
                 os.chown(dirpath, uid, gid)
                 for filename in filenames:
                     os.chown(os.path.join(dirpath, filename), uid, gid)
