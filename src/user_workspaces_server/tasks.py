@@ -189,7 +189,8 @@ def delete_workspace(workspace_id):
         logger.exception(f"Could not delete workspace {workspace_id}")
         raise
 
-    workspace.delete()
+    workspace.status = models.Workspace.Status.DELETED
+    workspace.datetime_deleted = datetime.datetime.now(workspace.datetime_deleted.tzinfo)
 
     user_quota = models.UserQuota.objects.filter(user_id=workspace.user_id).first()
     # If this user has a quota spawn a routine to update the disk space.

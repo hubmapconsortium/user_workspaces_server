@@ -6,21 +6,27 @@ class Workspace(models.Model):
     class Status(models.TextChoices):
         IDLE = "idle"
         ACTIVE = "active"
-        DELETING = "deleting"
+        DELETED = "deleted"
         ERROR = "error"
 
+    id: int
     user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=64, default="")
     description = models.TextField(default="")
     file_path = models.CharField(max_length=64, default="")
     disk_space = models.IntegerField(default=0)
     datetime_created = models.DateTimeField()
+    datetime_deleted = models.DateTimeField()
     workspace_details = models.JSONField()
     status = models.CharField(max_length=64, default=Status.IDLE, choices=Status.choices)
     default_job_type = models.CharField(max_length=64, null=True)
 
     def __str__(self):
         return f"{self.id}: {self.user_id.username} - {self.status}"
+
+    @property
+    def is_active(self) -> bool:
+        return True if self.status != self.Status.DELETED else False
 
     @staticmethod
     def get_query_param_fields():
@@ -48,6 +54,7 @@ class Job(models.Model):
         FAILED = "failed"
         STOPPING = "stopping"
 
+    id: int
     user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
     resource_job_id = models.IntegerField()
@@ -88,6 +95,7 @@ class Job(models.Model):
 
 
 class UserQuota(models.Model):
+    id: int
     user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     max_disk_space = models.IntegerField()
     max_core_hours = models.DecimalField(max_digits=15, decimal_places=5)
@@ -96,6 +104,7 @@ class UserQuota(models.Model):
 
 
 class ExternalUserMapping(models.Model):
+    id: int
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     external_user_id = models.CharField(max_length=128)
     external_username = models.CharField(max_length=64)

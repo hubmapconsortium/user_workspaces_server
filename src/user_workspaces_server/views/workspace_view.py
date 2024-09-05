@@ -22,7 +22,7 @@ class WorkspaceView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, workspace_id=None):
-        workspace = models.Workspace.objects.filter(user_id=request.user)
+        workspace = models.Workspace.objects.filter(user_id=request.user, is_active=True)
 
         if workspace_id:
             workspace = workspace.filter(id=workspace_id)

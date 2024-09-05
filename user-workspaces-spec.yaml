@@ -90,7 +90,7 @@ components:
           enum:
             - idle
             - active
-            - deleting
+            - deleted
             - error
         default_job_type:
             type: string
@@ -222,7 +222,7 @@ paths:
             enum:
               - idle
               - active
-              - deleting
+              - deleted
               - error
           description: Workspace status
       responses:
