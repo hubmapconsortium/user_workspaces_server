@@ -28,7 +28,7 @@ class WorkspaceView(APIView):
 
 
     def get(self, request, workspace_id=None):
-        workspace = models.Workspace.objects.filter(user_id=request.user, is_active=True)
+        workspace = models.Workspace.objects.filter(user_id=request.user)
 
         if workspace_id:
             workspace = workspace.filter(id=workspace_id)

@@ -4,15 +4,20 @@ import os
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.apps import apps
 from django.conf import settings
 from django.db.models import Sum
 from django_q.tasks import async_task
+
+from user_workspaces_server.apps import UserWorkspacesServerConfig
 
 from . import models, utils
 
 logger = logging.getLogger(__name__)
 
+config = UserWorkspacesServerConfig
+main_storage = config.main_storage
+resource = config.main_resource
+available_job_types = config.available_job_types
 
 def update_job_status(job_id):
     try:
@@ -21,9 +26,8 @@ def update_job_status(job_id):
         logger.exception(f"Job {job_id} does not exist.")
         raise
 
-    resource = apps.get_app_config("user_workspaces_server").main_resource
     resource_job_info = resource.get_resource_job(job)
-    current_job_status = resource_job_info["status"]
+    current_job_status = resource_job_info.get("status")
 
     # Check the existing job status
     # If the job is STOPPING, FAILED, or COMPLETE
@@ -61,9 +65,7 @@ def update_job_status(job_id):
     )
 
     try:
-        job_type_config = apps.get_app_config("user_workspaces_server").available_job_types.get(
-            job.job_type
-        )
+        job_type_config = available_job_types.get(job.job_type, {})
 
         job_type = utils.generate_controller_object(
             job_type_config["job_type"],
@@ -146,7 +148,6 @@ def update_job_core_hours(job_id):
         logger.exception(f"Job {job_id} does not exist.")
         raise
 
-    resource = apps.get_app_config("user_workspaces_server").main_resource
     job.core_hours = resource.get_job_core_hours(job)
     job.save()
     user_quota = models.UserQuota.objects.filter(user_id=job.workspace_id.user_id).first()
@@ -163,7 +164,6 @@ def stop_job(job_id):
         logger.exception(f"Job {job_id} does not exist.")
         raise
 
-    resource = apps.get_app_config("user_workspaces_server").main_resource
     if not resource.stop_job(job):
         job.status = models.Job.Status.FAILED
         job.save()
@@ -176,7 +176,6 @@ def delete_workspace(workspace_id):
         logger.exception(f"Workspace {workspace_id} does not exist.")
         raise
 
-    main_storage = apps.get_app_config("user_workspaces_server").main_storage
     external_user_mapping = main_storage.storage_user_authentication.has_permission(
         workspace.user_id
     )
@@ -204,11 +203,10 @@ def update_workspace(workspace_id):
         logger.exception(f"Workspace {workspace_id} does not exist.")
         raise
 
-    main_storage = apps.get_app_config("user_workspaces_server").main_storage
     current_details = {"files": [], "symlinks": []}
 
     # This will IGNORE dot directories and files
-    for dirpath, dirnames, filenames, dirfd in main_storage.get_dir_tree(workspace.file_path):
+    for dirpath, dirnames, filenames, _ in main_storage.get_dir_tree(workspace.file_path):
         dirnames[:] = [dirname for dirname in dirnames if not dirname[0] == "."]
         filenames = [f for f in filenames if not f[0] == "."]
 
