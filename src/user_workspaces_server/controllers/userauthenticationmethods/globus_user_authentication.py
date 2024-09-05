@@ -35,6 +35,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
         except Exception as e:
             raise ParseError(repr(e))
 
+        return_user = False
         globus_user_info = (
             self.globus_oauth_get_user_info(body)
             if self.authentication_type == "oauth"
@@ -45,54 +46,60 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
             )
         )
 
-        if type(globus_user_info) in [Response, flask_response]:
-            return globus_user_info
-
-        external_user_mapping = self.get_external_user_mapping(
-            {
-                "external_user_id": globus_user_info["sub"],
-                "user_authentication_name": type(self).__name__,
-            }
-        )
-
-        if not external_user_mapping:
-            # Since its Globus, lets get the username from the email
-            username = globus_user_info["email"].split("@")[0]
-            internal_user = self.get_internal_user(
-                {"username": username, "email": globus_user_info["email"]}
-            )
-
-            if not internal_user:
-                full_name = globus_user_info.get("name", []).split(" ")
-                internal_user = self.create_internal_user(
-                    {
-                        "first_name": full_name[0],
-                        "last_name": full_name[-1],
-                        "username": username,
-                        "email": globus_user_info["email"],
-                    }
-                )
-
-            globus_user_info["internal_user_id"] = internal_user
-            self.create_external_user_mapping(
+        # Return responses directly
+        if isinstance(globus_user_info, Response) or isinstance(globus_user_info, flask_response):
+            return_user = globus_user_info
+        # If globus_user_info is a dict, try to return ExternalUserMapping; barring that, get internal user info, create external_user_mapping, and return (internal) User
+        elif type(globus_user_info) is dict:
+            external_user_mapping = self.get_external_user_mapping(
                 {
-                    "user_id": globus_user_info["internal_user_id"],
-                    "user_authentication_name": type(self).__name__,
                     "external_user_id": globus_user_info["sub"],
-                    "external_username": globus_user_info["username"],
+                    "user_authentication_name": type(self).__name__,
                 }
             )
-            return internal_user
-        else:
-            return external_user_mapping.user_id
+            if external_user_mapping:
+                return_user = external_user_mapping.user_id
 
-    def create_external_user(self, user_info):
+            else:
+                # Since its Globus, lets get the username from the email
+                username = globus_user_info["email"].split("@")[0]
+                internal_user = self.get_internal_user(
+                    {"username": username, "email": globus_user_info["email"]}
+                )
+
+                if not internal_user:
+                    full_name = globus_user_info.get("name", []).split(" ")
+                    internal_user = self.create_internal_user(
+                        {
+                            "first_name": full_name[0],
+                            "last_name": full_name[-1],
+                            "username": username,
+                            "email": globus_user_info["email"],
+                        }
+                    )
+
+                globus_user_info["internal_user_id"] = internal_user
+                external_user = self.create_external_user_mapping(
+                    {
+                        "user_id": globus_user_info["internal_user_id"],
+                        "user_authentication_name": type(self).__name__,
+                        "external_user_id": globus_user_info["sub"],
+                        "external_username": globus_user_info["username"],
+                    }
+                )
+                return_user = external_user if external_user else internal_user
+        # No response, no ExternalUserMapping, no User
+        if return_user is False:
+            raise Exception("No user found")
+        return return_user
+
+    def create_external_user(self, external_user_to_create):
         # Globus users cannot be created via their API
         pass
 
-    def get_external_user(self, external_user_info):
+    def get_external_user(self, external_user_id):
         try:
-            self.oauth.get_identities(ids=external_user_info["external_user_id"])
+            self.oauth.get_identities(ids=external_user_id["external_user_id"])
             # TODO: Do additional checking here and return the User info.
         except Exception as e:
             logger.error(repr(e))

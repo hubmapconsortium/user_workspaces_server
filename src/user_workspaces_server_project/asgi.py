@@ -13,7 +13,8 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "user_workspaces_server_project.settings")
+settings_file = "settings_example" if os.environ.get("GITHUB_WORKFLOW") else "settings_default"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"user_workspaces_server_project.{settings_file}")
 django_asgi_app = get_asgi_application()
 
 import user_workspaces_server.urls  # noqa: E402

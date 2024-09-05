@@ -3,7 +3,6 @@ import logging
 import os
 from datetime import datetime
 
-from django.apps import apps
 from django.conf import settings
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
@@ -13,16 +12,23 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from user_workspaces_server import models, utils
+from user_workspaces_server.apps import UserWorkspacesServerConfig
 from user_workspaces_server.exceptions import WorkspaceClientException
 
 logger = logging.getLogger(__name__)
 
+config = UserWorkspacesServerConfig
 
 class WorkspaceView(APIView):
     permission_classes = [IsAuthenticated]
+    main_storage = config.main_storage
+    # TODO: Grabbing the resource needs to be a bit more intelligent
+    resource = config.main_resource
+    available_job_types = config.available_job_types
+
 
     def get(self, request, workspace_id=None):
-        workspace = models.Workspace.objects.filter(user_id=request.user)
+        workspace = models.Workspace.objects.filter(user_id=request.user, is_active=True)
 
         if workspace_id:
             workspace = workspace.filter(id=workspace_id)
@@ -57,7 +63,7 @@ class WorkspaceView(APIView):
         if default_job_type := body.get("default_job_type"):
             if (
                 default_job_type
-                not in apps.get_app_config("user_workspaces_server").available_job_types
+                not in self.available_job_types
             ):
                 raise WorkspaceClientException(
                     f"{default_job_type} is not in the list of available job types."
@@ -85,8 +91,7 @@ class WorkspaceView(APIView):
             "default_job_type": default_job_type,
         }
 
-        main_storage = apps.get_app_config("user_workspaces_server").main_storage
-        external_user_mapping = main_storage.storage_user_authentication.has_permission(
+        external_user_mapping = self.main_storage.storage_user_authentication.has_permission(
             request.user
         )
 
@@ -114,15 +119,15 @@ class WorkspaceView(APIView):
         )
 
         try:
-            main_storage.create_dir(workspace.file_path)
+            self.main_storage.create_dir(workspace.file_path)
 
-            main_storage.create_symlinks(workspace, workspace_details)
-            main_storage.create_files(workspace, workspace_details)
+            self.main_storage.create_symlinks(workspace, workspace_details)
+            self.main_storage.create_files(workspace, workspace_details)
 
-            main_storage.set_ownership(
+            self.main_storage.set_ownership(
                 external_user_mapping.external_username, external_user_mapping
             )
-            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
+            self.main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             workspace.save()
         except Exception:
@@ -144,9 +149,7 @@ class WorkspaceView(APIView):
         )
 
     def put(self, request, workspace_id, put_type=None):
-        main_storage = apps.get_app_config("user_workspaces_server").main_storage
-
-        external_user_mapping = main_storage.storage_user_authentication.has_permission(
+        external_user_mapping = self.main_storage.storage_user_authentication.has_permission(
             request.user
         )
 
@@ -174,7 +177,7 @@ class WorkspaceView(APIView):
             if workspace.default_job_type:
                 if (
                     workspace.default_job_type
-                    not in apps.get_app_config("user_workspaces_server").available_job_types
+                    not in self.available_job_types
                 ):
                     raise WorkspaceClientException(
                         f"{workspace.default_job_type} is not in the list of available job types."
@@ -186,9 +189,9 @@ class WorkspaceView(APIView):
                 raise ParseError("Workspace details not JSON.")
 
             try:
-                main_storage.create_symlinks(workspace, workspace_details)
-                main_storage.create_files(workspace, workspace_details)
-                main_storage.set_ownership(
+                self.main_storage.create_symlinks(workspace, workspace_details)
+                self.main_storage.create_files(workspace, workspace_details)
+                self.main_storage.set_ownership(
                     workspace.file_path, external_user_mapping, recursive=True
                 )
             except Exception:
@@ -220,7 +223,7 @@ class WorkspaceView(APIView):
 
             return JsonResponse({"message": "Update successful.", "success": True})
         if put_type.lower() == "start":
-            if not main_storage.is_valid_path(workspace.file_path):
+            if not self.main_storage.is_valid_path(workspace.file_path):
                 raise APIException(
                     "Please contact a system administrator there is a failure with "
                     "the workspace directory that will not allow for jobs to be created."
@@ -237,7 +240,7 @@ class WorkspaceView(APIView):
                 else:
                     job_type = workspace.default_job_type
 
-            if job_type not in apps.get_app_config("user_workspaces_server").available_job_types:
+            if job_type not in self.available_job_types:
                 raise WorkspaceClientException(
                     f"{job_type} is not in the list of available job types."
                 )
@@ -250,13 +253,10 @@ class WorkspaceView(APIView):
             if not isinstance(resource_options, dict):
                 raise ParseError("Resource options not JSON.")
 
-            # TODO: Grabbing the resource needs to be a bit more intelligent
-            resource = apps.get_app_config("user_workspaces_server").main_resource
-
             # TODO: GPU support "gpu_enabled": true,
             # {"num_cpus": 0, "memory_mb": 0, "time_limit_minutes": 30}
 
-            if not resource.validate_options(resource_options):
+            if not self.resource.validate_options(resource_options):
                 raise ParseError("Invalid resource options found.")
 
             # TODO: Check whether user has permission for this resource (and resource storage).
@@ -272,7 +272,7 @@ class WorkspaceView(APIView):
                     "current_job_details": {},
                 },
                 "resource_options": resource_options,
-                "resource_name": type(resource).__name__,
+                "resource_name": type(self.resource).__name__,
                 "status": "pending",
                 "resource_job_id": -1,
                 "core_hours": 0,
@@ -282,11 +282,11 @@ class WorkspaceView(APIView):
             job.save()
 
             # I think that instantiating the job here and passing that through to the resource makes the most sense
-            try:
-                job_type_config = apps.get_app_config(
-                    "user_workspaces_server"
-                ).available_job_types.get(job_type)
+            job_type_config = self.available_job_types.get(job_type)
+            if not job_type_config:
+                raise WorkspaceClientException("Invalid job type specified")
 
+            try:
                 job_to_launch = utils.generate_controller_object(
                     job_type_config["job_type"],
                     "jobtypes",
@@ -298,9 +298,9 @@ class WorkspaceView(APIView):
                     },
                 )
             except Exception:
-                raise WorkspaceClientException("Invalid job type specified")
+                raise WorkspaceClientException(f"Could not generate controller for job_type {job_type}")
 
-            resource_job_id = resource.launch_job(job_to_launch, workspace, resource_options)
+            resource_job_id = self.resource.launch_job(job_to_launch, workspace, resource_options)
 
             job.resource_job_id = resource_job_id
             job.save()
@@ -326,10 +326,10 @@ class WorkspaceView(APIView):
             if not request.FILES:
                 raise WorkspaceClientException("No files found in request.")
 
-            for file_index, file in request.FILES.items():
-                main_storage.create_file(workspace.file_path, file)
+            for file in request.FILES.values():
+                self.main_storage.create_file(workspace.file_path, file)
 
-            main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
+            self.main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
 
@@ -350,8 +350,7 @@ class WorkspaceView(APIView):
                 "Cannot delete workspace, jobs are running for this workspace."
             )
 
-        main_storage = apps.get_app_config("user_workspaces_server").main_storage
-        external_user_mapping = main_storage.storage_user_authentication.has_permission(
+        external_user_mapping = self.main_storage.storage_user_authentication.has_permission(
             request.user
         )
 
@@ -360,7 +359,7 @@ class WorkspaceView(APIView):
                 "User could not be found/created on main storage system."
             )
 
-        if not main_storage.is_valid_path(workspace.file_path):
+        if not self.main_storage.is_valid_path(workspace.file_path):
             logger.error(f"Workspace {workspace_id} deletion failed due to invalid path")
             workspace.status = models.Workspace.Status.ERROR
             workspace.save()
@@ -368,9 +367,6 @@ class WorkspaceView(APIView):
                 "Please contact a system administrator there is a failure with "
                 "the workspace directory that will not allow for this workspace to be deleted."
             )
-
-        workspace.status = models.Workspace.Status.DELETING
-        workspace.save()
 
         async_task("user_workspaces_server.tasks.delete_workspace", workspace.pk)
 

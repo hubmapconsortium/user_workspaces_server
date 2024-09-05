@@ -8,8 +8,8 @@ def workspaces_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     # Now add the HTTP status code to the response.
-    if response is not None:
-        response.data = {"success": False, "message": response.data["detail"]}
+    if response is not None and response.data is not None:
+        response.data = {"success": False, "message": response.data.get("detail")}
 
     return response
 

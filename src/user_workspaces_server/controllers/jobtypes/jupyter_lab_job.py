@@ -3,13 +3,15 @@ import os
 from datetime import datetime
 from urllib import parse
 
-from django.apps import apps
 from django.template import loader
 
 from user_workspaces_server import models
+from user_workspaces_server.apps import UserWorkspacesServerConfig
 from user_workspaces_server.controllers.jobtypes.abstract_job import AbstractJob
 
 logger = logging.getLogger(__name__)
+config = UserWorkspacesServerConfig
+resource = config.main_resource
 
 
 class JupyterLabJob(AbstractJob):
@@ -20,7 +22,8 @@ class JupyterLabJob(AbstractJob):
     def get_script(self, template_params=None):
         template_config = {"job_id": self.job_details["id"]}
         template_config.update(self.config)
-        template_config.update(template_params)
+        if template_params:
+            template_config.update(template_params)
 
         template = loader.get_template(f"script_templates/{self.script_template_name}")
         script = template.render(template_config)
@@ -29,7 +32,6 @@ class JupyterLabJob(AbstractJob):
 
     def status_check(self, job_model):
         output_file_name = f"JupyterLabJob_{job_model.id}_output.log"
-        resource = apps.get_app_config("user_workspaces_server").main_resource
 
         if job_model.status == models.Job.Status.FAILED:
             return {

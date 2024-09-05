@@ -100,7 +100,7 @@ class LocalFileSystemStorage(AbstractStorage):
         os.chown(os.path.join(self.root_dir, path), uid, gid)
 
         if recursive:
-            for dirpath, dirnames, filenames, dirfd in self.get_dir_tree(path):
+            for dirpath, _, filenames, _ in self.get_dir_tree(path):
                 # Ignore the venv environments
                 if "venv" in dirpath:
                     continue
@@ -136,21 +136,19 @@ class LocalFileSystemStorage(AbstractStorage):
             raise APIException(f"Symlink path not found: {symlink_source_path}")
 
     def create_file(self, path, file):
-        file_path_list = file.name.split("/")
-        file_name = file_path_list[-1]
-        file_dest_path = file_path_list[:-1]
+        file_name = file.name
 
         if not self.is_valid_path(os.path.join(path, file.name)):
             logger.error(f"File {file.name} cannot be created in {path}")
             raise WorkspaceClientException(f"Invalid file path specified {file.name}")
 
-        file_full_dest_path = os.path.join(self.root_dir, path, "/".join(file_dest_path))
+        file_full_dest_path = os.path.join(self.root_dir, path, file_name)
 
-        os.makedirs(file_full_dest_path, exist_ok=True)
+        os.makedirs(path, exist_ok=True)
 
-        if os.path.exists(os.path.join(file_full_dest_path, file_name)):
-            os.remove(os.path.join(file_full_dest_path, file_name))
+        if os.path.exists(file_full_dest_path):
+            os.remove(os.path.join(file_full_dest_path))
 
-        with open(os.path.join(file_full_dest_path, file_name), "wb") as new_file:
+        with open(file_full_dest_path, "wb") as new_file:
             for chunk in file.chunks():
                 new_file.write(chunk)

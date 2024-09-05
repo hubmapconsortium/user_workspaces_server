@@ -16,7 +16,7 @@ class UserWorkspacesTokenAuthentication(authentication.TokenAuthentication):
             return None
 
         try:
-            identifier, token = auth_header.split(" ")
+            _, token = auth_header.split(" ")
         except ValueError:
             logger.exception(f"Invalid auth header format: {auth_header}")
             raise AuthenticationFailed("Invalid auth header format.")
@@ -27,4 +27,4 @@ class UserWorkspacesTokenAuthentication(authentication.TokenAuthentication):
             logger.exception(f"Token {token} not found.")
             raise AuthenticationFailed("Invalid token provided.")
 
-        return valid_token.user, None
+        return valid_token.user, valid_token

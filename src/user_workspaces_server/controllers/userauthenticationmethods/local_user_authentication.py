@@ -65,6 +65,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
         except Exception as e:
             raise ParseError(repr(e))
 
+        return_user = False
         if "client_token" not in body:
             raise ParseError("Missing client_token. Please have admin generate a token for you.")
 
@@ -101,23 +102,25 @@ class LocalUserAuthentication(AbstractUserAuthentication):
                 )
 
                 if not internal_user:
-                    internal_user = self.create_internal_user(
+                    return_user = self.create_internal_user(
                         {"username": user_info["username"], "email": user_info["email"]}
                     )
-
-                return internal_user
             else:
-                return external_user_mapping.user_id
+                return_user = external_user_mapping.user_id
+            if return_user is False:
+                raise Exception("No user found")
 
         except Exception as e:
             logger.error(repr(e))
-            return e
+            raise e
 
-    def create_external_user(self, user_info):
+        return return_user
+
+    def create_external_user(self, external_user_to_create):
         if self.operating_system == "linux":
-            output = subprocess.run(["useradd", user_info["username"]], capture_output=True)
+            output = subprocess.run(["useradd", external_user_to_create["username"]], capture_output=True)
             if output.returncode == 0:
-                external_user = pwd.getpwnam(user_info["username"])
+                external_user = pwd.getpwnam(external_user_to_create["username"])
             else:
                 # TODO: Add logging here
                 external_user = False
@@ -138,12 +141,12 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             else external_user
         )
 
-    def get_external_user(self, external_user_info):
+    def get_external_user(self, external_user_id):
         try:
-            if "username" in external_user_info:
-                external_user = pwd.getpwnam(external_user_info["username"])
-            elif "external_user_id" in external_user_info:
-                external_user = pwd.getpwuid(int(external_user_info["external_user_id"]))
+            if "username" in external_user_id:
+                external_user = pwd.getpwnam(external_user_id["username"])
+            elif "external_user_id" in external_user_id:
+                external_user = pwd.getpwuid(int(external_user_id["external_user_id"]))
             else:
                 external_user = False
             return (

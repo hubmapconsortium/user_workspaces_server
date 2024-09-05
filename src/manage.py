@@ -6,7 +6,9 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "user_workspaces_server_project.settings")
+    # requires setting a different env var for DJANGO_SETTINGS_MODULE per environment
+    # (e.g. DJANGO_SETTINGS_MODULE="user_workspaces_server_project.settings.local")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "user_workspaces_server_project.settings_default")
     argv = sys.argv
     cmd = argv[1] if len(argv) > 1 else ""
     os.environ["SUBCOMMAND"] = cmd

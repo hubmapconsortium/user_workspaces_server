@@ -30,6 +30,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         if not external_user_mapping:
             # If the mapping does not exist, we have to try to "find" an external use
             # based on the info we have from the internal user
+            external_user = None
             for option in ["username", "email"]:
                 external_user = self.get_external_user({option: getattr(internal_user, option)})
                 if external_user:
@@ -71,6 +72,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         except Exception as e:
             raise ParseError(repr(e))
 
+        return_user = False
         if "client_token" not in body:
             raise ParseError("Missing client_token. Please have admin generate a token for you.")
 
@@ -116,15 +118,16 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                         }
                     )
 
-                return internal_user
+                return_user = internal_user
             else:
-                return external_user_mapping.user_id
+                return_user = external_user_mapping.user_id
 
         except Exception as e:
             logger.error(repr(e))
-            return e
+            raise e
+        return return_user
 
-    def create_external_user(self, user_info):
+    def create_external_user(self, external_user_to_create):
         allocation = self.get_allocation()
 
         body = {
@@ -164,11 +167,11 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             "variables": {
                 "input": {
                     "name": {
-                        "first": f"{user_info.get('first_name', user_info.get('username'))}",
-                        "last": f"{user_info.get('last_name', user_info.get('username'))}",
+                        "first": f"{external_user_to_create.get('first_name', external_user_to_create.get('username'))}",
+                        "last": f"{external_user_to_create.get('last_name', external_user_to_create.get('username'))}",
                     },
                     "affiliation": {"affiliationCode": "WS_API"},
-                    "email": {"primary": f"{user_info['email']}"},
+                    "email": {"primary": f"{external_user_to_create['email']}"},
                     "allocations": [{"allocation": {"id": f"{allocation.get('id')}"}}],
                 }
             },
@@ -207,16 +210,16 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             else external_user
         )
 
-    def get_external_user(self, external_user_info):
+    def get_external_user(self, external_user_id):
         # Check username, then email, then pscId
         variables = {}
 
-        if "external_user_id" in external_user_info:
-            variables["pscId"] = external_user_info["external_user_id"]
-        elif "username" in external_user_info:
-            variables["username"] = external_user_info["username"]
-        elif "email" in external_user_info:
-            variables["email"] = external_user_info["email"]
+        if "external_user_id" in external_user_id:
+            variables["pscId"] = external_user_id["external_user_id"]
+        elif "username" in external_user_id:
+            variables["username"] = external_user_id["username"]
+        elif "email" in external_user_id:
+            variables["email"] = external_user_id["email"]
 
         body = {
             "operationName": "GetUserAndAllocationUsers",

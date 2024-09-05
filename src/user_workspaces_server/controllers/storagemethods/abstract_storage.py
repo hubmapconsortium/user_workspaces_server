@@ -38,13 +38,13 @@ class AbstractStorage(ABC):
             content_file = ContentFile(
                 bytes(file.get("content", ""), "utf-8"), name=file.get("name")
             )
-            if ".." in content_file.name:
+            if content_file.name and ".." in content_file.name:
                 raise ParseError("File name cannot contain double dots.")
 
             self.create_file(workspace.file_path, content_file)
 
     @abstractmethod
-    def is_valid_path(self, path):
+    def is_valid_path(self, path) -> bool:
         pass
 
     @abstractmethod
@@ -56,19 +56,19 @@ class AbstractStorage(ABC):
         pass
 
     @abstractmethod
-    def get_dir_size(self, path):
+    def get_dir_size(self, path) -> int:
         pass
 
     @abstractmethod
-    def get_dir_tree(self, path):
+    def get_dir_tree(self, path) -> tuple:
         pass
 
     @abstractmethod
-    def check_is_owner(self, path, owner_mapping):
+    def check_is_owner(self, path, owner_mapping) -> bool:
         pass
 
     @abstractmethod
-    def set_ownership(self, path, owner_mapping):
+    def set_ownership(self, path, owner_mapping, recursive=False):
         pass
 
     @abstractmethod

@@ -11,6 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "user_workspaces_server_project.settings")
+settings_file = "settings_example" if os.environ.get("GITHUB_WORKFLOW") else "settings_default"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"user_workspaces_server_project.{settings_file}")
 
 application = get_wsgi_application()
