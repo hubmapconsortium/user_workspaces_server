@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 import requests as http_r
 from django.forms.models import model_to_dict
@@ -253,9 +254,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             "variables": variables,
         }
 
+        start_time = time.time()
         response = http_r.post(
             self.root_url, json=body, headers={"Authorization": f"JWT {self.jwt_token}"}
         )
+
+        if (time.time() - start_time) > 10:
+            logger.error(f"PSC Users API took {time.time() - start_time} seconds")
+
         external_user = response.json().get("data", {}).get("user", {})
 
         if external_user is None:
