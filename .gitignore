@@ -1,4 +1,5 @@
 venv/
+.envrc
 
 *.pyc
 __pycache__/
@@ -23,3 +24,4 @@ db.sqlite3
 /docker/db_dir/
 /docker/redis_dir/
 /docker/docker-compose.yml
+/docker/grafana_dir/provisioning/datasources/datasource.yml
