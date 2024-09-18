@@ -370,16 +370,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                 }
             """,
             "variables": {
-                {
-                    "input": {
-                        "user": {"username": f"{user_id}"},
-                        "allocation": {
-                            "components": {
-                                "grant": {"number": f"{self.grant_number}"},
-                                "resource": {"name": f"{self.resource_name}"},
-                            }
-                        },
-                    }
+                "input": {
+                    "user": {"username": f"{user_id}"},
+                    "allocation": {
+                        "components": {
+                            "grant": {"number": f"{self.grant_number}"},
+                            "resource": {"name": f"{self.resource_name}"},
+                        }
+                    },
                 }
             },
         }
