@@ -38,6 +38,14 @@ services:
     environment:
       - POSTGRES_PASSWORD=blank
       - POSTGRES_USER=blank
+      - GRAFANA_PASSWORD=blank
+      - GRAFANA_USER=blank
     depends_on:
       - redis
       - postgres
+  grafana:
+    image: grafana/grafana
+    build:
+      context: ./grafana_dir
+    ports:
+      - "3000:3000"

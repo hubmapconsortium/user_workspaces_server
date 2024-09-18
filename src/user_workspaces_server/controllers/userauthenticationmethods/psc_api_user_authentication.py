@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 import requests as http_r
 from django.forms.models import model_to_dict
@@ -253,9 +254,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             "variables": variables,
         }
 
+        start_time = time.time()
         response = http_r.post(
             self.root_url, json=body, headers={"Authorization": f"JWT {self.jwt_token}"}
         )
+
+        if (time.time() - start_time) > 10:
+            logger.error(f"PSC Users API took {time.time() - start_time} seconds")
+
         external_user = response.json().get("data", {}).get("user", {})
 
         if external_user is None:
@@ -269,8 +275,9 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                 gid = allocation.get("gid", False)
 
         if not gid:
-            # TODO: If this user is not assigned to this grant, then we need to assign the user
-            pass
+            # If this user is not assigned to this grant, then we need to assign the user
+            if not (gid := self.add_external_user_to_allocation(external_user["username"])):
+                pass
 
         return (
             {
@@ -339,3 +346,57 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             )
 
         return allocation
+
+    def add_external_user_to_allocation(self, user_id):
+        body = {
+            "operationName": "AddUserToAllocation",
+            "query": """
+                mutation AddUserToAllocation($input: AddAllocationUserInput!) {
+                    addAllocationUser(input: $input) {
+                        allocationUser {
+                            user {
+                                name {
+                                    first
+                                    last
+                                }
+                            }
+                            allocation {
+                                grant {
+                                    number
+                                }
+                            }
+                        }
+                    }
+                }
+            """,
+            "variables": {
+                {
+                    "input": {
+                        "user": {"username": f"{user_id}"},
+                        "allocation": {
+                            "components": {
+                                "grant": {"number": f"{self.grant_nubmer}"},
+                                "resource": {"name": f"{self.resource_name}"},
+                            }
+                        },
+                    }
+                }
+            },
+        }
+
+        response = http_r.post(
+            self.root_url, json=body, headers={"Authorization": f"JWT {self.jwt_token}"}
+        )
+        external_user = response.json().get("data", {}).get("user", {})
+
+        if external_user is None:
+            return external_user
+
+        gid = False
+
+        for allocation_user in external_user.get("allocationUsers", []):
+            allocation = allocation_user.get("allocation", {})
+            if allocation.get("grant", {}).get("number", False) == self.grant_number:
+                gid = allocation.get("gid", False)
+
+        return gid

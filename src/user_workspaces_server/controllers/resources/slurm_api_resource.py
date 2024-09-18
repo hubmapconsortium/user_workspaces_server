@@ -53,7 +53,7 @@ class SlurmAPIResource(AbstractResource):
         }
 
         time_limit = job.config.get("time_limit", "30")
-        partition = self.config.get("partition", "")
+        cpu_partition = self.config.get("cpu_partition", "")
 
         body = {
             "script": job.get_script({"workspace_full_path": workspace_full_path}),
@@ -67,14 +67,14 @@ class SlurmAPIResource(AbstractResource):
                 "standard_error": os.path.join(
                     job_full_path, f'slurm_{job.job_details["id"]}_error.out'
                 ),
-                "get_user_environment": 1,
                 "environment": {
+                    "SLURM_GET_USER_ENV": 1,
                     "PATH": "/bin/:/usr/bin/:/usr/local/bin/",
                     "LD_LIBRARY_PATH": "/lib/:/lib64/:/usr/local/lib",
                 },
                 "time_limit": time_limit,
                 "requeue": False,
-                "partition": partition,
+                "partition": cpu_partition,
             },
         }
 
@@ -249,5 +249,7 @@ class SlurmAPIResource(AbstractResource):
         gpu_enabled = resource_options.get("gpu_enabled", False)
         if isinstance(gpu_enabled, bool) and gpu_enabled:
             updated_options["tres_per_job"] = "gres/gpu=1"
+            if gpu_partition := self.config.get("gpu_partition"):
+                updated_options["partition"] = gpu_partition
 
         return updated_options
