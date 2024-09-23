@@ -372,7 +372,8 @@ class WorkspaceView(APIView):
         workspace.status = models.Workspace.Status.DELETING
         workspace.save()
 
-        async_task("user_workspaces_server.tasks.delete_workspace", workspace.pk)
+        # TODO: Turn this back on once we switch over to Django-Q2
+        # async_task("user_workspaces_server.tasks.delete_workspace", workspace.pk)
 
         return JsonResponse(
             {
