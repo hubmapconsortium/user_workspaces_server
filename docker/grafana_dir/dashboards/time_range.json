@@ -540,7 +540,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "user_workspaces_postgres"
       },
-      "description": "Count of workspaces created by year.",
+      "description": "Count of workspaces created.",
       "fieldConfig": {
         "defaults": {
           "color": {
