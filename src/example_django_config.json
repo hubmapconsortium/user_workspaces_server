@@ -14,6 +14,7 @@
     "workers": 8,
     "recycle": 500,
     "timeout": 60,
+    "retry": 90,
     "compress": true,
     "save_limit": 250,
     "queue_limit": 500,
@@ -22,6 +23,12 @@
     "redis": {
       "host": "127.0.0.1",
       "port": 6379
+    },
+    "ALT_CLUSTERS": {
+        "long": {
+            "timeout": 300,
+            "retry": 360
+        }
     }
   },
   "CHANNEL_LAYERS": {

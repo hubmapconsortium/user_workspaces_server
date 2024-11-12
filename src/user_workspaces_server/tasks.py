@@ -135,7 +135,7 @@ def queue_job_update(task):
         ).exists():
             workspace.status = models.Workspace.Status.IDLE
             workspace.save()
-            async_task("user_workspaces_server.tasks.update_workspace", workspace.id)
+            async_update_workspace(workspace.pk)
             async_task("user_workspaces_server.tasks.update_job_core_hours", job_id)
 
 
@@ -197,7 +197,11 @@ def delete_workspace(workspace_id):
         async_task("user_workspaces_server.tasks.update_user_quota_disk_space", user_quota.id)
 
 
-def update_workspace(workspace_id):
+def async_update_workspace(workspace_id: int):
+    # Helper that makes sure updates go to the "long" cluster
+    async_task("user_workspaces_server.tasks.update_workspace", workspace_id, cluster="long")
+
+def update_workspace(workspace_id: int):
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except models.Workspace.DoesNotExist:
