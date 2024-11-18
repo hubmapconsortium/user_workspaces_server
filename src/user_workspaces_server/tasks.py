@@ -138,7 +138,9 @@ def queue_job_update(task):
             workspace.status = models.Workspace.Status.IDLE
             workspace.save()
             async_update_workspace(workspace.pk)
-            async_task("user_workspaces_server.tasks.update_job_core_hours", job_id, cluster="myproject")
+            async_task(
+                "user_workspaces_server.tasks.update_job_core_hours", job_id, cluster="myproject"
+            )
 
 
 def update_job_core_hours(job_id):
