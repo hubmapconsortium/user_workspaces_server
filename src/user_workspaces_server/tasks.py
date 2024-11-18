@@ -7,8 +7,8 @@ from channels.layers import get_channel_layer
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Sum
-from django_q.tasks import async_task
 from django_q.brokers import get_broker
+from django_q.tasks import async_task
 
 from . import models, utils
 
@@ -205,6 +205,7 @@ def delete_workspace(workspace_id):
 def async_update_workspace(workspace_id: int):
     # Helper that makes sure updates go to the "long" cluster
     async_task("user_workspaces_server.tasks.update_workspace", workspace_id, cluster="long")
+
 
 def update_workspace(workspace_id: int):
     print(f"Updating workspace {workspace_id} on {get_broker().list_key}")
