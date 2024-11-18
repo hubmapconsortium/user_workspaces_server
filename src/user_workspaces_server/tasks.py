@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def update_job_status(job_id):
-    print(f"Updating job status on {get_broker().list_key}")
+    print(f"Updating job {job_id} status on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -138,11 +138,11 @@ def queue_job_update(task):
             workspace.status = models.Workspace.Status.IDLE
             workspace.save()
             async_update_workspace(workspace.pk)
-            async_task("user_workspaces_server.tasks.update_job_core_hours", job_id)
+            async_task("user_workspaces_server.tasks.update_job_core_hours", job_id, cluster="myproject")
 
 
 def update_job_core_hours(job_id):
-    print(f"Updating job core hours on {get_broker().list_key}")
+    print(f"Updating job {job_id} core hours on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -160,7 +160,7 @@ def update_job_core_hours(job_id):
 
 
 def stop_job(job_id):
-    print(f"Stopping job on {get_broker().list_key}")
+    print(f"Stopping job {job_id} on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -174,7 +174,7 @@ def stop_job(job_id):
 
 
 def delete_workspace(workspace_id):
-    print(f"Deleting workspace on {get_broker().list_key}")
+    print(f"Deleting workspace {workspace_id} on {get_broker().list_key}")
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except models.Workspace.DoesNotExist:
@@ -207,7 +207,7 @@ def async_update_workspace(workspace_id: int):
     async_task("user_workspaces_server.tasks.update_workspace", workspace_id, cluster="long")
 
 def update_workspace(workspace_id: int):
-    print(f"Updating workspace on {get_broker().list_key}")
+    print(f"Updating workspace {workspace_id} on {get_broker().list_key}")
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except models.Workspace.DoesNotExist:
@@ -252,7 +252,7 @@ def update_workspace(workspace_id: int):
 
 
 def update_user_quota_disk_space(user_quota_id):
-    print(f"Updating user quota disk space on {get_broker().list_key}")
+    print(f"Updating user quota {user_quota_id} disk space on {get_broker().list_key}")
     try:
         user_quota = models.UserQuota.objects.get(pk=user_quota_id)
     except models.UserQuota.DoesNotExist:
@@ -266,7 +266,7 @@ def update_user_quota_disk_space(user_quota_id):
 
 
 def update_user_quota_core_hours(user_quota_id):
-    print(f"Updating user quota core hours on {get_broker().list_key}")
+    print(f"Updating user quota {user_quota_id} core hours on {get_broker().list_key}")
     try:
         user_quota = models.UserQuota.objects.get(pk=user_quota_id)
     except models.UserQuota.DoesNotExist:
