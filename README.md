@@ -31,6 +31,11 @@ sudo python manage.py qcluster &
 sudo python manage.py runserver
 ```
 
+Run tests
+```
+./manage.py test tests.unittests --settings=tests.settings
+```
+
 ## Docker development
 
 In the case that you wish to launch a docker compose cluster to do your development/testing, there is a docker-compose.yml file that can be used.

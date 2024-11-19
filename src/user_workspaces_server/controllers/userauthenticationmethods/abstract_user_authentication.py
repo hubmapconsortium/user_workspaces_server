@@ -53,7 +53,7 @@ class AbstractUserAuthentication(ABC):
             return False
 
     @abstractmethod
-    def get_external_user(self, external_user_id):
+    def get_external_user(self, external_user_info: dict) -> dict:
         pass
 
     def get_external_user_mapping(self, user_info):
