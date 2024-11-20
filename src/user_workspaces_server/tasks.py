@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def update_job_status(job_id):
-    print(f"Updating job {job_id} status on {get_broker().list_key}")
+    logger.info(f"Updating job {job_id} status on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -57,15 +57,16 @@ def update_job_status(job_id):
         job.status
         if (
             job.status == models.Job.Status.STOPPING
-            and current_job_status not in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]
+            and current_job_status
+            not in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]
         )
         else current_job_status
     )
 
     try:
-        job_type_config = apps.get_app_config("user_workspaces_server").available_job_types.get(
-            job.job_type
-        )
+        job_type_config = apps.get_app_config(
+            "user_workspaces_server"
+        ).available_job_types.get(job.job_type)
 
         job_type = utils.generate_controller_object(
             job_type_config["job_type"],
@@ -83,11 +84,15 @@ def update_job_status(job_id):
     # TODO: Make sure that we're using the resource to do this type of status check
     job_status = job_type.status_check(job)
 
-    job.job_details["current_job_details"].update(job_status.get("current_job_details", {}))
+    job.job_details["current_job_details"].update(
+        job_status.get("current_job_details", {})
+    )
     job.job_details["metrics"].update(job_status.get("metrics", {}))
 
     # TODO: At some point we will have metrics returned by resource_job_info
-    job.job_details["current_job_details"].update(resource_job_info.get("current_job_details", {}))
+    job.job_details["current_job_details"].update(
+        resource_job_info.get("current_job_details", {})
+    )
 
     if job.job_details["current_job_details"].get("connection_details", {}):
         job.job_details["current_job_details"]["connection_details"][
@@ -139,12 +144,14 @@ def queue_job_update(task):
             workspace.save()
             async_update_workspace(workspace.pk)
             async_task(
-                "user_workspaces_server.tasks.update_job_core_hours", job_id, cluster="myproject"
+                "user_workspaces_server.tasks.update_job_core_hours",
+                job_id,
+                cluster="myproject",
             )
 
 
 def update_job_core_hours(job_id):
-    print(f"Updating job {job_id} core hours on {get_broker().list_key}")
+    logger.info(f"Updating job {job_id} core hours on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -154,15 +161,19 @@ def update_job_core_hours(job_id):
     resource = apps.get_app_config("user_workspaces_server").main_resource
     job.core_hours = resource.get_job_core_hours(job)
     job.save()
-    user_quota = models.UserQuota.objects.filter(user_id=job.workspace_id.user_id).first()
+    user_quota = models.UserQuota.objects.filter(
+        user_id=job.workspace_id.user_id
+    ).first()
 
     # If this user has a quota spawn a routine to update the core hours.
     if user_quota:
-        async_task("user_workspaces_server.tasks.update_user_quota_core_hours", user_quota.id)
+        async_task(
+            "user_workspaces_server.tasks.update_user_quota_core_hours", user_quota.id
+        )
 
 
 def stop_job(job_id):
-    print(f"Stopping job {job_id} on {get_broker().list_key}")
+    logger.info(f"Stopping job {job_id} on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -176,7 +187,7 @@ def stop_job(job_id):
 
 
 def delete_workspace(workspace_id):
-    print(f"Deleting workspace {workspace_id} on {get_broker().list_key}")
+    logger.info(f"Deleting workspace {workspace_id} on {get_broker().list_key}")
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except models.Workspace.DoesNotExist:
@@ -201,16 +212,20 @@ def delete_workspace(workspace_id):
     user_quota = models.UserQuota.objects.filter(user_id=workspace.user_id).first()
     # If this user has a quota spawn a routine to update the disk space.
     if user_quota:
-        async_task("user_workspaces_server.tasks.update_user_quota_disk_space", user_quota.id)
+        async_task(
+            "user_workspaces_server.tasks.update_user_quota_disk_space", user_quota.id
+        )
 
 
 def async_update_workspace(workspace_id: int):
     # Helper that makes sure updates go to the "long" cluster
-    async_task("user_workspaces_server.tasks.update_workspace", workspace_id, cluster="long")
+    async_task(
+        "user_workspaces_server.tasks.update_workspace", workspace_id, cluster="long"
+    )
 
 
 def update_workspace(workspace_id: int):
-    print(f"Updating workspace {workspace_id} on {get_broker().list_key}")
+    logger.info(f"Updating workspace {workspace_id} on {get_broker().list_key}")
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except models.Workspace.DoesNotExist:
@@ -221,7 +236,9 @@ def update_workspace(workspace_id: int):
     current_details = {"files": [], "symlinks": []}
 
     # This will IGNORE dot directories and files
-    for dirpath, dirnames, filenames, dirfd in main_storage.get_dir_tree(workspace.file_path):
+    for dirpath, dirnames, filenames, dirfd in main_storage.get_dir_tree(
+        workspace.file_path
+    ):
         dirnames[:] = [dirname for dirname in dirnames if not dirname[0] == "."]
         filenames = [f for f in filenames if not f[0] == "."]
 
@@ -238,9 +255,9 @@ def update_workspace(workspace_id: int):
             relative_path = file_path.replace(
                 os.path.join(main_storage.root_dir, workspace.file_path), ""
             )
-            current_details["symlinks" if os.path.islink(file_path) else "files"].append(
-                {"name": relative_path}
-            )
+            current_details[
+                "symlinks" if os.path.islink(file_path) else "files"
+            ].append({"name": relative_path})
 
     workspace.workspace_details["current_workspace_details"] = current_details
 
@@ -251,11 +268,15 @@ def update_workspace(workspace_id: int):
     user_quota = models.UserQuota.objects.filter(user_id=workspace.user_id).first()
     # If this user has a quota spawn a routine to update the disk space.
     if user_quota:
-        async_task("user_workspaces_server.tasks.update_user_quota_disk_space", user_quota.id)
+        async_task(
+            "user_workspaces_server.tasks.update_user_quota_disk_space", user_quota.id
+        )
 
 
 def update_user_quota_disk_space(user_quota_id):
-    print(f"Updating user quota {user_quota_id} disk space on {get_broker().list_key}")
+    logger.info(
+        f"Updating user quota {user_quota_id} disk space on {get_broker().list_key}"
+    )
     try:
         user_quota = models.UserQuota.objects.get(pk=user_quota_id)
     except models.UserQuota.DoesNotExist:
@@ -269,7 +290,9 @@ def update_user_quota_disk_space(user_quota_id):
 
 
 def update_user_quota_core_hours(user_quota_id):
-    print(f"Updating user quota {user_quota_id} core hours on {get_broker().list_key}")
+    logger.info(
+        f"Updating user quota {user_quota_id} core hours on {get_broker().list_key}"
+    )
     try:
         user_quota = models.UserQuota.objects.get(pk=user_quota_id)
     except models.UserQuota.DoesNotExist:

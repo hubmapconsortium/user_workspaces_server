@@ -14,7 +14,6 @@
     "workers": 8,
     "recycle": 500,
     "timeout": 60,
-    "retry": 90,
     "compress": true,
     "save_limit": 250,
     "queue_limit": 500,
@@ -26,8 +25,7 @@
     },
     "ALT_CLUSTERS": {
         "long": {
-            "timeout": 300,
-            "retry": 360
+            "timeout": 600
         }
     }
   },
