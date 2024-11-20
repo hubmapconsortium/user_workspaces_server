@@ -22,6 +22,11 @@
     "redis": {
       "host": "127.0.0.1",
       "port": 6379
+    },
+    "ALT_CLUSTERS": {
+        "long": {
+            "timeout": 600
+        }
     }
   },
   "CHANNEL_LAYERS": {
