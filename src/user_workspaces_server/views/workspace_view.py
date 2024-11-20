@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 
 from user_workspaces_server import models, utils
 from user_workspaces_server.exceptions import WorkspaceClientException
+from user_workspaces_server.tasks import async_update_workspace
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +132,7 @@ class WorkspaceView(APIView):
             workspace.delete()
             raise
 
-        async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
+        async_update_workspace(workspace.pk)
 
         return JsonResponse(
             {
@@ -216,7 +217,7 @@ class WorkspaceView(APIView):
             workspace.save()
 
             logger.info(workspace.workspace_details)
-            async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
+            async_update_workspace(workspace.pk)
 
             return JsonResponse({"message": "Update successful.", "success": True})
         if put_type.lower() == "start":
@@ -326,12 +327,12 @@ class WorkspaceView(APIView):
             if not request.FILES:
                 raise WorkspaceClientException("No files found in request.")
 
-            for file_index, file in request.FILES.items():
+            for file in request.FILES.values():
                 main_storage.create_file(workspace.file_path, file)
 
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
-            async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
+            async_update_workspace(workspace.pk)
 
             return JsonResponse({"message": "Successful upload.", "success": True})
         else:
@@ -372,8 +373,7 @@ class WorkspaceView(APIView):
         workspace.status = models.Workspace.Status.DELETING
         workspace.save()
 
-        # TODO: Turn this back on once we switch over to Django-Q2
-        # async_task("user_workspaces_server.tasks.delete_workspace", workspace.pk)
+        async_task("user_workspaces_server.tasks.delete_workspace", workspace.pk, cluster="long")
 
         return JsonResponse(
             {
