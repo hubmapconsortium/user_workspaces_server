@@ -21,7 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent
 UWS_CONFIG = json.load(
     open(
         BASE_DIR
-        / ("github_test_config.json" if os.environ.get("GITHUB_WORKFLOW") else "test_config.json")
+        / (
+            "github_test_config.json"
+            if os.environ.get("GITHUB_WORKFLOW")
+            else "test_config.json"
+        )
     )
 )
 
@@ -37,7 +41,9 @@ DJANGO_CONFIG = json.load(
 )
 
 SECRET_KEY = (
-    get_random_string(12) if not DJANGO_CONFIG["SECRET_KEY"] else DJANGO_CONFIG["SECRET_KEY"]
+    get_random_string(12)
+    if not DJANGO_CONFIG["SECRET_KEY"]
+    else DJANGO_CONFIG["SECRET_KEY"]
 )
 
 DEBUG = DJANGO_CONFIG["DEBUG"]
@@ -118,8 +124,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 
 USE_I18N = True
-
-USE_L10N = True
 
 USE_TZ = True
 
