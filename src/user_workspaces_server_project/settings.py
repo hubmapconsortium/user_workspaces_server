@@ -23,11 +23,7 @@ UWS_CONFIG = json.load(
     open(
         os.path.join(
             BASE_DIR,
-            (
-                "example_config.json"
-                if os.environ.get("GITHUB_WORKFLOW")
-                else "config.json"
-            ),
+            ("example_config.json" if os.environ.get("GITHUB_WORKFLOW") else "config.json"),
         )
     )
 )
