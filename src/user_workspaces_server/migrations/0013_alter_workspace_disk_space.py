@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0012_job_resource_options'),
+        ("user_workspaces_server", "0012_job_resource_options"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='workspace',
-            name='disk_space',
+            model_name="workspace",
+            name="disk_space",
             field=models.BigIntegerField(default=0),
         ),
     ]
