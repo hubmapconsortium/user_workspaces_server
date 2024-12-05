@@ -131,10 +131,13 @@ def queue_job_update(task):
         )
     elif job.status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         workspace = job.workspace_id
-        if not models.Job.objects.filter(
-            workspace_id=job.workspace_id,
-            status__in=[models.Job.Status.PENDING, models.Job.Status.RUNNING],
-        ).exists():
+        if (
+            not models.Job.objects.filter(
+                workspace_id=job.workspace_id,
+                status__in=[models.Job.Status.PENDING, models.Job.Status.RUNNING],
+            ).exists()
+            and workspace.status != models.Workspace.Status.DELETING
+        ):
             workspace.status = models.Workspace.Status.IDLE
             workspace.save()
             async_update_workspace(workspace.pk)
