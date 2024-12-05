@@ -13,7 +13,7 @@ class Workspace(models.Model):
     name = models.CharField(max_length=64, default="")
     description = models.TextField(default="")
     file_path = models.CharField(max_length=64, default="")
-    disk_space = models.IntegerField(default=0)
+    disk_space = models.BigIntegerField(default=0)
     datetime_created = models.DateTimeField()
     workspace_details = models.JSONField()
     status = models.CharField(max_length=64, default=Status.IDLE, choices=Status.choices)
