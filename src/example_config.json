@@ -38,7 +38,7 @@
       "job_type": "JupyterLabJob",
       "environment_details": {
         "main_resource": {
-          "python_version": "python3.8",
+          "python_version": "python3.10",
           "module_manager": "virtualenv",
           "modules": [
             "jupyterlab"
