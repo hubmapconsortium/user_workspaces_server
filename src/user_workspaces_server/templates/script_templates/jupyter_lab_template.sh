@@ -42,8 +42,6 @@ install_environment
 ### Jupyter configuration
 CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
-VERSION=$(python -m jupyterlab --version)
-
 random_number () {
   shuf -i ${1}-${2} -n 1
 }
@@ -124,6 +122,7 @@ fi
 
 
 # Generate Jupyter configuration file with secure file permissions based on JupyterLab version
+VERSION=$(python -m jupyterlab --version)
 (
 umask 077
 cat > "${CONFIG_FILE}" << EOL
