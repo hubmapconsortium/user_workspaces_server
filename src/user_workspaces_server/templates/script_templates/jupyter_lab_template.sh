@@ -42,8 +42,6 @@ install_environment
 ### Jupyter configuration
 CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
-VERSION=$(python -m jupyterlab --version)
-
 random_number () {
   shuf -i ${1}-${2} -n 1
 }
@@ -104,7 +102,27 @@ find_port () {
 
 PORT=$(find_port)
 
+set -x
+
+# Check if Python is installed
+if command -v python &>/dev/null; then
+  # Check if Jupyter is installed in the Python environment
+  if python -m jupyterlab --version &>/dev/null; then
+    echo "Python & Jupyter installed"
+  else
+    # Delete the environment
+    rm -rf "$VENV_PATH"
+    install_environment
+  fi
+else
+  # Delete the environment
+  rm -rf "$VENV_PATH"
+  install_environment
+fi
+
+
 # Generate Jupyter configuration file with secure file permissions based on JupyterLab version
+VERSION=$(python -m jupyterlab --version)
 (
 umask 077
 cat > "${CONFIG_FILE}" << EOL
@@ -128,24 +146,7 @@ EOL
 )
 
 # Launch the Jupyter Notebook Server
-set -x
 export JUPYTER_DATA_DIR="$VENV_PATH/share/jupyter"
 export SSL_CERT_FILE="$VENV_PATH/ssl/cert.pem"
-
-# Check if Python is installed
-if command -v python &>/dev/null; then
-  # Check if Jupyter is installed in the Python environment
-  if python -m jupyter --version &>/dev/null; then
-    echo "Python & Jupyter installed"
-  else
-    # Delete the environment
-    rm -rf "$VENV_PATH"
-    install_environment
-  fi
-else
-  # Delete the environment
-  rm -rf "$VENV_PATH"
-  install_environment
-fi
 
 python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"
