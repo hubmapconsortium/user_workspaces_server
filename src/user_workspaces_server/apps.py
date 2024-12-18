@@ -22,6 +22,7 @@ class UserWorkspacesServerConfig(AppConfig):
         config_storage = settings.UWS_CONFIG["available_storage"]
         config_resource = settings.UWS_CONFIG["available_resources"]
         config_job_types = settings.UWS_CONFIG["available_job_types"]
+        self.parameters = settings.UWS_CONFIG["parameters"]
 
         for (
             user_authentication_name,

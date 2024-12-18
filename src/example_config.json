@@ -29,7 +29,14 @@
       "storage": "main_storage",
       "user_authentication": "main_auth",
       "passthrough_domain": "127.0.0.1:8000",
-      "connection_details": {}
+      "connection_details": {},
+      "parameter_mapping": [
+          {
+            "num_cpus": "cpus_per_task",
+            "memory_mb": "memory_per_node",
+            "time_limit_min": "time_limit",
+          }
+      ]
     }
   },
   "available_job_types": {
@@ -56,5 +63,53 @@
         }
       }
     }
-  }
+  },
+  "parameters": [
+    {
+      "display_name":  "Number of CPUs",
+      "description": "",
+      "variable_name": "num_cpus",
+      "default_value": 1,
+      "validation": {
+        "type": "int",
+        "min": 1,
+        "max": 4,
+        "required": false
+      }
+    },
+    {
+      "display_name": "Memory (MB)",
+      "description": "",
+      "variable_name": "memory_mb",
+      "default_value": 1024,
+      "validation": {
+        "type": "int",
+        "min": 1024,
+        "max": 8192,
+        "required": false
+      }
+    },
+    {
+      "display_name": "Time Limit (minutes)",
+      "description": "",
+      "variable_name": "time_limit_min",
+      "default_value": 180,
+      "validation": {
+        "type": "int",
+        "min": 1,
+        "max": 480,
+        "required": false
+      }
+    },
+    {
+      "display_name": "GPU Enabled",
+      "description": "",
+      "variable_name": "gpu_enabled",
+      "default_value": false,
+      "validation": {
+        "type": "bool",
+        "required": false
+      }
+    }
+  ]
 }

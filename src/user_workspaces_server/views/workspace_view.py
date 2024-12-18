@@ -35,7 +35,11 @@ class WorkspaceView(APIView):
 
         workspaces = list(workspace.all().values(*models.Workspace.get_dict_fields()))
 
-        response = {"message": "Successful.", "success": True, "data": {"workspaces": []}}
+        response = {
+            "message": "Successful.",
+            "success": True,
+            "data": {"workspaces": []},
+        }
 
         if workspaces:
             response["data"]["workspaces"] = workspaces
@@ -373,7 +377,11 @@ class WorkspaceView(APIView):
         workspace.status = models.Workspace.Status.DELETING
         workspace.save()
 
-        async_task("user_workspaces_server.tasks.delete_workspace", workspace.pk, cluster="long")
+        async_task(
+            "user_workspaces_server.tasks.delete_workspace",
+            workspace.pk,
+            cluster="long",
+        )
 
         return JsonResponse(
             {
