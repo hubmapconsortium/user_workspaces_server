@@ -34,7 +34,7 @@
           {
             "num_cpus": "cpus_per_task",
             "memory_mb": "memory_per_node",
-            "time_limit_min": "time_limit",
+            "time_limit_min": "time_limit"
           }
       ]
     }
