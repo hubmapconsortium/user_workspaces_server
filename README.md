@@ -7,10 +7,10 @@ This application is written in Django and it includes an example_config.json fil
 ## Development
 
 ### Local development
-Create a new Python (3.8>=) environment:
+Create a new Python (3.10>=) environment:
 
 ```
-virtualenv -p 3.8 venv
+virtualenv -p 3.10 venv
 source venv/bin/activate
 ```
 
