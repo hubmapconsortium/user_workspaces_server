@@ -24,6 +24,7 @@ from .views import (
     status_view,
     user_workspaces_server_token_view,
     workspace_view,
+    user_view,
 )
 
 token_view_patterns = [
@@ -71,12 +72,19 @@ passthrough_view_patterns = [
     ),
 ]
 
+user_view_patterns = [
+    path(
+        "", user_view.UserView.as_view(), name="users",
+    )
+]
+
 urlpatterns = [
     path("tokens/", include(token_view_patterns)),
     path("workspaces/", include(workspace_view_patterns)),
     path("jobs/", include(job_view_patterns)),
     path("job_types/", include(job_type_view_patterns)),
     path("passthrough/", include(passthrough_view_patterns)),
+    path("users/", include(user_view_patterns)),
     path("status/", status_view.StatusView.as_view(), name="status"),
 ]
 
