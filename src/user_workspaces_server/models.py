@@ -107,3 +107,10 @@ class ExternalUserMapping(models.Model):
             f"{self.id}: {self.user_id.username if self.user_id else 'User Missing'} -"
             f" {self.user_authentication_name}"
         )
+
+
+class SharedWorkspaceMapping(models.Model):
+    original_workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
+    shared_workspace_id = models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    last_params = models.JSONField(blank=True, null=True)
+    last_job_type = models.CharField(max_length=64, null=True)
