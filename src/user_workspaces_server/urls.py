@@ -74,7 +74,9 @@ passthrough_view_patterns = [
 
 user_view_patterns = [
     path(
-        "", user_view.UserView.as_view(), name="users",
+        "",
+        user_view.UserView.as_view(),
+        name="users",
     )
 ]
 
