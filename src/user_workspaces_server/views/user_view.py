@@ -2,12 +2,14 @@ import logging
 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import APIView
 
 logger = logging.getLogger(__name__)
 
 
 class UserView(APIView):
+    permission_classes = [IsAuthenticated]
     filter_user_fields = ["first_name", "last_name", "username", "email"]
     return_user_fields = ["id", "first_name", "last_name", "username", "email"]
 
