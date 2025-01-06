@@ -110,7 +110,14 @@ class ExternalUserMapping(models.Model):
 
 
 class SharedWorkspaceMapping(models.Model):
-    original_workspace_id = models.ForeignKey(Workspace, on_delete=models.SET_NULL, null=True)
-    shared_workspace_id = models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    original_workspace_id = models.ForeignKey(
+        Workspace,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="original_workspace_set",
+    )
+    shared_workspace_id = models.ForeignKey(
+        Workspace, on_delete=models.CASCADE, related_name="shared_workspace_set"
+    )
     last_params = models.JSONField(blank=True, null=True)
     last_job_type = models.CharField(max_length=64, null=True)
