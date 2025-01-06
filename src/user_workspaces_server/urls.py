@@ -25,6 +25,7 @@ from .views import (
     user_workspaces_server_token_view,
     workspace_view,
     user_view,
+    shared_workspace_view,
 )
 
 token_view_patterns = [
@@ -80,6 +81,14 @@ user_view_patterns = [
     )
 ]
 
+shared_workspace_view_patterns = [
+    path(
+        "",
+        shared_workspace_view.SharedWorkspaceView.as_view(),
+        name="shared_workspaces",
+    )
+]
+
 urlpatterns = [
     path("tokens/", include(token_view_patterns)),
     path("workspaces/", include(workspace_view_patterns)),
@@ -87,6 +96,7 @@ urlpatterns = [
     path("job_types/", include(job_type_view_patterns)),
     path("passthrough/", include(passthrough_view_patterns)),
     path("users/", include(user_view_patterns)),
+    path("shared_workspaces/", include(shared_workspace_view_patterns)),
     path("status/", status_view.StatusView.as_view(), name="status"),
 ]
 
