@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class UserView(APIView):
     filter_user_fields = ["first_name", "last_name", "username", "email"]
-    return_user_fields = ["id"].extend(filter_user_fields)
+    return_user_fields = ["id", "first_name", "last_name", "username", "email"]
 
     def get(self, request):
         users = User.objects.all()
