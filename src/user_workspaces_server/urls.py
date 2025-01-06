@@ -86,7 +86,12 @@ shared_workspace_view_patterns = [
         "",
         shared_workspace_view.SharedWorkspaceView.as_view(),
         name="shared_workspaces",
-    )
+    ),
+    path(
+        "<int:shared_workspace_id>/",
+        shared_workspace_view.SharedWorkspaceView.as_view(),
+        name="workspaces_with_id",
+    ),
 ]
 
 urlpatterns = [
