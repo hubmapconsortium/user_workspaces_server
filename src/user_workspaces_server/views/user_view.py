@@ -2,8 +2,8 @@ import logging
 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger(__name__)
 

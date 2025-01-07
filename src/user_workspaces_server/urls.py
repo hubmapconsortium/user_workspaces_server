@@ -21,11 +21,11 @@ from .views import (
     job_type_view,
     job_view,
     passthrough_view,
+    shared_workspace_view,
     status_view,
+    user_view,
     user_workspaces_server_token_view,
     workspace_view,
-    user_view,
-    shared_workspace_view,
 )
 
 token_view_patterns = [
