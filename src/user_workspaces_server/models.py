@@ -121,19 +121,18 @@ class SharedWorkspaceMapping(models.Model):
     )
     last_params = models.JSONField(blank=True, null=True)
     last_job_type = models.CharField(max_length=64, null=True)
+    is_accepted = models.BooleanField(default=False)
 
     @staticmethod
     def get_query_param_fields():
-        return {
-            "original_user_id": "original_workspace_id__user_id",
-            "shared_user_id": "shared_workspace_id__user_id",
-        }
+        return ["is_accepted"]
 
     @staticmethod
     def get_dict_fields():
         return [
-            "original_workspace_id__user_id",
-            "original_workspace_id__workspace_id",
-            "shared_workspace_id__user_id",
-            "shared_workspace_id__workspace_id",
+            "original_workspace_id",
+            "shared_workspace_id",
+            "is_accepted",
+            "last_params",
+            "last_job_type",
         ]
