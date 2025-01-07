@@ -32,4 +32,4 @@ class SharedWorkspaceMappingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SharedWorkspaceMapping
-        fields = "__all__"
+        exclude = ["id"]
