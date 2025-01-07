@@ -130,8 +130,6 @@ class SharedWorkspaceMapping(models.Model):
     @staticmethod
     def get_dict_fields():
         return [
-            "original_workspace_id",
-            "shared_workspace_id",
             "is_accepted",
             "last_params",
             "last_job_type",
