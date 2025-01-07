@@ -149,12 +149,19 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workspace
-        fields = "__all__"
+        fields = Workspace.get_dict_fields()
+
+    def __init__(self, *args, **kwargs):
+        workspace_type = kwargs.pop("workspace_type")
+        super().__init__(*args, **kwargs)
+
+        if workspace_type == "shared_workspace":
+            self.fields = ["id", "user_id", "name", "description"]
 
 
 class SharedWorkspaceMappingSerializer(serializers.ModelSerializer):
-    original_workspace_id = WorkspaceSerializer(read_only=True)
-    shared_workspace_id = WorkspaceSerializer(read_only=True)
+    original_workspace_id = WorkspaceSerializer(read_only=True, workspace_type="shared_workspace")
+    shared_workspace_id = WorkspaceSerializer(read_only=True, workspace_type="shared_workspace")
 
     class Meta:
         model = SharedWorkspaceMapping
