@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from user_workspaces_server import models
+from user_workspaces_server import models, serializers
 
 logger = logging.getLogger(__name__)
 
@@ -38,26 +38,33 @@ class SharedWorkspaceView(APIView):
                 original_workspaces = original_workspaces.filter(**{key: params[key]})
                 shared_workspaces = shared_workspaces.filter(**{key: params[key]})
 
-        shared_workspace_dict_fields = models.SharedWorkspaceMapping.get_dict_fields()
+        # shared_workspace_dict_fields = models.SharedWorkspaceMapping.get_dict_fields()
+        #
+        # workspace_dict_fields = [
+        #     "id",
+        #     "name",
+        #     "description",
+        #     "user_id__first_name",
+        #     "user_id__last_name",
+        # ]
+        #
+        # shared_workspace_dict_fields.extend(
+        #     [
+        #         prefix + dict_field
+        #         for prefix in ["original_workspace_id__", "shared_workspace_id__"]
+        #         for dict_field in workspace_dict_fields
+        #     ]
+        # )
+        #
+        # original_workspaces = list(original_workspaces.all().values(*shared_workspace_dict_fields))
+        # shared_workspaces = list(shared_workspaces.all().values(*shared_workspace_dict_fields))
 
-        workspace_dict_fields = [
-            "id",
-            "name",
-            "description",
-            "user_id__first_name",
-            "user_id__last_name",
-        ]
-
-        shared_workspace_dict_fields.extend(
-            [
-                prefix + dict_field
-                for prefix in ["original_workspace_id__", "shared_workspace_id__"]
-                for dict_field in workspace_dict_fields
-            ]
-        )
-
-        original_workspaces = list(original_workspaces.all().values(*shared_workspace_dict_fields))
-        shared_workspaces = list(shared_workspaces.all().values(*shared_workspace_dict_fields))
+        original_workspaces = serializers.SharedWorkspaceSerializer(
+            original_workspaces, many=True
+        ).data
+        shared_workspaces = serializers.SharedWorkspaceSerializer(
+            shared_workspaces, many=True
+        ).data
 
         response = {
             "message": "Successful.",
