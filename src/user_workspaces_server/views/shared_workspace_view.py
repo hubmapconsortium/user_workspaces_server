@@ -19,7 +19,7 @@ class SharedWorkspaceView(APIView):
         # We need to filter based on whether they've been accepted or not
         # We need to allow for a single shared workspace to be returned
 
-        original_workspaces = models.SharedWorkspace.objects.filter(
+        original_workspaces = models.SharedWorkspaceMapping.objects.filter(
             original_workspace_id__user_id=request.user
         )
 
