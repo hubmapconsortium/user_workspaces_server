@@ -149,11 +149,13 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workspace
+        fields = "__all__"
 
 
-class ShareWorkspaceMappingSerializer(serializers.ModelSerializer):
+class SharedWorkspaceMappingSerializer(serializers.ModelSerializer):
     original_workspace_id = WorkspaceSerializer(read_only=True)
     shared_workspace_id = WorkspaceSerializer(read_only=True)
 
     class Meta:
         model = SharedWorkspaceMapping
+        fields = "__all__"
