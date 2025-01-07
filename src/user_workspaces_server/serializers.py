@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
-from models import SharedWorkspaceMapping, Workspace
 from rest_framework import serializers
+from user_workspaces_server.models import SharedWorkspaceMapping, Workspace
 
 
 class UserSerializer(serializers.ModelSerializer):
