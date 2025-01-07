@@ -59,10 +59,10 @@ class SharedWorkspaceView(APIView):
         # original_workspaces = list(original_workspaces.all().values(*shared_workspace_dict_fields))
         # shared_workspaces = list(shared_workspaces.all().values(*shared_workspace_dict_fields))
 
-        original_workspaces = serializers.SharedWorkspaceSerializer(
+        original_workspaces = serializers.SharedWorkspaceMappingSerializer(
             original_workspaces, many=True
         ).data
-        shared_workspaces = serializers.SharedWorkspaceSerializer(
+        shared_workspaces = serializers.SharedWorkspaceMappingSerializer(
             shared_workspaces, many=True
         ).data
 
