@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from user_workspaces_server import models, utils
+from user_workspaces_server import models
 
 logger = logging.getLogger(__name__)
 
