@@ -90,7 +90,7 @@ shared_workspace_view_patterns = [
     path(
         "<int:shared_workspace_id>/",
         shared_workspace_view.SharedWorkspaceView.as_view(),
-        name="workspaces_with_id",
+        name="shared_workspaces_with_id",
     ),
 ]
 
