@@ -119,7 +119,7 @@ class SharedWorkspaceMapping(models.Model):
     shared_workspace_id = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name="shared_workspace_set"
     )
-    last_params = models.JSONField(blank=True, null=True)
+    last_resource_options = models.JSONField(blank=True, null=True)
     last_job_type = models.CharField(max_length=64, null=True)
     is_accepted = models.BooleanField(default=False)
 
@@ -131,6 +131,6 @@ class SharedWorkspaceMapping(models.Model):
     def get_dict_fields():
         return [
             "is_accepted",
-            "last_params",
+            "last_resource_options",
             "last_job_type",
         ]
