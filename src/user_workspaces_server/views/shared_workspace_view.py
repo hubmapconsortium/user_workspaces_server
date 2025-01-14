@@ -110,7 +110,7 @@ class SharedWorkspaceView(APIView):
         }
 
         shared_workspace_data = {
-            "original_workspace_id": workspace.pk,
+            "original_workspace_id": workspace,
             "shared_workspace_id": None,
             "last_resource_options": {} if latest_job is None else latest_job.resource_options,
             "last_job_type": "" if latest_job is None else latest_job.job_type,
