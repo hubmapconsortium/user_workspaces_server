@@ -122,7 +122,7 @@ class SharedWorkspaceMapping(models.Model):
     last_resource_options = models.JSONField(blank=True, null=True)
     last_job_type = models.CharField(max_length=64, null=True)
     is_accepted = models.BooleanField(default=False)
-    datetime_share_created = models.DateTimeField()
+    datetime_share_created = models.DateTimeField(null=True)
 
     @staticmethod
     def get_query_param_fields():
