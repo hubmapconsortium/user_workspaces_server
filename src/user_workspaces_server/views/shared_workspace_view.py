@@ -115,6 +115,7 @@ class SharedWorkspaceView(APIView):
             "last_resource_options": {} if latest_job is None else latest_job.resource_options,
             "last_job_type": "" if latest_job is None else latest_job.job_type,
             "is_accepted": False,
+            "datetime_share_created": datetime.now(),
         }
 
         shared_workspaces_created = []
@@ -122,7 +123,6 @@ class SharedWorkspaceView(APIView):
             # Prepare workspace model creation
             workspace_data_copy = workspace_data.copy()
             workspace_data_copy["user_id"] = user
-            workspace_data_copy["datetime_created"] = datetime.now()
             new_workspace = models.Workspace.objects.create(**workspace_data_copy)
 
             # Create shared workspace mapping
@@ -146,3 +146,20 @@ class SharedWorkspaceView(APIView):
                 },
             }
         )
+
+    def put(self, request, shared_workspace_id, put_type):
+        # TODO: Basic validation checks
+        if put_type == "accept":
+            # TODO: set is_accepted to true for shared_workspace_id
+            pass
+        else:
+            # TODO: invalid put_type passed
+            pass
+        # TODO: Update the created timestamp for the workspace once they accept the request
+        return JsonResponse({"message": "Successful.", "success": True})
+
+    def delete(self, request, shared_workspace_id):
+        # TODO: Basic validation checks
+        # TODO: Check ownership of either original workspace or shared workspace
+        # TODO: Delete worksπ
+        return JsonResponse({"message": "Successful.", "success": True})
