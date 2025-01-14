@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="sharedworkspacemapping",
             name="datetime_share_created",
-            field=models.DateTimeField(default=""),
+            field=models.DateTimeField(null=True),
             preserve_default=False,
         ),
     ]
