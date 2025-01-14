@@ -127,7 +127,7 @@ class SharedWorkspaceView(APIView):
 
             # Create shared workspace mapping
             shared_workspace_data_copy = shared_workspace_data.copy()
-            shared_workspace_data_copy["shared_workspace_id"] = new_workspace.pk
+            shared_workspace_data_copy["shared_workspace_id"] = new_workspace
             shared_workspace = models.SharedWorkspaceMapping.objects.create(
                 **shared_workspace_data_copy
             )
