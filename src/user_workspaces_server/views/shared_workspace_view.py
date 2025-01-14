@@ -65,7 +65,6 @@ class SharedWorkspaceView(APIView):
 
     def post(self, request):
         # Begin Validity check section
-
         # Basic validity checks
         try:
             body = json.loads(request.body)
@@ -76,11 +75,11 @@ class SharedWorkspaceView(APIView):
             raise ParseError("Missing required fields.")
 
         # Check workspace_id is valid/owned by current user
-        workspace = models.Workspace.objects.filter(
-            user_id=request.user, id=body["original_workspace_id"]
-        )
-
-        if not workspace:
+        try:
+            workspace = models.Workspace.objects.get(
+                user_id=request.user, id=body["original_workspace_id"]
+            )
+        except Exception:
             raise NotFound(f"Workspace {body['original_workspace_id']} not found for user.")
 
         shared_user_ids = body["shared_user_ids"]
@@ -88,7 +87,9 @@ class SharedWorkspaceView(APIView):
         # Check user_ids_to_share are valid
         if not isinstance(shared_user_ids, list):
             raise ParseError("shared_user_ids is not a list.")
-        elif len(User.objects.filter(pk__in=shared_user_ids)) != len(shared_user_ids):
+        elif len(shared_users := User.objects.filter(pk__in=shared_user_ids)) != len(
+            shared_user_ids
+        ):
             raise ParseError("Invalid user id provided.")
 
         # Begin DAO inserts
@@ -101,8 +102,15 @@ class SharedWorkspaceView(APIView):
             latest_job = None
 
         # Same set of data will be used across all shared_workspace entries
+        workspace_data = {
+            "name": workspace.name,
+            "description": workspace.description,
+            "workspace_details": workspace.workspace_details,
+            "default_job_type": workspace.default_job_type,
+        }
+
         shared_workspace_data = {
-            "original_workspace_id": workspace.id,
+            "original_workspace_id": workspace.pk,
             "shared_workspace_id": None,
             "last_resource_options": {} if latest_job is None else latest_job.resource_options,
             "last_job_type": "" if latest_job is None else latest_job.job_type,
@@ -110,20 +118,19 @@ class SharedWorkspaceView(APIView):
         }
 
         shared_workspaces_created = []
-        for user_id in shared_user_ids:
+        for user in shared_users:
             # Prepare workspace model creation
-            workspace.pk = None
-            workspace._state.adding = True
-            workspace.user_id = user_id
-            workspace.datetime_created = datetime.now()
-            workspace.file_path = ""
-            workspace.save()
+            workspace_data_copy = workspace_data.copy()
+            workspace_data_copy["user_id"] = user
+            workspace_data_copy["datetime_created"] = datetime.now()
+            new_workspace = models.Workspace.objects.create(**workspace_data_copy)
 
             # Create shared workspace mapping
-            shared_workspace_id = workspace.pk
-            shared_workspace_data["shared_workspace_id"] = shared_workspace_id
-            shared_workspace = models.SharedWorkspaceMapping(**shared_workspace_data)
-            shared_workspace.save()
+            shared_workspace_data_copy = shared_workspace_data.copy()
+            shared_workspace_data_copy["shared_workspace_id"] = new_workspace.pk
+            shared_workspace = models.SharedWorkspaceMapping.objects.create(
+                **shared_workspace_data_copy
+            )
             shared_workspaces_created.append(shared_workspace)
 
         shared_workspaces_created = serializers.SharedWorkspaceMappingSerializer(
