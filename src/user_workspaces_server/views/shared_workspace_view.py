@@ -161,5 +161,6 @@ class SharedWorkspaceView(APIView):
     def delete(self, request, shared_workspace_id):
         # TODO: Basic validation checks
         # TODO: Check ownership of either original workspace or shared workspace
-        # TODO: Delete worksπ
+        # TODO: Check that the workspace hasn't been accepted
+        # TODO: Delete shared workspace
         return JsonResponse({"message": "Successful.", "success": True})
