@@ -34,7 +34,7 @@ class SharedWorkspaceView(APIView):
 
         if shared_workspace_id:
             shared_workspaces = models.SharedWorkspaceMapping.objects.filter(
-                id=shared_workspace_id
+                shared_workspace_id__pk=shared_workspace_id
             )
         elif params := request.GET:
             for key in set(params.keys()).intersection(
@@ -163,9 +163,11 @@ class SharedWorkspaceView(APIView):
     def delete(self, request, shared_workspace_id):
         # Basic validation checks
 
-        # Check for the workspace's existence
+        # Check that the workspace exists
         try:
-            shared_workspace = models.SharedWorkspaceMapping.objects.get(pk=shared_workspace_id)
+            shared_workspace = models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id__pk=shared_workspace_id
+            )
         except Exception:
             raise NotFound(f"Shared workspace {shared_workspace_id} not found.")
 
