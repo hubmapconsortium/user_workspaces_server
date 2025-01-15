@@ -2,7 +2,6 @@ import json
 import logging
 from datetime import datetime
 
-from autobahn.wamp import NotAuthorized
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from rest_framework.exceptions import NotFound, ParseError
@@ -10,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from user_workspaces_server import models, serializers
+from user_workspaces_server.exceptions import WorkspaceClientException
 
 logger = logging.getLogger(__name__)
 
@@ -174,13 +174,13 @@ class SharedWorkspaceView(APIView):
             shared_workspace.shared_workspace_id.user_id,
             shared_workspace.original_workspace_id.user_id,
         ]:
-            raise NotAuthorized(
+            raise WorkspaceClientException(
                 f"User does not have permissions for shared workspace {shared_workspace_id}"
             )
 
         # Check that the workspace hasn't been accepted
         if shared_workspace.is_accepted:
-            raise NotAuthorized(
+            raise WorkspaceClientException(
                 f"Shared workspace {shared_workspace_id} has been accepted and cannot be deleted."
             )
 
