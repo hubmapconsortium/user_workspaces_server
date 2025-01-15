@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from rest_framework.exceptions import NotFound, ParseError
+from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
@@ -179,7 +179,7 @@ class SharedWorkspaceView(APIView):
             shared_workspace.shared_workspace_id.user_id,
             shared_workspace.original_workspace_id.user_id,
         ]:
-            raise WorkspaceClientException(
+            raise PermissionDenied(
                 f"User does not have permissions for shared workspace {shared_workspace_id}"
             )
 
