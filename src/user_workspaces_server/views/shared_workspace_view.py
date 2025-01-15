@@ -2,6 +2,7 @@ import json
 import logging
 from datetime import datetime
 
+from autobahn.wamp import NotAuthorized
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from rest_framework.exceptions import NotFound, ParseError
@@ -107,6 +108,7 @@ class SharedWorkspaceView(APIView):
             "description": workspace.description,
             "workspace_details": workspace.workspace_details,
             "default_job_type": workspace.default_job_type,
+            "datetime_created": datetime.now(),
         }
 
         shared_workspace_data = {
@@ -115,7 +117,6 @@ class SharedWorkspaceView(APIView):
             "last_resource_options": {} if latest_job is None else latest_job.resource_options,
             "last_job_type": "" if latest_job is None else latest_job.job_type,
             "is_accepted": False,
-            "datetime_share_created": datetime.now(),
         }
 
         shared_workspaces_created = []
@@ -128,6 +129,7 @@ class SharedWorkspaceView(APIView):
             # Create shared workspace mapping
             shared_workspace_data_copy = shared_workspace_data.copy()
             shared_workspace_data_copy["shared_workspace_id"] = new_workspace
+            shared_workspace_data_copy["datetime_share_created"] = datetime.now()
             shared_workspace = models.SharedWorkspaceMapping.objects.create(
                 **shared_workspace_data_copy
             )
@@ -159,8 +161,33 @@ class SharedWorkspaceView(APIView):
         return JsonResponse({"message": "Successful.", "success": True})
 
     def delete(self, request, shared_workspace_id):
-        # TODO: Basic validation checks
-        # TODO: Check ownership of either original workspace or shared workspace
-        # TODO: Check that the workspace hasn't been accepted
-        # TODO: Delete shared workspace
+        # Basic validation checks
+
+        # Check for the workspace's existence
+        try:
+            shared_workspace = models.SharedWorkspaceMapping.objects.get(pk=shared_workspace_id)
+        except Exception:
+            raise NotFound(f"Shared workspace {shared_workspace_id} not found.")
+
+        # Check ownership of either original workspace or shared workspace
+        if request.user not in [
+            shared_workspace.shared_workspace_id.user_id,
+            shared_workspace.original_workspace_id.user_id,
+        ]:
+            raise NotAuthorized(
+                f"User does not have permissions for shared workspace {shared_workspace_id}"
+            )
+
+        # Check that the workspace hasn't been accepted
+        if shared_workspace.is_accepted:
+            raise NotAuthorized(
+                f"Shared workspace {shared_workspace_id} has been accepted and cannot be deleted."
+            )
+
+        # Delete the shared workspace
+        shared_workspace.shared_workspace_id.delete()
+
+        # TODO: Can probably just call the workspaces delete endpoint
+        # Deleting the workspace itself should delete the shared workspace entry
+
         return JsonResponse({"message": "Successful.", "success": True})
