@@ -33,7 +33,10 @@ class SharedWorkspaceView(APIView):
         )
 
         if shared_workspace_id:
-            shared_workspaces = models.SharedWorkspaceMapping.objects.filter(
+            shared_workspaces = shared_workspaces.filter(
+                shared_workspace_id__pk=shared_workspace_id
+            )
+            original_workspaces = original_workspaces.filter(
                 shared_workspace_id__pk=shared_workspace_id
             )
         elif params := request.GET:
