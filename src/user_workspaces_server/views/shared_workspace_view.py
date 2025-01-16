@@ -156,8 +156,8 @@ class SharedWorkspaceView(APIView):
         # Basic validation checks
         try:
             shared_workspace_mapping = models.SharedWorkspaceMapping.objects.get(
-                shared_workspace_id__pk=shared_workspace_id,
-                shared_workspace_id_user_id=request.user
+                shared_workspace_id=shared_workspace_id,
+                shared_workspace_id__user_id=request.user,
             )
         except Exception:
             raise NotFound(f"Shared workspace {shared_workspace_id} not found.")
