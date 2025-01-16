@@ -153,14 +153,27 @@ class SharedWorkspaceView(APIView):
         )
 
     def put(self, request, shared_workspace_id, put_type):
-        # TODO: Basic validation checks
+        # Basic validation checks
+        try:
+            shared_workspace_mapping = models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id__pk=shared_workspace_id,
+                shared_workspace_id_user_id=request.user
+            )
+        except Exception:
+            raise NotFound(f"Shared workspace {shared_workspace_id} not found.")
+
         if put_type == "accept":
-            # TODO: set is_accepted to true for shared_workspace_id
-            pass
+            # Set is_accepted to true for shared_workspace_id
+            shared_workspace_mapping.is_accepted = True
+            shared_workspace_mapping.save()
+
+            # Update the created timestamp for the workspace once they accept the request
+            shared_workspace = shared_workspace_mapping.shared_workspace_id
+            shared_workspace.datetime_created = datetime.now()
+            shared_workspace.save()
         else:
-            # TODO: invalid put_type passed
-            pass
-        # TODO: Update the created timestamp for the workspace once they accept the request
+            raise NotFound(f"Put type {put_type} not supported.")
+
         return JsonResponse({"message": "Successful.", "success": True})
 
     def delete(self, request, shared_workspace_id):
