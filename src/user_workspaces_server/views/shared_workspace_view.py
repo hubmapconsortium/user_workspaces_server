@@ -2,8 +2,10 @@ import json
 import logging
 from datetime import datetime
 
+from django.apps import apps
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django_q.tasks import async_task
 from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -96,6 +98,16 @@ class SharedWorkspaceView(APIView):
         ):
             raise ParseError("Invalid user id provided.")
 
+        for user in shared_users:
+            # Check whether user has permission
+            main_storage = apps.get_app_config("user_workspaces_server").main_storage
+            external_user_mapping = main_storage.storage_user_authentication.has_permission(user)
+
+            if not external_user_mapping:
+                raise WorkspaceClientException(
+                    f"User {user.first_name} {user.last_name} does not have permission on the file system."
+                )
+
         # Begin DAO inserts
         # Get latest job for last_params and last_job_type
         try:
@@ -137,6 +149,16 @@ class SharedWorkspaceView(APIView):
                 **shared_workspace_data_copy
             )
             shared_workspaces_created.append(shared_workspace)
+
+        for shared_workspace_created in shared_workspaces_created:
+            logger.info(
+                f"Shared workspace created, sending to initialize: {shared_workspace_created}"
+            )
+            async_task(
+                "user_workspaces_server.tasks.initialize_shared_workspace",
+                shared_workspace_created.pk,
+                cluster="long",
+            )
 
         shared_workspaces_created = serializers.SharedWorkspaceMappingSerializer(
             shared_workspaces_created, many=True
