@@ -317,7 +317,7 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
             original_workspace.file_path, external_user_mapping, recursive=True
         )
     except Exception as e:
-        print(f"Copying files for {shared_workspace_mapping} failed: {e}")
+        logger.exception(f"Copying files for {shared_workspace_mapping} failed: {e}")
 
     async_update_workspace(shared_workspace.pk)
 
