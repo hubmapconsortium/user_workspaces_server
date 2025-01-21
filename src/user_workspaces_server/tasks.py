@@ -308,8 +308,8 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
     try:
         # Copy non . directories
         shutil.copytree(
-            original_workspace.file_path,
-            shared_workspace.file_path,
+            os.path.join(main_storage.root_dir, original_workspace.file_path),
+            os.path.join(main_storage.root_dir, shared_workspace.file_path),
             ignore=shutil.ignore_patterns(".*"),
             symlinks=True,
         )
