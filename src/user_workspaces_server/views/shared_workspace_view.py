@@ -6,7 +6,7 @@ from django.apps import apps
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django_q.tasks import async_task
-from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
+from rest_framework.exceptions import APIException, NotFound, ParseError, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
@@ -101,9 +101,7 @@ class SharedWorkspaceView(APIView):
         for user in shared_users:
             # Check whether user has permission
             main_storage = apps.get_app_config("user_workspaces_server").main_storage
-            external_user_mapping = main_storage.storage_user_authentication.has_permission(user)
-
-            if not external_user_mapping:
+            if not main_storage.storage_user_authentication.has_permission(user):
                 raise WorkspaceClientException(
                     f"User {user.first_name} {user.last_name} does not have permission on the file system."
                 )
@@ -203,20 +201,22 @@ class SharedWorkspaceView(APIView):
 
         # Check that the workspace exists
         try:
-            shared_workspace = models.SharedWorkspaceMapping.objects.get(
+            shared_workspace_mapping = models.SharedWorkspaceMapping.objects.get(
                 shared_workspace_id__pk=shared_workspace_id
             )
-        except Exception:
+        except models.SharedWorkspaceMapping.DoesNotExist:
             raise NotFound(f"Shared workspace {shared_workspace_id} not found.")
 
         # Check ownership of either original workspace or shared workspace
         if request.user not in [
-            shared_workspace.shared_workspace_id.user_id,
-            shared_workspace.original_workspace_id.user_id,
+            shared_workspace_mapping.shared_workspace_id.user_id,
+            shared_workspace_mapping.original_workspace_id.user_id,
         ]:
             raise PermissionDenied(
                 f"User does not have permissions for shared workspace {shared_workspace_id}"
             )
+
+        shared_workspace = shared_workspace_mapping.shared_workspace_id
 
         # Check that the workspace hasn't been accepted
         if shared_workspace.is_accepted:
@@ -224,10 +224,35 @@ class SharedWorkspaceView(APIView):
                 f"Shared workspace {shared_workspace_id} has been accepted and cannot be deleted."
             )
 
-        # Delete the shared workspace
-        shared_workspace.shared_workspace_id.delete()
+        if models.Job.objects.filter(
+            workspace_id=shared_workspace.shared_workspace_id, status__in=["pending", "running"]
+        ).exists():
+            raise WorkspaceClientException(
+                "Cannot delete workspace, jobs are running for this workspace."
+            )
 
-        # TODO: Can probably just call the workspaces delete endpoint
-        # Deleting the workspace itself should delete the shared workspace entry
+        main_storage = apps.get_app_config("user_workspaces_server").main_storage
+        external_user_mapping = main_storage.storage_user_authentication.has_permission(
+            request.user
+        )
+
+        if not external_user_mapping:
+            raise WorkspaceClientException(
+                "User could not be found/created on main storage system."
+            )
+
+        if not main_storage.is_valid_path(shared_workspace.file_path):
+            logger.error(f"Workspace {shared_workspace.pk} deletion failed due to invalid path")
+            shared_workspace.status = models.Workspace.Status.ERROR
+            shared_workspace.save()
+            raise APIException(
+                "Please contact a system administrator there is a failure with "
+                "the workspace directory that will not allow for this workspace to be deleted."
+            )
+
+        shared_workspace.status = models.Workspace.Status.DELETING
+        shared_workspace.save()
+
+        async_task("user_workspaces_server.tasks.delete_workspace", shared_workspace.pk, cluster="long")
 
         return JsonResponse({"message": "Successful.", "success": True})
