@@ -40,10 +40,6 @@ class AbstractResource(ABC):
         # Should stop the job on the resource
         pass
 
-    def translate_options(self, resource_options: dict) -> dict:
-        # Should translate the options into a format that can be used by the resource
-        pass
-
     def validate_options(self, resource_options: dict) -> bool:
         validator = ParamValidator()
         validator.validate(resource_options)

@@ -225,18 +225,17 @@ class SlurmAPIResource(AbstractResource):
         return token
 
     def translate_options(self, resource_options):
-        # TODO: yucky indentation
+        # Should translate the options into a format that can be used by the resource
         updated_options = {}
         for option_name, option_value in resource_options.items():
             if updated_option_name := self.translate_option_name(option_name):
                 updated_options[updated_option_name] = option_value
-                if option_name == "gpu_enabled":
-                    if isinstance(option_name, bool) and option_name:
-                        updated_options["tres_per_job"] = "gres/gpu=1"
-                        if gpu_partition := self.config.get("gpu_partition"):
-                            updated_options["partition"] = gpu_partition
-            # TODO: currently disallows anything that's not in the map,
-            # do we want that? Would require that everything be in the mapping
+
+        gpu_enabled = resource_options.get("gpu_enabled", False)
+        if isinstance(gpu_enabled, bool) and gpu_enabled:
+            updated_options["tres_per_job"] = "gres/gpu=1"
+            if gpu_partition := self.config.get("gpu_partition"):
+                updated_options["partition"] = gpu_partition
         return updated_options
 
     def translate_option_name(self, option: str) -> str:
