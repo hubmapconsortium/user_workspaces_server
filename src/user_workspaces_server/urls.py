@@ -16,6 +16,8 @@ Including another URLconf
 
 from django.urls import include, path
 
+from user_workspaces_server.views import parameter_view
+
 from . import ws_consumers
 from .views import (
     job_type_view,
@@ -58,6 +60,10 @@ job_type_view_patterns = [
     path("", job_type_view.JobTypeView.as_view(), name="job_types"),
 ]
 
+parameter_view_patterns = [
+    path("", parameter_view.ParameterView.as_view(), name="parameters"),
+]
+
 passthrough_view_patterns = [
     path(
         "<str:hostname>/<int:job_id>/",
@@ -77,6 +83,7 @@ urlpatterns = [
     path("jobs/", include(job_view_patterns)),
     path("job_types/", include(job_type_view_patterns)),
     path("passthrough/", include(passthrough_view_patterns)),
+    path("parameters/", include(parameter_view_patterns)),
     path("status/", status_view.StatusView.as_view(), name="status"),
 ]
 

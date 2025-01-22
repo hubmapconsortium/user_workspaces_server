@@ -89,13 +89,3 @@ class LocalResource(AbstractResource):
         except Exception as e:
             logger.error(repr(e))
             return False
-
-    def translate_options(self, resource_options):
-        # Should translate the options into a format that can be used by the resource
-        return {}
-
-    def validate_options(self, resource_options):
-        validator = self.get_validation_result(resource_options)
-        if validator.errors:
-            logger.error(validator.errors)
-        return validator.is_valid
