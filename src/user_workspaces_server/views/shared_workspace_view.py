@@ -253,6 +253,8 @@ class SharedWorkspaceView(APIView):
         shared_workspace.status = models.Workspace.Status.DELETING
         shared_workspace.save()
 
-        async_task("user_workspaces_server.tasks.delete_workspace", shared_workspace.pk, cluster="long")
+        async_task(
+            "user_workspaces_server.tasks.delete_workspace", shared_workspace.pk, cluster="long"
+        )
 
         return JsonResponse({"message": "Successful.", "success": True})
