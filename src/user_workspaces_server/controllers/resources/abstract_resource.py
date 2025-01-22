@@ -21,9 +21,7 @@ class AbstractResource(ABC):
         pass
 
     @abstractmethod
-    def launch_job(
-        self, job: AbstractJob, workspace: Workspace, resource_options: dict
-    ) -> int:
+    def launch_job(self, job: AbstractJob, workspace: Workspace, resource_options: dict) -> int:
         # Should return resource_job_id
         pass
 
