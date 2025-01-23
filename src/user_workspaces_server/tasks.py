@@ -329,7 +329,7 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
                 "sharer": original_workspace.user_id,
                 "receiver": shared_workspace.user_id,
                 "mapping_details": shared_workspace_mapping,
-                "original_workspace": original_workspace
+                "original_workspace": original_workspace,
             }
         },
     )
