@@ -323,7 +323,7 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
     async_update_workspace(shared_workspace.pk)
 
     message = render_to_string(
-        "templates/email_templates/share_email.txt",
+        "email_templates/share_email.txt",
         context={
             "sharer": original_workspace.user_id,
             "receiver": shared_workspace.user_id,
