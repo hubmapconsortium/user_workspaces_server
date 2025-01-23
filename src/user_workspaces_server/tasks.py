@@ -333,7 +333,7 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
     )
     async_task(
         "django.core.mail.send_mail",
-        tuple("Workspaces Sharing", message, None, [shared_workspace.user_id.email]),
+        ("Workspaces Sharing", message, None, [shared_workspace.user_id.email]),
     )
 
     shared_workspace.save()
