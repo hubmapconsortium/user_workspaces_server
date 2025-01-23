@@ -1,8 +1,8 @@
-Dear {{ receiver.first_name receiver.last_name }},
+Dear {{ receiver.first_name }} {{ receiver.last_name }},
 
-You have received a request from {{ sharer.first_name sharer.last_name }} at {{ mapping_details.datetime_share_created }} to share their workspace with you.
+You have received a request from {{ sharer.first_name }} {{ sharer.last_name }} at {{ mapping_details.datetime_share_created }} to share their workspace with you.
 
-This workspace is called {{ original_workspace.name }} and is described by {{ sharer.first_name sharer.last_name }} as {{ original_workspace.description }}.
+This workspace is called {{ original_workspace.name }} and is described as {{ original_workspace.description }}.
 
 You will be able to review this request from within the portal.
 
