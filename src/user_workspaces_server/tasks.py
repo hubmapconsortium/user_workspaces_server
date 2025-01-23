@@ -10,6 +10,7 @@ from django.conf import settings
 from django.db.models import Sum
 from django_q.brokers import get_broker
 from django_q.tasks import async_task
+from django.template.loader import render_to_string
 
 from . import models, utils
 
@@ -320,5 +321,21 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
         logger.exception(f"Copying files for {shared_workspace_mapping} failed: {e}")
 
     async_update_workspace(shared_workspace.pk)
+
+    message = render_to_string(
+        "templates/email_templates/share_email.txt",
+        context={
+            {
+                "sharer": original_workspace.user_id,
+                "receiver": shared_workspace.user_id,
+                "mapping_details": shared_workspace_mapping,
+                "original_workspace": original_workspace
+            }
+        },
+    )
+    async_task(
+        "django.core.mail.send_mail",
+        tuple("Workspaces Sharing", message, None, [shared_workspace.user_id.email]),
+    )
 
     shared_workspace.save()
