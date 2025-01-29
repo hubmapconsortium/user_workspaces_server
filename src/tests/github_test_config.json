@@ -27,13 +27,11 @@
       "user_authentication": "test_auth",
       "passthrough_domain": "127.0.0.1:8000",
       "connection_details": {},
-      "parameter_mapping": [
-          {
+      "parameter_mapping": {
             "num_cpus": "cpus_per_task",
             "memory_mb": "memory_per_node",
             "time_limit_min": "time_limit"
-          }
-      ]
+            }
     }
   },
   "available_job_types": {

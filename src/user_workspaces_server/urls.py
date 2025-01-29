@@ -16,12 +16,11 @@ Including another URLconf
 
 from django.urls import include, path
 
-from user_workspaces_server.views import parameter_view
-
 from . import ws_consumers
 from .views import (
     job_type_view,
     job_view,
+    parameter_view,
     passthrough_view,
     status_view,
     user_workspaces_server_token_view,
