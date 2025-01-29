@@ -221,16 +221,16 @@ class SharedWorkspaceView(APIView):
                 f"User does not have permissions for shared workspace {shared_workspace_id}"
             )
 
-        shared_workspace = shared_workspace_mapping.shared_workspace_id
-
         # Check that the workspace hasn't been accepted
         if shared_workspace_mapping.is_accepted:
             raise WorkspaceClientException(
                 f"Shared workspace {shared_workspace_id} has been accepted and cannot be deleted."
             )
 
+        shared_workspace = shared_workspace_mapping.shared_workspace_id
+
         if models.Job.objects.filter(
-            workspace_id=shared_workspace.shared_workspace_id, status__in=["pending", "running"]
+            workspace_id=shared_workspace, status__in=["pending", "running"]
         ).exists():
             raise WorkspaceClientException(
                 "Cannot delete workspace, jobs are running for this workspace."
