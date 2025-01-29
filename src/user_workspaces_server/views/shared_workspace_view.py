@@ -224,7 +224,7 @@ class SharedWorkspaceView(APIView):
         shared_workspace = shared_workspace_mapping.shared_workspace_id
 
         # Check that the workspace hasn't been accepted
-        if shared_workspace.is_accepted:
+        if shared_workspace_mapping.is_accepted:
             raise WorkspaceClientException(
                 f"Shared workspace {shared_workspace_id} has been accepted and cannot be deleted."
             )
