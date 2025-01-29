@@ -49,9 +49,7 @@ class ParamValidator:
         # not_allowed are ignored in validation and stripped in the translation step
         if not_allowed:
             resource_options = {
-                key: value
-                for key, value in resource_options.items()
-                if key not in not_allowed
+                key: value for key, value in resource_options.items() if key not in not_allowed
             }
         return resource_options
 
@@ -65,9 +63,7 @@ class ParamValidator:
     def _validate_above_min(self, param: str, value: int):
         if min := self.param_details[param].get("validation", {}).get("min"):
             if value < min:
-                self.errors.append(
-                    f"{param}: Value '{value}' not above minimum of {min}."
-                )
+                self.errors.append(f"{param}: Value '{value}' not above minimum of {min}.")
 
     def _validate_below_max(self, param, value):
         if max := self.param_details[param].get("validation", {}).get("max"):
