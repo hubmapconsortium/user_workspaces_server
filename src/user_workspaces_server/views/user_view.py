@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework.authtoken.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -16,9 +17,12 @@ class UserView(APIView):
     def get(self, request):
         users = User.objects.all()
 
-        if params := request.GET:
-            for key in set(params.keys()).intersection(set(self.filter_user_fields)):
-                users = users.filter(**{key: params[key]})
+        if params := request.GET.keys().intersection({"search_string"}):
+            users = users.filter(
+                Q(first_name__icontains=params["search_string"])
+                | Q(last_name__icontains=params["search_string"])
+                | Q(email__icontains=params["search_string"])
+            )
 
         users = list(users.all().values(*self.return_user_fields))
 
