@@ -6,7 +6,12 @@ from django.apps import apps
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django_q.tasks import async_task
-from rest_framework.exceptions import APIException, NotFound, ParseError, PermissionDenied
+from rest_framework.exceptions import (
+    APIException,
+    NotFound,
+    ParseError,
+    PermissionDenied,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 

@@ -8,9 +8,9 @@ from channels.layers import get_channel_layer
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Sum
+from django.template.loader import render_to_string
 from django_q.brokers import get_broker
 from django_q.tasks import async_task
-from django.template.loader import render_to_string
 
 from . import models, utils
 
