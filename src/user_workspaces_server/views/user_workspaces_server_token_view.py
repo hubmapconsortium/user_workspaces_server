@@ -29,10 +29,6 @@ class UserWorkspacesServerTokenView(ObtainAuthToken):
                     "token": token.key,
                 }
             )
-            # TODO: Start an async routine to confirm "main storage" user
-            # external_user_mapping = main_storage.storage_user_authentication.has_permission(
-            #     request.user
-            # )
         elif isinstance(api_user, Response):
             result = api_user
         else:

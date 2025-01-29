@@ -1,14 +1,12 @@
 import datetime
 import logging
 import os
-import shutil
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Sum
-from django.template.loader import render_to_string
 from django_q.brokers import get_broker
 from django_q.tasks import async_task
 
@@ -287,56 +285,3 @@ def update_user_quota_core_hours(user_quota_id):
         workspace_id__user_id=user_quota.user_id
     ).aggregate(Sum("core_hours"))["core_hours__sum"]
     user_quota.save()
-
-
-def initialize_shared_workspace(shared_workspace_mapping_id: int):
-    shared_workspace_mapping = models.SharedWorkspaceMapping.objects.get(
-        pk=shared_workspace_mapping_id
-    )
-    original_workspace = shared_workspace_mapping.original_workspace_id
-    shared_workspace = shared_workspace_mapping.shared_workspace_id
-
-    main_storage = apps.get_app_config("user_workspaces_server").main_storage
-    external_user_mapping = main_storage.storage_user_authentication.has_permission(
-        shared_workspace.user_id
-    )
-
-    # Set the shared_workspace file path
-    shared_workspace.file_path = os.path.join(
-        external_user_mapping.external_username, str(shared_workspace.pk)
-    )
-
-    try:
-        # Copy non . directories
-        shutil.copytree(
-            os.path.join(main_storage.root_dir, original_workspace.file_path),
-            os.path.join(main_storage.root_dir, shared_workspace.file_path),
-            ignore=shutil.ignore_patterns(".*"),
-            symlinks=True,
-        )
-        main_storage.set_ownership(
-            shared_workspace.file_path, external_user_mapping, recursive=True
-        )
-    except Exception as e:
-        logger.exception(f"Copying files for {shared_workspace_mapping} failed: {e}")
-
-    async_update_workspace(shared_workspace.pk)
-
-    message = render_to_string(
-        "email_templates/share_email.txt",
-        context={
-            "sharer": original_workspace.user_id,
-            "receiver": shared_workspace.user_id,
-            "mapping_details": shared_workspace_mapping,
-            "original_workspace": original_workspace,
-        },
-    )
-    async_task(
-        "django.core.mail.send_mail",
-        "Invitation to Share a Workspace",
-        message,
-        None,
-        [shared_workspace.user_id.email],
-    )
-
-    shared_workspace.save()
