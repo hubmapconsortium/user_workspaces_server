@@ -1,7 +1,8 @@
 import logging
 
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from django.http import JsonResponse
 from rest_framework.authtoken.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -19,11 +20,9 @@ class UserView(APIView):
 
         if request.GET and "search" in request.GET:
             search = request.GET["search"]
-            users = users.filter(
-                Q(first_name__icontains=search)
-                | Q(last_name__icontains=search)
-                | Q(email__icontains=search)
-            )
+            users = users.annotate(
+                first_last=Concat("first_name", Value(" "), "last_name")
+            ).filter(Q(first_last__icontains=search) | Q(email__icontains=search))
 
         users = list(users.all().values(*self.return_user_fields))
 
