@@ -315,7 +315,7 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
             symlinks=True,
         )
         main_storage.set_ownership(
-            original_workspace.file_path, external_user_mapping, recursive=True
+            shared_workspace.file_path, external_user_mapping, recursive=True
         )
     except Exception as e:
         logger.exception(f"Copying files for {shared_workspace_mapping} failed: {e}")
