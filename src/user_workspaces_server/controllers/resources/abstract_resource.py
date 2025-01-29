@@ -2,6 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 
 from user_workspaces_server.controllers.jobtypes.abstract_job import AbstractJob
+from user_workspaces_server.exceptions import ValidationException
 from user_workspaces_server.models import Job, Workspace
 from user_workspaces_server.validation.validate_job_params import ParamValidator
 
@@ -21,7 +22,9 @@ class AbstractResource(ABC):
         pass
 
     @abstractmethod
-    def launch_job(self, job: AbstractJob, workspace: Workspace, resource_options: dict) -> int:
+    def launch_job(
+        self, job: AbstractJob, workspace: Workspace, resource_options: dict
+    ) -> int:
         # Should return resource_job_id
         pass
 
@@ -45,5 +48,7 @@ class AbstractResource(ABC):
         validator.validate(resource_options)
         if validator.errors:
             logging.error(f"Validation errors: {validator.errors}")
-            raise Exception("Invalid resource options found.")
+            raise ValidationException(
+                f"Invalid resource options found: {validator.errors}"
+            )
         return validator.is_valid

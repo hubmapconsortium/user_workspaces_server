@@ -21,6 +21,7 @@ class TestResource(AbstractResource):
         return status_list[status]
 
     def launch_job(self, job, workspace, resource_options):
+        self.validate_options(resource_options)
         return 0
 
     def get_resource_job(self, job):
@@ -31,12 +32,6 @@ class TestResource(AbstractResource):
 
     def stop_job(self, job):
         return job.resource_job_id
-
-    def validate_options(self, resource_options):
-        # Should determine whether the requested options are valid for a resource
-        # Might be able to implement this at the abstract level once we've defined
-        #   a data model for resource options.
-        return True
 
     def translate_option_name(self, option):
         return None

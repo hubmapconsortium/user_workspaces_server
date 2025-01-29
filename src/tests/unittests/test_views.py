@@ -57,16 +57,18 @@ class UserWorkspacesAPITestCase(APITestCase):
         )
 
         # Override existing controllers
-        apps.get_app_config("user_workspaces_server").available_user_authentication_methods = {
-            "test_user_auth": test_user_auth
-        }
+        apps.get_app_config(
+            "user_workspaces_server"
+        ).available_user_authentication_methods = {"test_user_auth": test_user_auth}
         apps.get_app_config("user_workspaces_server").available_storage_methods = {
             "test_storage": test_storage
         }
         apps.get_app_config("user_workspaces_server").available_resources = {
             "test_resource": test_resource
         }
-        apps.get_app_config("user_workspaces_server").api_user_authentication = test_user_auth
+        apps.get_app_config("user_workspaces_server").api_user_authentication = (
+            test_user_auth
+        )
         apps.get_app_config("user_workspaces_server").main_storage = test_storage
         apps.get_app_config("user_workspaces_server").main_resource = test_resource
         cls.user = User.objects.create_user("test", email="test@test.com")
@@ -157,7 +159,9 @@ class WorkspaceGETAPITests(WorkspaceAPITestCase):
     # TODO: Check body
     def test_workspace_id_get(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.get(reverse("workspaces_with_id", args=[self.workspace.id]))
+        response = self.client.get(
+            reverse("workspaces_with_id", args=[self.workspace.id])
+        )
         self.assertValidResponse(response, status.HTTP_200_OK, success=True)
 
     def test_workspace_query_param_name_get(self):
@@ -224,7 +228,9 @@ class WorkspacePOSTAPITests(WorkspaceAPITestCase):
         self.client.force_authenticate(user=self.user)
         body = {"name": "Test", "description": "Test", "workspace_details": {}}
         response = self.client.post(self.workspaces_url, body)
-        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertValidResponse(
+            response, status.HTTP_200_OK, success=True, message="Successful."
+        )
         # TODO: Check body
 
     def test_invalid_job_type_post(self):
@@ -252,7 +258,9 @@ class WorkspacePOSTAPITests(WorkspaceAPITestCase):
             "default_job_type": "",
         }
         response = self.client.post(self.workspaces_url, body)
-        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertValidResponse(
+            response, status.HTTP_200_OK, success=True, message="Successful."
+        )
 
     def test_valid_job_type_post(self):
         self.client.force_authenticate(user=self.user)
@@ -263,7 +271,9 @@ class WorkspacePOSTAPITests(WorkspaceAPITestCase):
             "default_job_type": "test_job",
         }
         response = self.client.post(self.workspaces_url, body)
-        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertValidResponse(
+            response, status.HTTP_200_OK, success=True, message="Successful."
+        )
 
     def test_invalid_symlinks_structure_post(self):
         self.client.force_authenticate(user=self.user)
@@ -300,7 +310,9 @@ class WorkspacePOSTAPITests(WorkspaceAPITestCase):
         body = {
             "name": "Test",
             "description": "Test",
-            "workspace_details": {"files": [{"name": "../file.txt", "content": "Hello World"}]},
+            "workspace_details": {
+                "files": [{"name": "../file.txt", "content": "Hello World"}]
+            },
         }
         response = self.client.post(self.workspaces_url, body)
         self.assertValidResponse(
@@ -324,13 +336,17 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
 
     def test_workspace_data_update_missing_body_put(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]))
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id])
+        )
         self.assertValidResponse(response, status.HTTP_400_BAD_REQUEST, success=False)
 
     def test_workspace_data_update_invalid_workspace_details_put(self):
         self.client.force_authenticate(user=self.user)
         body = {"name": "Test", "description": "Test", "workspace_details": ""}
-        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
         self.assertValidResponse(
             response,
             status.HTTP_400_BAD_REQUEST,
@@ -345,7 +361,9 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "description": "Test",
             "workspace_details": {"symlinks": ""},
         }
-        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
         self.assertValidResponse(
             response,
             status.HTTP_400_BAD_REQUEST,
@@ -360,7 +378,9 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "description": "Test",
             "workspace_details": {"files": ""},
         }
-        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
         self.assertValidResponse(
             response,
             status.HTTP_400_BAD_REQUEST,
@@ -377,7 +397,9 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "default_job_type": "fake_job",
         }
 
-        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
         self.assertValidResponse(
             response,
             status.HTTP_400_BAD_REQUEST,
@@ -394,7 +416,9 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "default_job_type": "",
         }
 
-        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
         self.assertValidResponse(
             response,
             status.HTTP_200_OK,
@@ -411,7 +435,9 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "default_job_type": "test_job",
         }
 
-        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
         self.assertValidResponse(
             response,
             status.HTTP_200_OK,
@@ -426,7 +452,9 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "description": "Test",
             "workspace_details": {"symlinks": [], "files": []},
         }
-        response = self.client.put(reverse("workspaces_with_id", args=[self.workspace.id]), body)
+        response = self.client.put(
+            reverse("workspaces_with_id", args=[self.workspace.id]), body
+        )
         self.assertValidResponse(
             response,
             status.HTTP_200_OK,
@@ -583,6 +611,104 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
         test_file_1.close()
         test_file_2.close()
 
+    def test_workspace_custom_params_validation_good(self):
+        test_data_good = (
+            {"num_cpus": 1, "memory_mb": 1025},
+            {"time_limit_min": 480},
+            {"gpu_enabled": True},
+            {"unknown_param": "should_be_ignored"},
+            {},
+        )
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        for test in test_data_good:
+            with self.subTest(test=test):
+                body["resource_options"] = test
+                response = self.client.put(
+                    reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+                    body,
+                )
+                self.assertValidResponse(
+                    response,
+                    status.HTTP_200_OK,
+                    success=True,
+                    message="Successful start.",
+                )
+
+    def test_workspace_custom_params_validation_bad(self):
+        test_data_bad = [
+            (
+                {"num_cpus": "one"},
+                {
+                    "msg": "[\"num_cpus: Value 'one' of type str does not match required type int. Skipping further validation of parameter num_cpus.\"]"
+                },
+            ),
+            (
+                {"memory_mb": 1},
+                {"msg": "[\"memory_mb: Value '1' not above minimum of 1024.\"]"},
+            ),
+            (
+                {"time_limit_min": 481},
+                {
+                    "msg": "[\"time_limit_min: Value '481' above maximum of 480.\"]",
+                },
+            ),
+        ]
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        for test in test_data_bad:
+            with self.subTest(test=test):
+                body["resource_options"] = test[0]
+                response = self.client.put(
+                    reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+                    body,
+                )
+                self.assertValidResponse(
+                    response,
+                    status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    success=False,
+                    message=f"Invalid resource options found: {test[1]['msg']}",
+                )
+
+    def test_workspace_custom_params_validation_required(self):
+        test_param = {
+            "display_name": "Test Param",
+            "description": "",
+            "variable_name": "test_param",
+            "validation": {"type": "str", "required": True},
+        }
+        apps.get_app_config("user_workspaces_server").parameters.append(test_param)
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+            body,
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            success=False,
+            message="Invalid resource options found: ['Missing required: test_param']",
+        )
+        body["resource_options"] = {"test_param": "test"}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+            body,
+        )
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+        self.assertEqual(
+            apps.get_app_config("user_workspaces_server").parameters.pop(), test_param
+        )
+
 
 class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
     def test_workspace_not_found_delete(self):
@@ -599,7 +725,9 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
         self.client.force_authenticate(user=self.user)
         self.workspace.file_path = "."
         self.workspace.save()
-        response = self.client.delete(reverse("workspaces_with_id", args=[self.workspace.id]))
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.workspace.id])
+        )
         self.assertValidResponse(
             response,
             status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -625,7 +753,9 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
         job.save()
 
         self.client.force_authenticate(user=self.user)
-        response = self.client.delete(reverse("workspaces_with_id", args=[self.workspace.id]))
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.workspace.id])
+        )
         self.assertValidResponse(
             response,
             status.HTTP_400_BAD_REQUEST,
@@ -635,7 +765,9 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
 
     def test_workspace_delete(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.delete(reverse("workspaces_with_id", args=[self.workspace.id]))
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.workspace.id])
+        )
         self.assertValidResponse(
             response,
             status.HTTP_200_OK,
@@ -762,4 +894,21 @@ class JobTypeGETAPITests(JobTypeAPITestCase):
     def test_job_types_get(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.job_types_url)
-        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertValidResponse(
+            response, status.HTTP_200_OK, success=True, message="Successful."
+        )
+
+
+class ParameterGETAPITest(UserWorkspacesAPITestCase):
+    parameters_url = reverse("parameters")
+    params_config = apps.get_app_config("user_workspaces_server").parameters
+
+    def test_parameters_get(self):
+        response = self.client.get(self.parameters_url)
+        self.assertValidResponse(
+            response, status.HTTP_200_OK, success=True, message="Successful."
+        )
+        self.assertContains(response, "data")
+        response_data = response.json()["data"]
+        self.assertIn("parameters", response_data)
+        self.assertEqual(response_data["parameters"], self.params_config)
