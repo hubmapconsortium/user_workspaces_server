@@ -17,11 +17,11 @@ class UserView(APIView):
     def get(self, request):
         users = User.objects.all()
 
-        if params := request.GET:
+        if params := request.GET and "search" in request.GET:
             users = users.filter(
-                Q(first_name__icontains=params["search_string"])
-                | Q(last_name__icontains=params["search_string"])
-                | Q(email__icontains=params["search_string"])
+                Q(first_name__icontains=params["search"])
+                | Q(last_name__icontains=params["search"])
+                | Q(email__icontains=params["search"])
             )
 
         users = list(users.all().values(*self.return_user_fields))
