@@ -360,7 +360,9 @@ class WorkspaceView(APIView):
                 shared_workspace_id=workspace
             )
             if not shared_workspace.is_accepted:
-                raise WorkspaceClientException(f"Workspace {workspace_id} has not been accepted.")
+                raise WorkspaceClientException(
+                    f"Workspace {workspace_id} is a shared workspace and has not been accepted."
+                )
         except models.SharedWorkspaceMapping.DoesNotExist:
             pass
 
