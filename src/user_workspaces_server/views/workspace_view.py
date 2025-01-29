@@ -162,12 +162,14 @@ class WorkspaceView(APIView):
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
         try:
-            shared_workspace = models.SharedWorkspace.objects.get(shared_workspace_id=workspace)
+            shared_workspace = models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id=workspace
+            )
             if not shared_workspace.is_accepted:
                 raise WorkspaceClientException(
                     f"Workspace {workspace_id} is a shared workspace and has not been accepted."
                 )
-        except models.SharedWorkspace.DoesNotExist:
+        except models.SharedWorkspaceMapping.DoesNotExist:
             pass
 
         if not put_type:
@@ -354,10 +356,12 @@ class WorkspaceView(APIView):
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
         try:
-            shared_workspace = models.SharedWorkspace.objects.get(shared_workspace_id=workspace)
+            shared_workspace = models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id=workspace
+            )
             if not shared_workspace.is_accepted:
                 raise WorkspaceClientException(f"Workspace {workspace_id} has not been accepted.")
-        except models.SharedWorkspace.DoesNotExist:
+        except models.SharedWorkspaceMapping.DoesNotExist:
             pass
 
         if models.Job.objects.filter(
