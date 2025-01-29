@@ -17,7 +17,7 @@ class UserView(APIView):
     def get(self, request):
         users = User.objects.all()
 
-        if params := request.GET and "search" in request.GET:
+        if (params := request.GET) and ("search" in request.GET):
             users = users.filter(
                 Q(first_name__icontains=params["search"])
                 | Q(last_name__icontains=params["search"])
