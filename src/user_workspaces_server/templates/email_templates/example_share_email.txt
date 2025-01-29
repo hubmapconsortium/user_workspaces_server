@@ -1,0 +1,9 @@
+Dear {{ receiver.first_name }} {{ receiver.last_name }},
+
+{{ sharer.first_name }} {{ sharer.last_name }} would like to share their workspace with you.
+
+This workspace is called {{ original_workspace.name }} and is described as {{ original_workspace.description }}.
+
+Best regards,
+
+Data Portal Team

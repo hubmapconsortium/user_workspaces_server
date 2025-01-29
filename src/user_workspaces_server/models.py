@@ -107,3 +107,31 @@ class ExternalUserMapping(models.Model):
             f"{self.id}: {self.user_id.username if self.user_id else 'User Missing'} -"
             f" {self.user_authentication_name}"
         )
+
+
+class SharedWorkspaceMapping(models.Model):
+    original_workspace_id = models.ForeignKey(
+        Workspace,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="original_workspace_set",
+    )
+    shared_workspace_id = models.ForeignKey(
+        Workspace, on_delete=models.CASCADE, related_name="shared_workspace_set"
+    )
+    last_resource_options = models.JSONField(blank=True, null=True)
+    last_job_type = models.CharField(max_length=64, null=True)
+    is_accepted = models.BooleanField(default=False)
+    datetime_share_created = models.DateTimeField(null=True)
+
+    @staticmethod
+    def get_query_param_fields():
+        return ["is_accepted"]
+
+    @staticmethod
+    def get_dict_fields():
+        return [
+            "is_accepted",
+            "last_resource_options",
+            "last_job_type",
+        ]
