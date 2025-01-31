@@ -226,17 +226,10 @@ class SlurmAPIResource(AbstractResource):
 
     def translate_options(self, resource_options):
         # Should translate the options into a format that can be used by the resource
-        updated_options = {}
-        for option_name, option_value in resource_options.items():
-            if updated_option_name := self.translate_option_name(option_name):
-                updated_options[updated_option_name] = option_value
-
+        translated_options = self.translated_options(resource_options)
         gpu_enabled = resource_options.get("gpu_enabled", False)
         if isinstance(gpu_enabled, bool) and gpu_enabled:
-            updated_options["tres_per_job"] = "gres/gpu=1"
+            translated_options["tres_per_job"] = "gres/gpu=1"
             if gpu_partition := self.config.get("gpu_partition"):
-                updated_options["partition"] = gpu_partition
-        return updated_options
-
-    def translate_option_name(self, option: str) -> str:
-        return self.config.get("parameter_mapping", {}).get(option)
+                translated_options["partition"] = gpu_partition
+        return translated_options

@@ -263,6 +263,7 @@ class WorkspaceView(APIView):
 
             if not resource.validate_options(resource_options):
                 raise ParseError("Invalid resource options found.")
+            translated_options = resource.translate_options(resource_options)
 
             # TODO: Check whether user has permission for this resource (and resource storage).
 
@@ -276,7 +277,7 @@ class WorkspaceView(APIView):
                     "request_job_details": job_details,
                     "current_job_details": {},
                 },
-                "resource_options": resource_options,
+                "resource_options": translated_options,
                 "resource_name": type(resource).__name__,
                 "status": "pending",
                 "resource_job_id": -1,
