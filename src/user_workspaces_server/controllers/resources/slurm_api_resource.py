@@ -35,7 +35,9 @@ class SlurmAPIResource(AbstractResource):
 
     def launch_job(self, job, workspace, resource_options):
         # Need to generate a SLURM token (as a user) to launch a job
-        workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
+        workspace_full_path = os.path.join(
+            self.resource_storage.root_dir, workspace.file_path
+        )
         job_full_path = os.path.join(workspace_full_path, f'.{job.job_details["id"]}')
 
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
@@ -184,7 +186,9 @@ class SlurmAPIResource(AbstractResource):
             return 0
 
     def stop_job(self, job):
-        user_info = self.resource_user_authentication.has_permission(job.workspace_id.user_id)
+        user_info = self.resource_user_authentication.has_permission(
+            job.workspace_id.user_id
+        )
 
         token = self.get_user_token(user_info)
 
@@ -226,7 +230,7 @@ class SlurmAPIResource(AbstractResource):
 
     def translate_options(self, resource_options):
         # Should translate the options into a format that can be used by the resource
-        translated_options = self.translated_options(resource_options)
+        translated_options = super().translate_options(resource_options)
         gpu_enabled = resource_options.get("gpu_enabled", False)
         if isinstance(gpu_enabled, bool) and gpu_enabled:
             translated_options["tres_per_job"] = "gres/gpu=1"
