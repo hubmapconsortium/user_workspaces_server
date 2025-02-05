@@ -18,3 +18,9 @@ class WorkspaceClientException(APIException):
     status_code = 400
     default_detail = "Error with client request."
     default_code = "client_request_error"
+
+
+class ValidationException(APIException):
+    status_code = 422
+    default_detail = "Error with validation of request body."
+    default_code = "validation_error"

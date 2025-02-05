@@ -35,7 +35,11 @@ class WorkspaceView(APIView):
 
         workspaces = list(workspace.all().values(*models.Workspace.get_dict_fields()))
 
-        response = {"message": "Successful.", "success": True, "data": {"workspaces": []}}
+        response = {
+            "message": "Successful.",
+            "success": True,
+            "data": {"workspaces": []},
+        }
 
         if workspaces:
             response["data"]["workspaces"] = workspaces
@@ -259,6 +263,7 @@ class WorkspaceView(APIView):
 
             if not resource.validate_options(resource_options):
                 raise ParseError("Invalid resource options found.")
+            translated_options = resource.translate_options(resource_options)
 
             # TODO: Check whether user has permission for this resource (and resource storage).
 
@@ -272,7 +277,7 @@ class WorkspaceView(APIView):
                     "request_job_details": job_details,
                     "current_job_details": {},
                 },
-                "resource_options": resource_options,
+                "resource_options": translated_options,
                 "resource_name": type(resource).__name__,
                 "status": "pending",
                 "resource_job_id": -1,
@@ -373,7 +378,11 @@ class WorkspaceView(APIView):
         workspace.status = models.Workspace.Status.DELETING
         workspace.save()
 
-        async_task("user_workspaces_server.tasks.delete_workspace", workspace.pk, cluster="long")
+        async_task(
+            "user_workspaces_server.tasks.delete_workspace",
+            workspace.pk,
+            cluster="long",
+        )
 
         return JsonResponse(
             {
