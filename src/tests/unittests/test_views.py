@@ -661,22 +661,22 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             "job_type": "test_job",
             "job_details": {},
         }
-        response = self.client.put(
+        response_bad = self.client.put(
             reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
             body,
         )
         self.assertValidResponse(
-            response,
+            response_bad,
             status.HTTP_422_UNPROCESSABLE_ENTITY,
             success=False,
             message="Invalid resource options found: ['Missing required: test_param']",
         )
         body["resource_options"] = {"test_param": "test"}
-        response = self.client.put(
+        response_good = self.client.put(
             reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
             body,
         )
-        self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+        self.assertValidResponse(response_good, status.HTTP_200_OK, success=True)
         self.assertEqual(
             apps.get_app_config("user_workspaces_server").parameters.pop(), test_param
         )

@@ -48,3 +48,14 @@ class AbstractResource(ABC):
             logging.error(f"Validation errors: {validator.errors}")
             raise ValidationException(f"Invalid resource options found: {validator.errors}")
         return validator.is_valid
+
+    def translate_option_name(self, option: str) -> str:
+        return self.config.get("parameter_mapping", {}).get(option)
+
+    def translate_options(self, resource_options: dict) -> dict:
+        translated_options = {}
+        for option_name, option_value in resource_options.items():
+            if updated_option_name := self.translate_option_name(option_name):
+                translated_options[updated_option_name] = option_value
+
+        return translated_options
