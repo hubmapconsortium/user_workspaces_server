@@ -24,7 +24,7 @@ class UserView(APIView):
                 first_last=Concat("first_name", Value(" "), "last_name")
             ).filter(Q(first_last__icontains=search) | Q(email__icontains=search))
 
-        users = list(users.all().values(*self.return_user_fields))
+        users = list(users.exclude(username=request.user.username).all().values(*self.return_user_fields))
 
         response = {"message": "Successful.", "success": True, "data": {"users": []}}
 
