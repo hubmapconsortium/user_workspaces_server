@@ -19,6 +19,7 @@ from user_workspaces_server.tasks import async_update_workspace
 logger = logging.getLogger(__name__)
 
 
+# TODO: Changes to guard for non-accepted shared workspaces
 class WorkspaceView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -225,6 +226,7 @@ class WorkspaceView(APIView):
                 }
             ]
 
+            workspace.datetime_last_modified = datetime.now()
             workspace.save()
 
             logger.info(workspace.workspace_details)
@@ -325,6 +327,7 @@ class WorkspaceView(APIView):
             )
 
             workspace.status = models.Workspace.Status.ACTIVE
+            workspace.datetime_last_job_launch = datetime.now()
             workspace.save()
 
             return JsonResponse(
@@ -344,6 +347,9 @@ class WorkspaceView(APIView):
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
             async_update_workspace(workspace.pk)
+
+            workspace.datetime_last_modified = datetime.now()
+            workspace.save()
 
             return JsonResponse({"message": "Successful upload.", "success": True})
         else:
