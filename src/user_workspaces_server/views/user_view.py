@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 class UserView(APIView):
     permission_classes = [IsAuthenticated]
-    filter_user_fields = ["first_name", "last_name", "username", "email"]
     return_user_fields = ["id", "first_name", "last_name", "username", "email"]
 
     def get(self, request):
