@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0017_sharedworkspacemapping_datetime_share_created'),
+        ("user_workspaces_server", "0017_sharedworkspacemapping_datetime_share_created"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='workspace',
-            name='datetime_last_job_launch',
+            model_name="workspace",
+            name="datetime_last_job_launch",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='workspace',
-            name='datetime_last_modified',
+            model_name="workspace",
+            name="datetime_last_modified",
             field=models.DateTimeField(null=True),
         ),
     ]
