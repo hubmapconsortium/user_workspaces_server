@@ -228,14 +228,6 @@ class SharedWorkspaceView(APIView):
             )
 
         shared_workspace = shared_workspace_mapping.shared_workspace_id
-
-        if models.Job.objects.filter(
-            workspace_id=shared_workspace, status__in=["pending", "running"]
-        ).exists():
-            raise WorkspaceClientException(
-                "Cannot delete workspace, jobs are running for this workspace."
-            )
-
         main_storage = apps.get_app_config("user_workspaces_server").main_storage
         external_user_mapping = main_storage.storage_user_authentication.has_permission(
             request.user
