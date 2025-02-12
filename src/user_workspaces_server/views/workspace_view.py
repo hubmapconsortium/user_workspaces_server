@@ -361,6 +361,7 @@ class WorkspaceView(APIView):
         except models.Workspace.DoesNotExist:
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
+        # If this is a shared workspace that has not been accepted, error out.
         try:
             shared_workspace = models.SharedWorkspaceMapping.objects.get(
                 shared_workspace_id=workspace
@@ -368,6 +369,18 @@ class WorkspaceView(APIView):
             if not shared_workspace.is_accepted:
                 raise WorkspaceClientException(
                     f"Workspace {workspace_id} is a shared workspace and has not been accepted."
+                )
+        except models.SharedWorkspaceMapping.DoesNotExist:
+            pass
+
+        # If this is a workspace that has shared workspaces associated that have not been accepted, error out
+        try:
+            shared_workspaces = models.SharedWorkspaceMapping.objects.filter(
+                original_workspace_id=workspace, is_accepted=False
+            ).all()
+            if shared_workspaces:
+                raise WorkspaceClientException(
+                    f"Workspace {workspace_id} has shared workspaces associated with it, that have not yet been accepted. Please cancel those shares to delete this workspace."
                 )
         except models.SharedWorkspaceMapping.DoesNotExist:
             pass
