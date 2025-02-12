@@ -35,7 +35,7 @@ class WorkspaceView(APIView):
                 workspace = workspace.filter(**{key: params[key]})
 
         workspaces = list(
-            workspace.exclude(sharedworkspace_set__is_accepted=False)
+            workspace.exclude(shared_workspace_set__is_accepted=False)
             .all()
             .values(*models.Workspace.get_dict_fields())
         )
