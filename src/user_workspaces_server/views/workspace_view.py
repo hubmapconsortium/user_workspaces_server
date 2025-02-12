@@ -363,10 +363,9 @@ class WorkspaceView(APIView):
 
         # If this is a shared workspace that has not been accepted, error out.
         try:
-            shared_workspace = models.SharedWorkspaceMapping.objects.get(
-                shared_workspace_id=workspace
-            )
-            if not shared_workspace.is_accepted:
+            if models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id=workspace, is_accepted=False
+            ).exists():
                 raise WorkspaceClientException(
                     f"Workspace {workspace_id} is a shared workspace and has not been accepted."
                 )
