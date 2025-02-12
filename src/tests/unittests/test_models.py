@@ -16,6 +16,8 @@ class WorkspaceModelTests(TestCase):
             "description",
             "disk_space",
             "datetime_created",
+            "datetime_last_modified",
+            "datetime_last_job_launch",
             "workspace_details",
             "status",
             "default_job_type",
