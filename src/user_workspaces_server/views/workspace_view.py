@@ -375,10 +375,9 @@ class WorkspaceView(APIView):
 
         # If this is a workspace that has shared workspaces associated that have not been accepted, error out
         try:
-            shared_workspaces = models.SharedWorkspaceMapping.objects.filter(
+            if models.SharedWorkspaceMapping.objects.filter(
                 original_workspace_id=workspace, is_accepted=False
-            ).all()
-            if shared_workspaces:
+            ).exists():
                 raise WorkspaceClientException(
                     f"Workspace {workspace_id} has shared workspaces associated with it, that have not yet been accepted. Please cancel those shares to delete this workspace."
                 )
