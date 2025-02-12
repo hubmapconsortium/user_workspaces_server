@@ -34,7 +34,11 @@ class WorkspaceView(APIView):
             ):
                 workspace = workspace.filter(**{key: params[key]})
 
-        workspaces = list(workspace.all().values(*models.Workspace.get_dict_fields()))
+        workspaces = list(
+            workspace.exclude(sharedworkspace_set__is_accepted=False)
+            .all()
+            .values(*models.Workspace.get_dict_fields())
+        )
 
         response = {"message": "Successful.", "success": True, "data": {"workspaces": []}}
 
