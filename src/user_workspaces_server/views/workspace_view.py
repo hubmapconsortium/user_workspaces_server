@@ -19,7 +19,6 @@ from user_workspaces_server.tasks import async_update_workspace
 logger = logging.getLogger(__name__)
 
 
-# TODO: Changes to guard for non-accepted shared workspaces
 class WorkspaceView(APIView):
     permission_classes = [IsAuthenticated]
 
