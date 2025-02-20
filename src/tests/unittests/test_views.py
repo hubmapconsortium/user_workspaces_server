@@ -91,7 +91,8 @@ class TokenAPITests(UserWorkspacesAPITestCase):
         api_user = User.objects.create_user("api_user")
         api_clients_group = Group.objects.create(name="api_clients")
         api_clients_group.user_set.add(api_user)
-        cls.client_token = Token.objects.create(user=api_user)
+        cls.client_token = Token(**{"user": api_user})
+        cls.client_token.save()
 
     def test_get_new_user_token(self):
         body = {
@@ -129,6 +130,56 @@ class StatusAPITests(UserWorkspacesAPITestCase):
         self.assertValidResponse(response, status.HTTP_200_OK)
         self.assertContains(response, "version")
         self.assertContains(response, "build")
+
+
+class UserAPITests(UserWorkspacesAPITestCase):
+    users_url = reverse("users")
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.search_user = User.objects.create_user(
+            "search_user", first_name="Search", last_name="User", email="search_user@querying.com"
+        )
+
+    def test_get_all_users(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.users_url)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+
+    def test_get_user_search_email(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=querying")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertEqual(len(response.json()["data"]["users"]), 1)
+
+    def test_get_user_search_first_name(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=Search")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertEqual(len(response.json()["data"]["users"]), 1)
+
+    def test_get_user_search_last_name(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=User")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertEqual(len(response.json()["data"]["users"]), 1)
+
+    def test_get_user_search_first_and_last_name(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=Search+User")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertEqual(len(response.json()["data"]["users"]), 1)
+
+    def test_get_user_search_none_found(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=Fake")
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Users matching given parameters could not be found.",
+        )
 
 
 class WorkspaceAPITestCase(UserWorkspacesAPITestCase):
