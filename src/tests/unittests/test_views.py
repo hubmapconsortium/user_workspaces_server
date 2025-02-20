@@ -216,6 +216,16 @@ class WorkspaceGETAPITests(WorkspaceAPITestCase):
         response = self.client.get(f"{self.workspaces_url}?name={self.workspace.name}")
         self.assertValidResponse(response, status.HTTP_200_OK, success=True)
 
+    def test_workspace_query_param_name_get_none_found(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.workspaces_url}?name=FakeWorkspace")
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Workspace matching given parameters could not be found.",
+        )
+
     def test_workspaces_get(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.workspaces_url)
@@ -558,6 +568,19 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             message="Job details not JSON.",
         )
 
+    def test_workspace_start_resource_options_not_json_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {"job_type": "test_job", "job_details": {}, "resource_options": ""}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Resource options not JSON.",
+        )
+
     def test_workspace_start_invalid_file_path_put(self):
         self.client.force_authenticate(user=self.user)
         self.workspace.file_path = "."
@@ -572,6 +595,27 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             success=False,
             message="Please contact a system administrator there is a failure with "
             "the workspace directory that will not allow for jobs to be created.",
+        )
+
+    def test_workspace_start_invalid_job_type_configuration(self):
+        apps.get_app_config("user_workspaces_server").available_job_types["test_job"][
+            "job_type"
+        ] = "FakeJobType"
+        self.client.force_authenticate(user=self.user)
+        body = {"job_type": "test_job", "job_details": {}}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
+        )
+
+        apps.get_app_config("user_workspaces_server").available_job_types["test_job"][
+            "job_type"
+        ] = "LocalTestJob"
+
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Job Type improperly configured. Please contact a system administrator to resolve this.",
         )
 
     def test_workspace_start_minimum_valid_put(self):
@@ -1077,4 +1121,54 @@ class SharedWorkspaceDELETEAPITests(SharedWorkspaceAPITestCase):
             status.HTTP_200_OK,
             success=True,
             message=f"Shared workspace {self.shared_workspace.pk} queued for deletion.",
+        )
+
+
+class WorkspaceAndSharedWorkspaceAPITests(SharedWorkspaceAPITestCase):
+    def test_workspace_put_not_accepted_shared_workspace(self):
+        self.client.force_authenticate(user=self.user_2)
+        response = self.client.put(reverse("workspaces_with_id", args=[self.shared_workspace.pk]))
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message=f"Workspace {self.shared_workspace.pk} is a shared workspace and has not been accepted.",
+        )
+
+    def test_workspace_delete_not_accepted_shared_workspace(self):
+        self.client.force_authenticate(user=self.user_2)
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.shared_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message=f"Workspace {self.shared_workspace.pk} is a shared workspace and has not been accepted.",
+        )
+
+    def test_workspace_delete_original_workspace_with_not_accepted_shared_workspace(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.original_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message=f"Workspace {self.original_workspace.pk} has shared workspaces associated with it, that have not yet been accepted. Please cancel those shares to delete this workspace.",
+        )
+
+    def test_workspace_delete_original_workspace_with_accepted_shared_workspace(self):
+        self.client.force_authenticate(user=self.user)
+        self.shared_workspace_mapping.is_accepted = True
+        self.shared_workspace_mapping.save()
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.original_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message=f"Workspace {self.original_workspace.pk} queued for deletion.",
         )
