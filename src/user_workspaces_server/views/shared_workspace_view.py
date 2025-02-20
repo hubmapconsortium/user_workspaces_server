@@ -197,7 +197,7 @@ class SharedWorkspaceView(APIView):
             shared_workspace.datetime_created = datetime.now()
             shared_workspace.save()
         else:
-            raise NotFound(f"Put type {put_type} not supported.")
+            raise WorkspaceClientException("Invalid PUT type passed.")
 
         return JsonResponse({"message": "Successful.", "success": True})
 
@@ -207,7 +207,7 @@ class SharedWorkspaceView(APIView):
         # Check that the workspace exists
         try:
             shared_workspace_mapping = models.SharedWorkspaceMapping.objects.get(
-                shared_workspace_id__pk=shared_workspace_id
+                shared_workspace_id=shared_workspace_id
             )
         except models.SharedWorkspaceMapping.DoesNotExist:
             raise NotFound(f"Shared workspace {shared_workspace_id} not found.")
@@ -218,7 +218,7 @@ class SharedWorkspaceView(APIView):
             shared_workspace_mapping.original_workspace_id.user_id,
         ]:
             raise PermissionDenied(
-                f"User does not have permissions for shared workspace {shared_workspace_id}"
+                f"User does not have permissions for shared workspace {shared_workspace_id}."
             )
 
         # Check that the workspace hasn't been accepted
@@ -254,4 +254,9 @@ class SharedWorkspaceView(APIView):
             "user_workspaces_server.tasks.delete_workspace", shared_workspace.pk, cluster="long"
         )
 
-        return JsonResponse({"message": "Successful.", "success": True})
+        return JsonResponse(
+            {
+                "message": f"Shared workspace {shared_workspace_id} queued for deletion.",
+                "success": True,
+            }
+        )
