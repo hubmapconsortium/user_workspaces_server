@@ -340,3 +340,13 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
     )
 
     shared_workspace.save()
+
+
+def check_main_storage_user(user):
+    main_storage = apps.get_app_config("user_workspaces_server").main_storage
+
+    external_user_mapping = main_storage.storage_user_authentication.has_permission(user)
+
+    if not external_user_mapping:
+        logger.exception(f"User {user} could not be authenticated on {main_storage}.")
+        raise

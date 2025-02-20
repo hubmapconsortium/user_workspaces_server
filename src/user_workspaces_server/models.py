@@ -15,6 +15,8 @@ class Workspace(models.Model):
     file_path = models.CharField(max_length=64, default="")
     disk_space = models.BigIntegerField(default=0)
     datetime_created = models.DateTimeField()
+    datetime_last_modified = models.DateTimeField(null=True)
+    datetime_last_job_launch = models.DateTimeField(null=True)
     workspace_details = models.JSONField()
     status = models.CharField(max_length=64, default=Status.IDLE, choices=Status.choices)
     default_job_type = models.CharField(max_length=64, null=True)
@@ -34,6 +36,8 @@ class Workspace(models.Model):
             "description",
             "disk_space",
             "datetime_created",
+            "datetime_last_modified",
+            "datetime_last_job_launch",
             "workspace_details",
             "status",
             "default_job_type",

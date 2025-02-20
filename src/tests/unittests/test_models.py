@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from user_workspaces_server.models import Job, Workspace
+from user_workspaces_server.models import Job, SharedWorkspaceMapping, Workspace
 
 
 class WorkspaceModelTests(TestCase):
@@ -16,6 +16,8 @@ class WorkspaceModelTests(TestCase):
             "description",
             "disk_space",
             "datetime_created",
+            "datetime_last_modified",
+            "datetime_last_job_launch",
             "workspace_details",
             "status",
             "default_job_type",
@@ -45,4 +47,17 @@ class JobModelTests(TestCase):
             "datetime_end",
             "core_hours",
             "job_details",
+        ]
+
+
+class SharedWorkspaceModelTests(TestCase):
+    def test_get_shared_workspace_query_param_fields(self):
+        """Check Workspace query parameters"""
+        assert SharedWorkspaceMapping.get_query_param_fields() == ["is_accepted"]
+
+    def test_get_shared_workspace_dict_fields(self):
+        assert SharedWorkspaceMapping.get_dict_fields() == [
+            "is_accepted",
+            "last_resource_options",
+            "last_job_type",
         ]

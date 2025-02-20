@@ -33,7 +33,11 @@ class WorkspaceView(APIView):
             ):
                 workspace = workspace.filter(**{key: params[key]})
 
-        workspaces = list(workspace.all().values(*models.Workspace.get_dict_fields()))
+        workspaces = list(
+            workspace.exclude(shared_workspace_set__is_accepted=False)
+            .all()
+            .values(*models.Workspace.get_dict_fields())
+        )
 
         response = {
             "message": "Successful.",
@@ -166,10 +170,9 @@ class WorkspaceView(APIView):
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
         try:
-            shared_workspace = models.SharedWorkspaceMapping.objects.get(
-                shared_workspace_id=workspace
-            )
-            if not shared_workspace.is_accepted:
+            if models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id=workspace, is_accepted=False
+            ):
                 raise WorkspaceClientException(
                     f"Workspace {workspace_id} is a shared workspace and has not been accepted."
                 )
@@ -229,6 +232,7 @@ class WorkspaceView(APIView):
                 }
             ]
 
+            workspace.datetime_last_modified = datetime.now()
             workspace.save()
 
             logger.info(workspace.workspace_details)
@@ -315,7 +319,9 @@ class WorkspaceView(APIView):
                     },
                 )
             except Exception:
-                raise WorkspaceClientException("Invalid job type specified")
+                raise WorkspaceClientException(
+                    "Job Type improperly configured. Please contact a system administrator to resolve this."
+                )
 
             resource_job_id = resource.launch_job(job_to_launch, workspace, resource_options)
 
@@ -330,6 +336,7 @@ class WorkspaceView(APIView):
             )
 
             workspace.status = models.Workspace.Status.ACTIVE
+            workspace.datetime_last_job_launch = datetime.now()
             workspace.save()
 
             return JsonResponse(
@@ -350,6 +357,9 @@ class WorkspaceView(APIView):
 
             async_update_workspace(workspace.pk)
 
+            workspace.datetime_last_modified = datetime.now()
+            workspace.save()
+
             return JsonResponse({"message": "Successful upload.", "success": True})
         else:
             raise WorkspaceClientException("Invalid PUT type passed.")
@@ -360,16 +370,24 @@ class WorkspaceView(APIView):
         except models.Workspace.DoesNotExist:
             raise NotFound(f"Workspace {workspace_id} not found for user.")
 
+        # If this is a shared workspace that has not been accepted, error out.
         try:
-            shared_workspace = models.SharedWorkspaceMapping.objects.get(
-                shared_workspace_id=workspace
-            )
-            if not shared_workspace.is_accepted:
+            if models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id=workspace, is_accepted=False
+            ):
                 raise WorkspaceClientException(
                     f"Workspace {workspace_id} is a shared workspace and has not been accepted."
                 )
         except models.SharedWorkspaceMapping.DoesNotExist:
             pass
+
+        # If this is a workspace that has shared workspaces associated that have not been accepted, error out
+        if models.SharedWorkspaceMapping.objects.filter(
+            original_workspace_id=workspace, is_accepted=False
+        ).exists():
+            raise WorkspaceClientException(
+                f"Workspace {workspace_id} has shared workspaces associated with it, that have not yet been accepted. Please cancel those shares to delete this workspace."
+            )
 
         if models.Job.objects.filter(
             workspace_id=workspace, status__in=["pending", "running"]

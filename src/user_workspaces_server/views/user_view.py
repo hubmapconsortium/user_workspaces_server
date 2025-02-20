@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 class UserView(APIView):
     permission_classes = [IsAuthenticated]
-    filter_user_fields = ["first_name", "last_name", "username", "email"]
     return_user_fields = ["id", "first_name", "last_name", "username", "email"]
 
     def get(self, request):
@@ -24,7 +23,9 @@ class UserView(APIView):
                 first_last=Concat("first_name", Value(" "), "last_name")
             ).filter(Q(first_last__icontains=search) | Q(email__icontains=search))
 
-        users = list(users.all().values(*self.return_user_fields))
+        users = list(
+            users.exclude(username=request.user.username).all().values(*self.return_user_fields)
+        )
 
         response = {"message": "Successful.", "success": True, "data": {"users": []}}
 
