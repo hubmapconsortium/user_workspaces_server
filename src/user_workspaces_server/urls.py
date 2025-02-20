@@ -20,6 +20,7 @@ from . import ws_consumers
 from .views import (
     job_type_view,
     job_view,
+    parameter_view,
     passthrough_view,
     shared_workspace_view,
     status_view,
@@ -58,6 +59,10 @@ job_view_patterns = [
 
 job_type_view_patterns = [
     path("", job_type_view.JobTypeView.as_view(), name="job_types"),
+]
+
+parameter_view_patterns = [
+    path("", parameter_view.ParameterView.as_view(), name="parameters"),
 ]
 
 passthrough_view_patterns = [
@@ -105,6 +110,7 @@ urlpatterns = [
     path("jobs/", include(job_view_patterns)),
     path("job_types/", include(job_type_view_patterns)),
     path("passthrough/", include(passthrough_view_patterns)),
+    path("parameters/", include(parameter_view_patterns)),
     path("users/", include(user_view_patterns)),
     path("shared_workspaces/", include(shared_workspace_view_patterns)),
     path("status/", status_view.StatusView.as_view(), name="status"),

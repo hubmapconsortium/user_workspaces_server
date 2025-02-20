@@ -678,6 +678,104 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
         test_file_1.close()
         test_file_2.close()
 
+    def test_workspace_custom_params_validation_good(self):
+        test_data_good = (
+            {"num_cpus": 1, "memory_mb": 1025},
+            {"time_limit_min": 480},
+            {"gpu_enabled": True},
+            {"unknown_param": "should_be_ignored"},
+            {},
+        )
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        for test in test_data_good:
+            with self.subTest(test=test):
+                body["resource_options"] = test
+                response = self.client.put(
+                    reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+                    body,
+                )
+                self.assertValidResponse(
+                    response,
+                    status.HTTP_200_OK,
+                    success=True,
+                    message="Successful start.",
+                )
+
+    def test_workspace_custom_params_validation_bad(self):
+        test_data_bad = [
+            (
+                {"num_cpus": "one"},
+                {
+                    "msg": "[\"num_cpus: Value 'one' of type str does not match required type int. Skipping further validation of parameter num_cpus.\"]"
+                },
+            ),
+            (
+                {"memory_mb": 1},
+                {"msg": "[\"memory_mb: Value '1' not above minimum of 1024.\"]"},
+            ),
+            (
+                {"time_limit_min": 481},
+                {
+                    "msg": "[\"time_limit_min: Value '481' above maximum of 480.\"]",
+                },
+            ),
+        ]
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        for test in test_data_bad:
+            with self.subTest(test=test):
+                body["resource_options"] = test[0]
+                response = self.client.put(
+                    reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+                    body,
+                )
+                self.assertValidResponse(
+                    response,
+                    status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    success=False,
+                    message=f"Invalid resource options found: {test[1]['msg']}",
+                )
+
+    def test_workspace_custom_params_validation_required(self):
+        test_param = {
+            "display_name": "Test Param",
+            "description": "",
+            "variable_name": "test_param",
+            "validation": {"type": "str", "required": True},
+        }
+        apps.get_app_config("user_workspaces_server").parameters.append(test_param)
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        response_bad = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+            body,
+        )
+        self.assertValidResponse(
+            response_bad,
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            success=False,
+            message="Invalid resource options found: ['Missing required: test_param']",
+        )
+        body["resource_options"] = {"test_param": "test"}
+        response_good = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+            body,
+        )
+        self.assertValidResponse(response_good, status.HTTP_200_OK, success=True)
+        self.assertEqual(
+            apps.get_app_config("user_workspaces_server").parameters.pop(), test_param
+        )
+
 
 class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
     def test_workspace_not_found_delete(self):
@@ -1172,3 +1270,16 @@ class WorkspaceAndSharedWorkspaceAPITests(SharedWorkspaceAPITestCase):
             success=True,
             message=f"Workspace {self.original_workspace.pk} queued for deletion.",
         )
+        
+        
+class ParameterGETAPITest(UserWorkspacesAPITestCase):
+    parameters_url = reverse("parameters")
+    params_config = apps.get_app_config("user_workspaces_server").parameters
+
+    def test_parameters_get(self):
+        response = self.client.get(self.parameters_url)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertContains(response, "data")
+        response_data = response.json()["data"]
+        self.assertIn("parameters", response_data)
+        self.assertEqual(response_data["parameters"], self.params_config)
