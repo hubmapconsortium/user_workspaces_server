@@ -1270,8 +1270,8 @@ class WorkspaceAndSharedWorkspaceAPITests(SharedWorkspaceAPITestCase):
             success=True,
             message=f"Workspace {self.original_workspace.pk} queued for deletion.",
         )
-        
-        
+
+
 class ParameterGETAPITest(UserWorkspacesAPITestCase):
     parameters_url = reverse("parameters")
     params_config = apps.get_app_config("user_workspaces_server").parameters
