@@ -13,7 +13,7 @@ from tests.controllers.storagemethods.test_storage import TestStorage
 from tests.controllers.userauthenticationmethods.test_user_authentication import (
     TestUserAuthentication,
 )
-from user_workspaces_server.models import Job, Workspace, SharedWorkspaceMapping
+from user_workspaces_server.models import Job, SharedWorkspaceMapping, Workspace
 
 
 class UserWorkspacesAPITestCase(APITestCase):

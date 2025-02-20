@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from user_workspaces_server.models import Job, Workspace, SharedWorkspaceMapping
+from user_workspaces_server.models import Job, SharedWorkspaceMapping, Workspace
 
 
 class WorkspaceModelTests(TestCase):
