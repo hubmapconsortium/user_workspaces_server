@@ -24,7 +24,10 @@ class UserView(APIView):
             ).filter(Q(first_last__icontains=search) | Q(email__icontains=search))
 
         users = list(
-            users.exclude(username=request.user.username).all().values(*self.return_user_fields)
+            users.exclude(username=request.user.username)
+            .exclude(username="admin")
+            .all()
+            .values(*self.return_user_fields)
         )
 
         response = {"message": "Successful.", "success": True, "data": {"users": []}}
