@@ -23,7 +23,13 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
 
         if workspace_type == "shared_workspace":
-            for field_name in set(self.fields) - {"id", "user_id", "name", "description"}:
+            for field_name in set(self.fields) - {
+                "id",
+                "user_id",
+                "name",
+                "description",
+                "workspace_details",
+            }:
                 self.fields.pop(field_name)
 
 
