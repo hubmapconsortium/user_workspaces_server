@@ -63,9 +63,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             # If the mapping does exist, we just get that external user, to confirm it exists
             return (
                 external_user_mapping
-                # TODO: We should use LDAP here rather than the PSC Users API. The Users API
-                #  should only be used when we're initially searching for the user.
-                #  we should be able to find based on UID.
+                # Look for user using LDAP rather than the API. Should be updated more quickly.
                 if self.get_external_user_ldap({"external_user_id": external_user_mapping})
                 else False
             )
