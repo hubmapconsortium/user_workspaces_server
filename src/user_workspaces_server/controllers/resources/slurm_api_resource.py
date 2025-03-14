@@ -3,6 +3,7 @@ import logging
 import os
 import time
 
+import jwt
 import requests as http_r
 from rest_framework.exceptions import APIException
 
@@ -10,6 +11,10 @@ from user_workspaces_server.controllers.resources.abstract_resource import (
     AbstractResource,
 )
 from user_workspaces_server.models import Job
+
+from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
+    AbstractUserAuthentication,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +48,7 @@ class SlurmAPIResource(AbstractResource):
         self.resource_storage.create_dir(job_full_path)
         self.resource_storage.set_ownership(job_full_path, user_info)
 
-        token = self.get_user_token(user_info)
+        token = self.get_valid_user_token(user_info)
 
         # For pure testing, lets just set a var in the connection details.
         headers = {
@@ -115,7 +120,7 @@ class SlurmAPIResource(AbstractResource):
         workspace = job.workspace_id
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
 
-        token = self.get_user_token(user_info)
+        token = self.get_valid_user_token(user_info)
 
         headers = {
             "Authorization": f'Token {self.connection_details.get("api_token")}',
@@ -154,7 +159,7 @@ class SlurmAPIResource(AbstractResource):
         workspace = job.workspace_id
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
 
-        token = self.get_user_token(user_info)
+        token = self.get_valid_user_token(user_info)
 
         headers = {
             "Authorization": f'Token {self.connection_details.get("api_token")}',
@@ -186,7 +191,7 @@ class SlurmAPIResource(AbstractResource):
     def stop_job(self, job):
         user_info = self.resource_user_authentication.has_permission(job.workspace_id.user_id)
 
-        token = self.get_user_token(user_info)
+        token = self.get_valid_user_token(user_info)
 
         # For pure testing, lets just set a var in the connection details.
         headers = {
@@ -221,8 +226,39 @@ class SlurmAPIResource(AbstractResource):
         if response.status_code not in [200, 201]:
             raise APIException(response.text)
 
-        token = response.json()["slurm_token"]
-        return token
+        return response.json()["slurm_token"]
+
+    def get_valid_user_token(self, external_user):
+        external_user_mapping = self.get_external_user_mapping(
+            {
+                "user_id": external_user.user_id,
+                "user_authentication_name": f"{type(self).__name__}Authentication",
+            }
+        )
+
+        if not external_user_mapping:
+            token = self.get_user_token(external_user)
+            external_user_mapping = AbstractUserAuthentication({}).create_external_user_mapping(
+                {
+                    "user_id": external_user.user_id,
+                    "user_authentication_name": f"{type(self).__name__}Authentication",
+                    "external_user_id": external_user.user_id,
+                    "external_username": external_user.external_username,
+                    "external_user_details": {"token": token},
+                }
+            )
+        else:
+            decoded_token = jwt.decode(
+                external_user_mapping.external_token["token"], options={"verify_signature": False}
+            )
+            if time.time() > decoded_token["exp"]:
+                # Update token
+                external_user_mapping.external_user_details["token"] = self.get_user_token(
+                    external_user
+                )
+                external_user_mapping.save()
+
+        return external_user_mapping.external_user_details["token"]
 
     def translate_options(self, resource_options):
         # Should translate the options into a format that can be used by the resource
