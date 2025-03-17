@@ -229,7 +229,7 @@ class SlurmAPIResource(AbstractResource):
         return response.json()["slurm_token"]
 
     def get_valid_user_token(self, external_user):
-        external_user_mapping = self.get_external_user_mapping(
+        external_user_mapping = self.resource_user_authentication.get_external_user_mapping(
             {
                 "user_id": external_user.user_id,
                 "user_authentication_name": f"{type(self).__name__}Authentication",
@@ -238,7 +238,7 @@ class SlurmAPIResource(AbstractResource):
 
         if not external_user_mapping:
             token = self.get_user_token(external_user)
-            external_user_mapping = AbstractUserAuthentication({}).create_external_user_mapping(
+            external_user_mapping = self.resource_user_authentication.create_external_user_mapping(
                 {
                     "user_id": external_user.user_id,
                     "user_authentication_name": f"{type(self).__name__}Authentication",
@@ -249,7 +249,8 @@ class SlurmAPIResource(AbstractResource):
             )
         else:
             decoded_token = jwt.decode(
-                external_user_mapping.external_token["token"], options={"verify_signature": False}
+                external_user_mapping.external_user_details["token"],
+                options={"verify_signature": False},
             )
             if time.time() > decoded_token["exp"]:
                 # Update token
