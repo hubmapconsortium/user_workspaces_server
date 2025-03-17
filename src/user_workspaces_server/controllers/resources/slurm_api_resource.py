@@ -12,10 +12,6 @@ from user_workspaces_server.controllers.resources.abstract_resource import (
 )
 from user_workspaces_server.models import Job
 
-from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
-    AbstractUserAuthentication,
-)
-
 logger = logging.getLogger(__name__)
 
 
