@@ -3,6 +3,7 @@ import logging
 import os
 import time
 
+import jwt
 import requests as http_r
 from rest_framework.exceptions import APIException
 
@@ -208,7 +209,7 @@ class SlurmAPIResource(AbstractResource):
             logger.error((repr(e)))
             return False
 
-    def get_user_token(self, external_user):
+    def get_user_token_from_slurm(self, external_user):
         headers = {
             "Authorization": f'Token {self.connection_details.get("api_token")}',
             "Slurm-User": external_user.external_username,
@@ -221,8 +222,40 @@ class SlurmAPIResource(AbstractResource):
         if response.status_code not in [200, 201]:
             raise APIException(response.text)
 
-        token = response.json()["slurm_token"]
-        return token
+        return response.json()["slurm_token"]
+
+    def get_user_token(self, external_user):
+        external_user_mapping = self.resource_user_authentication.get_external_user_mapping(
+            {
+                "user_id": external_user.user_id,
+                "user_authentication_name": f"{type(self).__name__}Authentication",
+            }
+        )
+
+        if not external_user_mapping:
+            token = self.get_user_token_from_slurm(external_user)
+            external_user_mapping = self.resource_user_authentication.create_external_user_mapping(
+                {
+                    "user_id": external_user.user_id,
+                    "user_authentication_name": f"{type(self).__name__}Authentication",
+                    "external_user_id": external_user.user_id,
+                    "external_username": external_user.external_username,
+                    "external_user_details": {"token": token},
+                }
+            )
+        else:
+            decoded_token = jwt.decode(
+                external_user_mapping.external_user_details["token"],
+                options={"verify_signature": False},
+            )
+            if time.time() > decoded_token["exp"]:
+                # Update token
+                external_user_mapping.external_user_details["token"] = (
+                    self.get_user_token_from_slurm(external_user)
+                )
+                external_user_mapping.save()
+
+        return external_user_mapping.external_user_details["token"]
 
     def translate_options(self, resource_options):
         # Should translate the options into a format that can be used by the resource

@@ -2,6 +2,7 @@ import json
 import logging
 import time
 
+import ldap
 import requests as http_r
 from django.forms.models import model_to_dict
 from rest_framework.authtoken.models import Token
@@ -22,6 +23,10 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         self.jwt_token = self.connection_details.get("jwt_token", "")
         self.grant_number = self.connection_details.get("grant_number", "")
         self.resource_name = self.connection_details.get("resource_name", "")
+        self.ldap_uri = self.connection_details.get("ldap_uri", "")
+        self.ldap_base = self.connection_details.get("ldap_base", "")
+        self.ldap_user_dn = self.connection_details.get("ldap_user_dn", "")
+        self.ldap_password = self.connection_details.get("ldap_password", "")
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping(
@@ -58,9 +63,8 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             # If the mapping does exist, we just get that external user, to confirm it exists
             return (
                 external_user_mapping
-                if self.get_external_user(
-                    {"external_user_id": external_user_mapping.external_user_id}
-                )
+                # Look for user using LDAP rather than the API. Should be updated more quickly.
+                if self.get_external_user_ldap({"external_user_id": external_user_mapping})
                 else False
             )
         else:
@@ -398,3 +402,21 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                 gid = allocation.get("gid", False)
 
         return gid
+
+    def get_external_user_ldap(self, external_user):
+        user = None
+        try:
+            conn = ldap.initialize(self.ldap_uri)
+            conn.simple_bind_s(self.ldap_user_dn, self.ldap_password)
+
+            search_filter = f"(uid={external_user['uid']})"
+            results = conn.search_s(self.ldap_base, ldap.SCOPE_SUBTREE, search_filter)
+            user = results[0][1]
+            conn.unbind_s()
+
+        except ldap.LDAPError as e:
+            print(f"LDAP error: {e}")
+
+        print(user)
+
+        return external_user if user else user
