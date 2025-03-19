@@ -44,7 +44,7 @@ class SlurmAPIResource(AbstractResource):
         self.resource_storage.create_dir(job_full_path)
         self.resource_storage.set_ownership(job_full_path, user_info)
 
-        token = self.get_valid_user_token(user_info)
+        token = self.get_user_token(user_info)
 
         # For pure testing, lets just set a var in the connection details.
         headers = {
@@ -116,7 +116,7 @@ class SlurmAPIResource(AbstractResource):
         workspace = job.workspace_id
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
 
-        token = self.get_valid_user_token(user_info)
+        token = self.get_user_token(user_info)
 
         headers = {
             "Authorization": f'Token {self.connection_details.get("api_token")}',
@@ -155,7 +155,7 @@ class SlurmAPIResource(AbstractResource):
         workspace = job.workspace_id
         user_info = self.resource_user_authentication.has_permission(workspace.user_id)
 
-        token = self.get_valid_user_token(user_info)
+        token = self.get_user_token(user_info)
 
         headers = {
             "Authorization": f'Token {self.connection_details.get("api_token")}',
@@ -187,7 +187,7 @@ class SlurmAPIResource(AbstractResource):
     def stop_job(self, job):
         user_info = self.resource_user_authentication.has_permission(job.workspace_id.user_id)
 
-        token = self.get_valid_user_token(user_info)
+        token = self.get_user_token(user_info)
 
         # For pure testing, lets just set a var in the connection details.
         headers = {
@@ -209,7 +209,7 @@ class SlurmAPIResource(AbstractResource):
             logger.error((repr(e)))
             return False
 
-    def get_user_token(self, external_user):
+    def get_user_token_from_slurm(self, external_user):
         headers = {
             "Authorization": f'Token {self.connection_details.get("api_token")}',
             "Slurm-User": external_user.external_username,
@@ -224,7 +224,7 @@ class SlurmAPIResource(AbstractResource):
 
         return response.json()["slurm_token"]
 
-    def get_valid_user_token(self, external_user):
+    def get_user_token(self, external_user):
         external_user_mapping = self.resource_user_authentication.get_external_user_mapping(
             {
                 "user_id": external_user.user_id,
@@ -233,7 +233,7 @@ class SlurmAPIResource(AbstractResource):
         )
 
         if not external_user_mapping:
-            token = self.get_user_token(external_user)
+            token = self.get_user_token_from_slurm(external_user)
             external_user_mapping = self.resource_user_authentication.create_external_user_mapping(
                 {
                     "user_id": external_user.user_id,
@@ -250,8 +250,8 @@ class SlurmAPIResource(AbstractResource):
             )
             if time.time() > decoded_token["exp"]:
                 # Update token
-                external_user_mapping.external_user_details["token"] = self.get_user_token(
-                    external_user
+                external_user_mapping.external_user_details["token"] = (
+                    self.get_user_token_from_slurm(external_user)
                 )
                 external_user_mapping.save()
 
