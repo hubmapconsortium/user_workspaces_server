@@ -65,18 +65,18 @@ parameter_view_patterns = [
     path("", parameter_view.ParameterView.as_view(), name="parameters"),
 ]
 
-passthrough_view_patterns = [
-    path(
-        "<str:hostname>/<int:job_id>/",
-        passthrough_view.PassthroughView.as_view(),
-        name="passthrough",
-    ),
-    path(
-        "<str:hostname>/<int:job_id>/<path:remainder>",
-        passthrough_view.PassthroughView.as_view(),
-        name="passthrough_remainder",
-    ),
-]
+# passthrough_view_patterns = [
+#     path(
+#         "<str:hostname>/<int:job_id>/",
+#         passthrough_view.PassthroughView.as_view(),
+#         name="passthrough",
+#     ),
+#     path(
+#         "<str:hostname>/<int:job_id>/<path:remainder>",
+#         passthrough_view.PassthroughView.as_view(),
+#         name="passthrough_remainder",
+#     ),
+# ]
 
 user_view_patterns = [
     path(
