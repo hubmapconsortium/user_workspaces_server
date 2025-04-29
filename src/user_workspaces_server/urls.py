@@ -109,7 +109,7 @@ urlpatterns = [
     path("workspaces/", include(workspace_view_patterns)),
     path("jobs/", include(job_view_patterns)),
     path("job_types/", include(job_type_view_patterns)),
-    path("passthrough/", include(passthrough_view_patterns)),
+    # path("passthrough/", include(passthrough_view_patterns)),
     path("parameters/", include(parameter_view_patterns)),
     path("users/", include(user_view_patterns)),
     path("shared_workspaces/", include(shared_workspace_view_patterns)),
