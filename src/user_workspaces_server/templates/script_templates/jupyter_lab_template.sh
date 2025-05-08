@@ -132,7 +132,7 @@ if ${VERSION:0:1} < 3:
   c.NotebookApp.allow_origin = '*'
   c.NotebookApp.notebook_dir = "{{ workspace_full_path }}"
   c.NotebookApp.disable_check_xsrf = True
-  c.NotebookApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
+  c.NotebookApp.base_url = "/passthrough/$(hostname)/${PORT}"
   c.NotebookApp.port = ${PORT}
 else:
   c.ServerApp.ip = '*'
@@ -140,7 +140,7 @@ else:
   c.ServerApp.allow_origin = '*'
   c.ServerApp.root_dir = "{{ workspace_full_path }}"
   c.ServerApp.disable_check_xsrf = True
-  c.ServerApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
+  c.ServerApp.base_url = "/passthrough/$(hostname)/${PORT}"
   c.ServerApp.port = ${PORT}
 EOL
 )

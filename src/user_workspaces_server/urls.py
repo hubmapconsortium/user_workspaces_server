@@ -17,11 +17,10 @@ Including another URLconf
 from django.urls import include, path
 
 from . import ws_consumers
-from .views import (
+from .views import (  # passthrough_view,
     job_type_view,
     job_view,
     parameter_view,
-    passthrough_view,
     shared_workspace_view,
     status_view,
     user_view,
@@ -65,18 +64,18 @@ parameter_view_patterns = [
     path("", parameter_view.ParameterView.as_view(), name="parameters"),
 ]
 
-passthrough_view_patterns = [
-    path(
-        "<str:hostname>/<int:job_id>/",
-        passthrough_view.PassthroughView.as_view(),
-        name="passthrough",
-    ),
-    path(
-        "<str:hostname>/<int:job_id>/<path:remainder>",
-        passthrough_view.PassthroughView.as_view(),
-        name="passthrough_remainder",
-    ),
-]
+# passthrough_view_patterns = [
+#     path(
+#         "<str:hostname>/<int:job_id>/",
+#         passthrough_view.PassthroughView.as_view(),
+#         name="passthrough",
+#     ),
+#     path(
+#         "<str:hostname>/<int:job_id>/<path:remainder>",
+#         passthrough_view.PassthroughView.as_view(),
+#         name="passthrough_remainder",
+#     ),
+# ]
 
 user_view_patterns = [
     path(
@@ -109,7 +108,7 @@ urlpatterns = [
     path("workspaces/", include(workspace_view_patterns)),
     path("jobs/", include(job_view_patterns)),
     path("job_types/", include(job_type_view_patterns)),
-    path("passthrough/", include(passthrough_view_patterns)),
+    # path("passthrough/", include(passthrough_view_patterns)),
     path("parameters/", include(parameter_view_patterns)),
     path("users/", include(user_view_patterns)),
     path("shared_workspaces/", include(shared_workspace_view_patterns)),
