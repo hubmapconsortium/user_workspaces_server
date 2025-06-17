@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_workspaces_server', '0018_workspace_datetime_last_job_launch_and_more'),
+        ("user_workspaces_server", "0018_workspace_datetime_last_job_launch_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='workspace',
-            name='status',
-            field=models.CharField(choices=[('initializing', 'Initializing'), ('idle', 'Idle'), ('active', 'Active'), ('deleting', 'Deleting'), ('error', 'Error')], default='idle', max_length=64),
+            model_name="workspace",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("initializing", "Initializing"),
+                    ("idle", "Idle"),
+                    ("active", "Active"),
+                    ("deleting", "Deleting"),
+                    ("error", "Error"),
+                ],
+                default="idle",
+                max_length=64,
+            ),
         ),
     ]
