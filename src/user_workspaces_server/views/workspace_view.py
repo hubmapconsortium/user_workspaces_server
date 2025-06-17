@@ -90,7 +90,7 @@ class WorkspaceView(APIView):
                 "request_workspace_details": request_workspace_details,
                 "current_workspace_details": {"files": [], "symlinks": []},
             },
-            "status": "idle",
+            "status": "initializing",
             "default_job_type": default_job_type,
         }
 
@@ -133,6 +133,8 @@ class WorkspaceView(APIView):
             )
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
+            # TODO: Set workspace status to idle
+            workspace.status = "idle"
             workspace.save()
         except Exception:
             # If there was a failure here, then we need to delete this workspace
