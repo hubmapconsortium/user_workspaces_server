@@ -127,6 +127,7 @@ class SharedWorkspaceView(APIView):
             "workspace_details": workspace.workspace_details,
             "default_job_type": workspace.default_job_type,
             "datetime_created": datetime.now(),
+            "status": "initializing",
         }
 
         shared_workspace_data = {

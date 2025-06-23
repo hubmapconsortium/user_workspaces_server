@@ -59,7 +59,7 @@ class JupyterLabJob(AbstractJob):
         url = ""
 
         for line in log_file:
-            if "http" in line:
+            if "http://" in line:
                 url = parse.urlparse(line.split("] ")[1])
                 break
 

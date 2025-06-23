@@ -339,6 +339,8 @@ def initialize_shared_workspace(shared_workspace_mapping_id: int):
         [shared_workspace.user_id.email],
     )
 
+    # TODO: Set shared_workspace status to idle
+    shared_workspace.status = "idle"
     shared_workspace.save()
 
 
