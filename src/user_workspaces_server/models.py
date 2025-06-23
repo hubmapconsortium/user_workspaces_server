@@ -4,6 +4,7 @@ from django.db import models
 
 class Workspace(models.Model):
     class Status(models.TextChoices):
+        INITIALIZING = "initializing"
         IDLE = "idle"
         ACTIVE = "active"
         DELETING = "deleting"
