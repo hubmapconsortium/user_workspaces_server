@@ -1,7 +1,9 @@
+# THIS RESOURCE IS MEANT TO SUPPORT v0.0.40 OF THE SLURM RESPONSE SCHEMAS
 import logging
 import os
 import time
 
+import jwt
 import requests as http_r
 from rest_framework.exceptions import APIException
 
@@ -32,7 +34,7 @@ class SlurmAPIResource(AbstractResource):
 
         return status_list[status]
 
-    def launch_job(self, job, workspace):
+    def launch_job(self, job, workspace, resource_options):
         # Need to generate a SLURM token (as a user) to launch a job
         workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
         job_full_path = os.path.join(workspace_full_path, f'.{job.job_details["id"]}')
@@ -52,7 +54,7 @@ class SlurmAPIResource(AbstractResource):
         }
 
         time_limit = job.config.get("time_limit", "30")
-        partition = self.config.get("partition", "")
+        cpu_partition = self.config.get("cpu_partition", "")
 
         body = {
             "script": job.get_script({"workspace_full_path": workspace_full_path}),
@@ -66,16 +68,22 @@ class SlurmAPIResource(AbstractResource):
                 "standard_error": os.path.join(
                     job_full_path, f'slurm_{job.job_details["id"]}_error.out'
                 ),
-                "get_user_environment": 1,
                 "environment": {
+                    "SLURM_GET_USER_ENV": 1,
                     "PATH": "/bin/:/usr/bin/:/usr/local/bin/",
                     "LD_LIBRARY_PATH": "/lib/:/lib64/:/usr/local/lib",
                 },
                 "time_limit": time_limit,
                 "requeue": False,
-                "partition": partition,
+                "partition": cpu_partition,
             },
         }
+
+        body_job_environment_copy = body["job"]["environment"].copy()
+
+        body["job"].update(self.translate_options(resource_options))
+
+        body["job"]["environment"].update(body_job_environment_copy)
 
         slurm_response = http_r.post(
             f'{self.config.get("connection_details", {}).get("root_url")}/jobControl/',
@@ -84,14 +92,19 @@ class SlurmAPIResource(AbstractResource):
         )
 
         if slurm_response.status_code != 200:
-            raise APIException(slurm_response.text)
+            raise APIException(
+                slurm_response.text
+                if slurm_response.text
+                else "No error message returned from Slurm API, please contact "
+                "system administrator for more information."
+            )
 
         try:
             slurm_response = slurm_response.json()
         except Exception:
             logger.info(slurm_response.text)
             raise APIException(
-                f"Slurm response for {job.id} could not be deciphered: {slurm_response.text}"
+                f"Slurm response for {job.job_details['id']} could not be deciphered: {slurm_response.text}"
             )
 
         if len(slurm_response["errors"]):
@@ -119,13 +132,14 @@ class SlurmAPIResource(AbstractResource):
                 raise APIException(resource_job["errors"])
             resource_job = resource_job["jobs"][0]
 
-            if resource_job["job_state"] == "TIMEOUT":
+            resource_job_state = resource_job.get("job_state", [])[0]
+            if resource_job_state == "TIMEOUT":
                 logger.error(
                     f"Workspaces Job {job.id}/Slurm job {job.resource_job_id} has timed out."
                 )
 
-            resource_job["status"] = self.translate_status(resource_job["job_state"])
-            end_time = resource_job.get("end_time")
+            resource_job["status"] = self.translate_status(resource_job_state)
+            end_time = resource_job.get("end_time", {}).get("number")
             if end_time is not None:
                 time_left = max(0, end_time - time.time())
             else:
@@ -158,7 +172,9 @@ class SlurmAPIResource(AbstractResource):
                 raise APIException(resource_job["errors"])
 
             resource_job = resource_job["jobs"][0]
-            time_running = resource_job.get("end_time") - resource_job.get("start_time")
+            end_time = resource_job.get("end_time", {}).get("number", 0)
+            start_time = resource_job.get("start_time", {}).get("number", 0)
+            time_running = end_time - start_time
             num_cores = resource_job.get("job_resources", {}).get("allocated_cpus", 0)
             core_seconds = time_running * num_cores
 
@@ -193,7 +209,7 @@ class SlurmAPIResource(AbstractResource):
             logger.error((repr(e)))
             return False
 
-    def get_user_token(self, external_user):
+    def get_user_token_from_slurm(self, external_user):
         headers = {
             "Authorization": f'Token {self.connection_details.get("api_token")}',
             "Slurm-User": external_user.external_username,
@@ -206,5 +222,47 @@ class SlurmAPIResource(AbstractResource):
         if response.status_code not in [200, 201]:
             raise APIException(response.text)
 
-        token = response.json()["slurm_token"]
-        return token
+        return response.json()["slurm_token"]
+
+    def get_user_token(self, external_user):
+        external_user_mapping = self.resource_user_authentication.get_external_user_mapping(
+            {
+                "user_id": external_user.user_id,
+                "user_authentication_name": f"{type(self).__name__}Authentication",
+            }
+        )
+
+        if not external_user_mapping:
+            token = self.get_user_token_from_slurm(external_user)
+            external_user_mapping = self.resource_user_authentication.create_external_user_mapping(
+                {
+                    "user_id": external_user.user_id,
+                    "user_authentication_name": f"{type(self).__name__}Authentication",
+                    "external_user_id": external_user.user_id,
+                    "external_username": external_user.external_username,
+                    "external_user_details": {"token": token},
+                }
+            )
+        else:
+            decoded_token = jwt.decode(
+                external_user_mapping.external_user_details["token"],
+                options={"verify_signature": False},
+            )
+            if time.time() > decoded_token["exp"]:
+                # Update token
+                external_user_mapping.external_user_details["token"] = (
+                    self.get_user_token_from_slurm(external_user)
+                )
+                external_user_mapping.save()
+
+        return external_user_mapping.external_user_details["token"]
+
+    def translate_options(self, resource_options):
+        # Should translate the options into a format that can be used by the resource
+        translated_options = super().translate_options(resource_options)
+        gpu_enabled = resource_options.get("gpu_enabled", False)
+        if isinstance(gpu_enabled, bool) and gpu_enabled:
+            translated_options["tres_per_job"] = "gres/gpu=1"
+            if gpu_partition := self.config.get("gpu_partition"):
+                translated_options["partition"] = gpu_partition
+        return translated_options

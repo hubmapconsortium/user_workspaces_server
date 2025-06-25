@@ -1,13 +1,15 @@
 import datetime
 import logging
 import os
+import shutil
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Sum
-from django.forms.models import model_to_dict
+from django.template.loader import render_to_string
+from django_q.brokers import get_broker
 from django_q.tasks import async_task
 
 from . import models, utils
@@ -16,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 def update_job_status(job_id):
+    logger.info(f"Updating job {job_id} status on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -39,6 +42,15 @@ def update_job_status(job_id):
         job.job_details["metrics"]["time_pending"] = time_pending
     elif current_job_status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         job.datetime_end = datetime.datetime.now()
+    elif current_job_status == models.Job.Status.PENDING:
+        current_time_pending = (
+            datetime.datetime.now(job.datetime_created.tzinfo) - job.datetime_created
+        ).total_seconds()
+        time_pending_catch = resource.config.get("time_pending_catch")
+        if int(time_pending_catch) and current_time_pending > time_pending_catch:
+            logger.error(
+                f"Job {job_id} for user {job.user_id.username} has been pending more than {time_pending_catch}"
+            )
 
     if current_job_status == models.Job.Status.FAILED:
         logger.error(f"Job {job_id} for user {job.user_id.username} has failed.")
@@ -64,7 +76,7 @@ def update_job_status(job_id):
                 "config": job_type_config["environment_details"][
                     settings.UWS_CONFIG["main_resource"]
                 ],
-                "job_details": model_to_dict(job),
+                "job_details": job,
             },
         )
     except Exception:
@@ -121,17 +133,25 @@ def queue_job_update(task):
         )
     elif job.status in [models.Job.Status.COMPLETE, models.Job.Status.FAILED]:
         workspace = job.workspace_id
-        if not models.Job.objects.filter(
-            workspace_id=job.workspace_id,
-            status__in=[models.Job.Status.PENDING, models.Job.Status.RUNNING],
-        ).exists():
+        if (
+            not models.Job.objects.filter(
+                workspace_id=job.workspace_id,
+                status__in=[models.Job.Status.PENDING, models.Job.Status.RUNNING],
+            ).exists()
+            and workspace.status != models.Workspace.Status.DELETING
+        ):
             workspace.status = models.Workspace.Status.IDLE
             workspace.save()
-            async_task("user_workspaces_server.tasks.update_workspace", workspace.id)
-            async_task("user_workspaces_server.tasks.update_job_core_hours", job_id)
+            async_update_workspace(workspace.pk)
+            async_task(
+                "user_workspaces_server.tasks.update_job_core_hours",
+                job_id,
+                cluster="myproject",
+            )
 
 
 def update_job_core_hours(job_id):
+    logger.info(f"Updating job {job_id} core hours on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -149,6 +169,7 @@ def update_job_core_hours(job_id):
 
 
 def stop_job(job_id):
+    logger.info(f"Stopping job {job_id} on {get_broker().list_key}")
     try:
         job = models.Job.objects.get(pk=job_id)
     except models.Job.DoesNotExist:
@@ -162,6 +183,7 @@ def stop_job(job_id):
 
 
 def delete_workspace(workspace_id):
+    logger.info(f"Deleting workspace {workspace_id} on {get_broker().list_key}")
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except models.Workspace.DoesNotExist:
@@ -189,7 +211,13 @@ def delete_workspace(workspace_id):
         async_task("user_workspaces_server.tasks.update_user_quota_disk_space", user_quota.id)
 
 
-def update_workspace(workspace_id):
+def async_update_workspace(workspace_id: int):
+    # Helper that makes sure updates go to the "long" cluster
+    async_task("user_workspaces_server.tasks.update_workspace", workspace_id, cluster="long")
+
+
+def update_workspace(workspace_id: int):
+    logger.info(f"Updating workspace {workspace_id} on {get_broker().list_key}")
     try:
         workspace = models.Workspace.objects.get(pk=workspace_id)
     except models.Workspace.DoesNotExist:
@@ -234,6 +262,7 @@ def update_workspace(workspace_id):
 
 
 def update_user_quota_disk_space(user_quota_id):
+    logger.info(f"Updating user quota {user_quota_id} disk space on {get_broker().list_key}")
     try:
         user_quota = models.UserQuota.objects.get(pk=user_quota_id)
     except models.UserQuota.DoesNotExist:
@@ -247,6 +276,7 @@ def update_user_quota_disk_space(user_quota_id):
 
 
 def update_user_quota_core_hours(user_quota_id):
+    logger.info(f"Updating user quota {user_quota_id} core hours on {get_broker().list_key}")
     try:
         user_quota = models.UserQuota.objects.get(pk=user_quota_id)
     except models.UserQuota.DoesNotExist:
@@ -257,3 +287,68 @@ def update_user_quota_core_hours(user_quota_id):
         workspace_id__user_id=user_quota.user_id
     ).aggregate(Sum("core_hours"))["core_hours__sum"]
     user_quota.save()
+
+
+def initialize_shared_workspace(shared_workspace_mapping_id: int):
+    shared_workspace_mapping = models.SharedWorkspaceMapping.objects.get(
+        pk=shared_workspace_mapping_id
+    )
+    original_workspace = shared_workspace_mapping.original_workspace_id
+    shared_workspace = shared_workspace_mapping.shared_workspace_id
+
+    main_storage = apps.get_app_config("user_workspaces_server").main_storage
+    external_user_mapping = main_storage.storage_user_authentication.has_permission(
+        shared_workspace.user_id
+    )
+
+    # Set the shared_workspace file path
+    shared_workspace.file_path = os.path.join(
+        external_user_mapping.external_username, str(shared_workspace.pk)
+    )
+
+    try:
+        # Copy non . directories
+        shutil.copytree(
+            os.path.join(main_storage.root_dir, original_workspace.file_path),
+            os.path.join(main_storage.root_dir, shared_workspace.file_path),
+            ignore=shutil.ignore_patterns(".*"),
+            symlinks=True,
+        )
+        main_storage.set_ownership(
+            shared_workspace.file_path, external_user_mapping, recursive=True
+        )
+    except Exception as e:
+        logger.exception(f"Copying files for {shared_workspace_mapping} failed: {e}")
+
+    async_update_workspace(shared_workspace.pk)
+
+    message = render_to_string(
+        "email_templates/share_email.txt",
+        context={
+            "sharer": original_workspace.user_id,
+            "receiver": shared_workspace.user_id,
+            "mapping_details": shared_workspace_mapping,
+            "original_workspace": original_workspace,
+        },
+    )
+    async_task(
+        "django.core.mail.send_mail",
+        "Invitation to Share a Workspace",
+        message,
+        None,
+        [shared_workspace.user_id.email],
+    )
+
+    # TODO: Set shared_workspace status to idle
+    shared_workspace.status = "idle"
+    shared_workspace.save()
+
+
+def check_main_storage_user(user):
+    main_storage = apps.get_app_config("user_workspaces_server").main_storage
+
+    external_user_mapping = main_storage.storage_user_authentication.has_permission(user)
+
+    if not external_user_mapping:
+        logger.exception(f"User {user} could not be authenticated on {main_storage}.")
+        raise

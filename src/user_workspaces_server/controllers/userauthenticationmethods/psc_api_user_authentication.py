@@ -1,6 +1,8 @@
 import json
 import logging
+import time
 
+import ldap
 import requests as http_r
 from django.forms.models import model_to_dict
 from rest_framework.authtoken.models import Token
@@ -21,6 +23,10 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         self.jwt_token = self.connection_details.get("jwt_token", "")
         self.grant_number = self.connection_details.get("grant_number", "")
         self.resource_name = self.connection_details.get("resource_name", "")
+        self.ldap_uri = self.connection_details.get("ldap_uri", "")
+        self.ldap_base = self.connection_details.get("ldap_base", "")
+        self.ldap_user_dn = self.connection_details.get("ldap_user_dn", "")
+        self.ldap_password = self.connection_details.get("ldap_password", "")
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping(
@@ -57,9 +63,8 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             # If the mapping does exist, we just get that external user, to confirm it exists
             return (
                 external_user_mapping
-                if self.get_external_user(
-                    {"external_user_id": external_user_mapping.external_user_id}
-                )
+                # Look for user using LDAP rather than the API. Should be updated more quickly.
+                if self.get_external_user_ldap({"external_user_id": external_user_mapping})
                 else False
             )
         else:
@@ -253,9 +258,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             "variables": variables,
         }
 
+        start_time = time.time()
         response = http_r.post(
             self.root_url, json=body, headers={"Authorization": f"JWT {self.jwt_token}"}
         )
+
+        if (time.time() - start_time) > 10:
+            logger.error(f"PSC Users API took {time.time() - start_time} seconds")
+
         external_user = response.json().get("data", {}).get("user", {})
 
         if external_user is None:
@@ -269,8 +279,9 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
                 gid = allocation.get("gid", False)
 
         if not gid:
-            # TODO: If this user is not assigned to this grant, then we need to assign the user
-            pass
+            # If this user is not assigned to this grant, then we need to assign the user
+            if not (gid := self.add_external_user_to_allocation(external_user["username"])):
+                pass
 
         return (
             {
@@ -339,3 +350,73 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             )
 
         return allocation
+
+    def add_external_user_to_allocation(self, user_id):
+        body = {
+            "operationName": "AddUserToAllocation",
+            "query": """
+                mutation AddUserToAllocation($input: AddAllocationUserInput!) {
+                    addAllocationUser(input: $input) {
+                        allocationUser {
+                            user {
+                                name {
+                                    first
+                                    last
+                                }
+                            }
+                            allocation {
+                                grant {
+                                    number
+                                }
+                            }
+                        }
+                    }
+                }
+            """,
+            "variables": {
+                "input": {
+                    "user": {"username": f"{user_id}"},
+                    "allocation": {
+                        "components": {
+                            "grant": {"number": f"{self.grant_number}"},
+                            "resource": {"name": f"{self.resource_name}"},
+                        }
+                    },
+                }
+            },
+        }
+
+        response = http_r.post(
+            self.root_url, json=body, headers={"Authorization": f"JWT {self.jwt_token}"}
+        )
+        external_user = response.json().get("data", {}).get("user", {})
+
+        if external_user is None:
+            return external_user
+
+        gid = False
+
+        for allocation_user in external_user.get("allocationUsers", []):
+            allocation = allocation_user.get("allocation", {})
+            if allocation.get("grant", {}).get("number", False) == self.grant_number:
+                gid = allocation.get("gid", False)
+
+        return gid
+
+    def get_external_user_ldap(self, external_user):
+        user = None
+        try:
+            conn = ldap.initialize(self.ldap_uri)
+            conn.simple_bind_s(self.ldap_user_dn, self.ldap_password)
+
+            search_filter = f"(uid={external_user['uid']})"
+            results = conn.search_s(self.ldap_base, ldap.SCOPE_SUBTREE, search_filter)
+            user = results[0][1]
+            conn.unbind_s()
+
+        except ldap.LDAPError as e:
+            print(f"LDAP error: {e}")
+
+        print(user)
+
+        return external_user if user else user

@@ -13,7 +13,7 @@ from tests.controllers.storagemethods.test_storage import TestStorage
 from tests.controllers.userauthenticationmethods.test_user_authentication import (
     TestUserAuthentication,
 )
-from user_workspaces_server.models import Job, Workspace
+from user_workspaces_server.models import Job, SharedWorkspaceMapping, Workspace
 
 
 class UserWorkspacesAPITestCase(APITestCase):
@@ -91,7 +91,8 @@ class TokenAPITests(UserWorkspacesAPITestCase):
         api_user = User.objects.create_user("api_user")
         api_clients_group = Group.objects.create(name="api_clients")
         api_clients_group.user_set.add(api_user)
-        cls.client_token = Token.objects.create(user=api_user)
+        cls.client_token = Token(**{"user": api_user})
+        cls.client_token.save()
 
     def test_get_new_user_token(self):
         body = {
@@ -131,6 +132,56 @@ class StatusAPITests(UserWorkspacesAPITestCase):
         self.assertContains(response, "build")
 
 
+class UserAPITests(UserWorkspacesAPITestCase):
+    users_url = reverse("users")
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.search_user = User.objects.create_user(
+            "search_user", first_name="Search", last_name="User", email="search_user@querying.com"
+        )
+
+    def test_get_all_users(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.users_url)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+
+    def test_get_user_search_email(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=querying")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertEqual(len(response.json()["data"]["users"]), 1)
+
+    def test_get_user_search_first_name(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=Search")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertEqual(len(response.json()["data"]["users"]), 1)
+
+    def test_get_user_search_last_name(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=User")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertEqual(len(response.json()["data"]["users"]), 1)
+
+    def test_get_user_search_first_and_last_name(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=Search+User")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertEqual(len(response.json()["data"]["users"]), 1)
+
+    def test_get_user_search_none_found(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.users_url}?search=Fake")
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Users matching given parameters could not be found.",
+        )
+
+
 class WorkspaceAPITestCase(UserWorkspacesAPITestCase):
     workspaces_url = reverse("workspaces")
 
@@ -164,6 +215,16 @@ class WorkspaceGETAPITests(WorkspaceAPITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(f"{self.workspaces_url}?name={self.workspace.name}")
         self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+
+    def test_workspace_query_param_name_get_none_found(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.workspaces_url}?name=FakeWorkspace")
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message="Workspace matching given parameters could not be found.",
+        )
 
     def test_workspaces_get(self):
         self.client.force_authenticate(user=self.user)
@@ -507,6 +568,19 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             message="Job details not JSON.",
         )
 
+    def test_workspace_start_resource_options_not_json_put(self):
+        self.client.force_authenticate(user=self.user)
+        body = {"job_type": "test_job", "job_details": {}, "resource_options": ""}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Resource options not JSON.",
+        )
+
     def test_workspace_start_invalid_file_path_put(self):
         self.client.force_authenticate(user=self.user)
         self.workspace.file_path = "."
@@ -521,6 +595,27 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             success=False,
             message="Please contact a system administrator there is a failure with "
             "the workspace directory that will not allow for jobs to be created.",
+        )
+
+    def test_workspace_start_invalid_job_type_configuration(self):
+        apps.get_app_config("user_workspaces_server").available_job_types["test_job"][
+            "job_type"
+        ] = "FakeJobType"
+        self.client.force_authenticate(user=self.user)
+        body = {"job_type": "test_job", "job_details": {}}
+        response = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]), body
+        )
+
+        apps.get_app_config("user_workspaces_server").available_job_types["test_job"][
+            "job_type"
+        ] = "LocalTestJob"
+
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Job Type improperly configured. Please contact a system administrator to resolve this.",
         )
 
     def test_workspace_start_minimum_valid_put(self):
@@ -583,6 +678,104 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
         test_file_1.close()
         test_file_2.close()
 
+    def test_workspace_custom_params_validation_good(self):
+        test_data_good = (
+            {"num_cpus": 1, "memory_mb": 1025},
+            {"time_limit_min": 480},
+            {"gpu_enabled": True},
+            {"unknown_param": "should_be_ignored"},
+            {},
+        )
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        for test in test_data_good:
+            with self.subTest(test=test):
+                body["resource_options"] = test
+                response = self.client.put(
+                    reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+                    body,
+                )
+                self.assertValidResponse(
+                    response,
+                    status.HTTP_200_OK,
+                    success=True,
+                    message="Successful start.",
+                )
+
+    def test_workspace_custom_params_validation_bad(self):
+        test_data_bad = [
+            (
+                {"num_cpus": "one"},
+                {
+                    "msg": "[\"num_cpus: Value 'one' of type str does not match required type int. Skipping further validation of parameter num_cpus.\"]"
+                },
+            ),
+            (
+                {"memory_mb": 1},
+                {"msg": "[\"memory_mb: Value '1' not above minimum of 1024.\"]"},
+            ),
+            (
+                {"time_limit_min": 481},
+                {
+                    "msg": "[\"time_limit_min: Value '481' above maximum of 480.\"]",
+                },
+            ),
+        ]
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        for test in test_data_bad:
+            with self.subTest(test=test):
+                body["resource_options"] = test[0]
+                response = self.client.put(
+                    reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+                    body,
+                )
+                self.assertValidResponse(
+                    response,
+                    status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    success=False,
+                    message=f"Invalid resource options found: {test[1]['msg']}",
+                )
+
+    def test_workspace_custom_params_validation_required(self):
+        test_param = {
+            "display_name": "Test Param",
+            "description": "",
+            "variable_name": "test_param",
+            "validation": {"type": "str", "required": True},
+        }
+        apps.get_app_config("user_workspaces_server").parameters.append(test_param)
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "job_type": "test_job",
+            "job_details": {},
+        }
+        response_bad = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+            body,
+        )
+        self.assertValidResponse(
+            response_bad,
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            success=False,
+            message="Invalid resource options found: ['Missing required: test_param']",
+        )
+        body["resource_options"] = {"test_param": "test"}
+        response_good = self.client.put(
+            reverse("workspaces_put_type", args=[self.workspace.id, "start"]),
+            body,
+        )
+        self.assertValidResponse(response_good, status.HTTP_200_OK, success=True)
+        self.assertEqual(
+            apps.get_app_config("user_workspaces_server").parameters.pop(), test_param
+        )
+
 
 class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
     def test_workspace_not_found_delete(self):
@@ -619,6 +812,7 @@ class WorkspaceDELETEAPITests(WorkspaceAPITestCase):
             "status": Job.Status.PENDING,
             "resource_job_id": -1,
             "core_hours": 0,
+            "resource_options": {},
         }
         job = Job(**job_data)
         job.save()
@@ -674,6 +868,7 @@ class JobAPITestCase(UserWorkspacesAPITestCase):
             "status": Job.Status.PENDING,
             "resource_job_id": -1,
             "core_hours": 0,
+            "resource_options": {},
         }
         cls.job = Job(**job_data)
         cls.job.save()
@@ -761,3 +956,330 @@ class JobTypeGETAPITests(JobTypeAPITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.job_types_url)
         self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+
+
+class SharedWorkspaceAPITestCase(UserWorkspacesAPITestCase):
+    shared_workspaces_url = reverse("shared_workspaces")
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user_2 = User.objects.create_user("test_2", email="test_2@test.com")
+        # Create a Workspace first that we can share from
+        workspace_data = {
+            "user_id": cls.user,
+            "name": "Test Name",
+            "description": "Test Description",
+            "disk_space": 0,
+            "datetime_created": datetime.now(),
+            "workspace_details": {
+                "request_workspace_details": {"files": [], "symlinks": []},
+                "current_workspace_details": {"files": [], "symlinks": []},
+            },
+            "file_path": "test/1",
+        }
+        cls.original_workspace = Workspace(**workspace_data)
+        cls.original_workspace.save()
+
+        workspace_data["user_id"] = cls.user_2
+        workspace_data["file_path"] = "test/2"
+        cls.shared_workspace = Workspace(**workspace_data)
+        cls.shared_workspace.save()
+
+        shared_workspace_data = {
+            "original_workspace_id": cls.original_workspace,
+            "shared_workspace_id": cls.shared_workspace,
+            "datetime_share_created": datetime.now(),
+        }
+        cls.shared_workspace_mapping = SharedWorkspaceMapping(**shared_workspace_data)
+        cls.shared_workspace_mapping.save()
+
+
+class SharedWorkspaceGETAPITests(SharedWorkspaceAPITestCase):
+    def test_shared_workspace_id_get_original_workspace_user(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(
+            reverse("shared_workspaces_with_id", args=[self.shared_workspace.id])
+        )
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+
+    def test_shared_workspace_id_get_shared_workspace_user(self):
+        self.client.force_authenticate(user=self.user_2)
+        response = self.client.get(
+            reverse("shared_workspaces_with_id", args=[self.shared_workspace.id])
+        )
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+
+    def test_shared_workspace_query_param_name_get(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.shared_workspaces_url}?is_accepted=False")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+
+    def test_shared_workspaces_get(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.shared_workspaces_url)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+
+    def test_shared_workspaces_get_none_found(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"{self.shared_workspaces_url}?is_accepted=True")
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True)
+
+
+class SharedWorkspacePOSTAPITests(SharedWorkspaceAPITestCase):
+    def test_unauthenticated(self):
+        response = self.client.get(self.shared_workspaces_url, {})
+        self.assertValidResponse(response, status.HTTP_401_UNAUTHORIZED, success=False)
+
+    def test_empty_post(self):
+        self.client.force_authenticate(user=self.user)
+        body = {}
+        response = self.client.post(self.shared_workspaces_url, body)
+        self.assertValidResponse(response, status.HTTP_400_BAD_REQUEST, success=False)
+
+    def test_missing_body_post(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(self.shared_workspaces_url)
+        self.assertValidResponse(response, status.HTTP_400_BAD_REQUEST, success=False)
+
+    def test_missing_original_workspace_id_body_post(self):
+        self.client.force_authenticate(user=self.user)
+        body = {"shared_user_ids": []}
+        response = self.client.post(self.shared_workspaces_url, body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Missing required fields.",
+        )
+
+    def test_missing_shared_user_ids_body_post(self):
+        self.client.force_authenticate(user=self.user)
+        body = {"original_workspace_id": self.original_workspace.pk}
+        response = self.client.post(self.shared_workspaces_url, body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Missing required fields.",
+        )
+
+    def test_invalid_original_workspace_for_user(self):
+        self.client.force_authenticate(user=self.user)
+        body = {"shared_user_ids": [], "original_workspace_id": self.shared_workspace.pk}
+        response = self.client.post(self.shared_workspaces_url, body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_404_NOT_FOUND,
+            success=False,
+            message=f"Workspace {body['original_workspace_id']} not found for user.",
+        )
+
+    def test_invalid_shared_user_ids_format(self):
+        self.client.force_authenticate(user=self.user)
+        body = {"shared_user_ids": "", "original_workspace_id": self.original_workspace.pk}
+        response = self.client.post(self.shared_workspaces_url, body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="shared_user_ids is not a list.",
+        )
+
+    def test_invalid_shared_user_ids(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "shared_user_ids": [-9999],
+            "original_workspace_id": self.original_workspace.pk,
+        }
+        response = self.client.post(self.shared_workspaces_url, body)
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Invalid user id provided.",
+        )
+
+    def test_minimum_valid_post(self):
+        self.client.force_authenticate(user=self.user)
+        body = {
+            "shared_user_ids": [self.user_2.pk],
+            "original_workspace_id": self.original_workspace.pk,
+        }
+        response = self.client.post(self.shared_workspaces_url, body)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        # TODO: Check body
+
+
+class SharedWorkspacePUTAPITests(SharedWorkspaceAPITestCase):
+    def test_shared_workspace_not_found_put(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.put(reverse("shared_workspaces_put_type", args=[9999, "test"]))
+        self.assertValidResponse(
+            response,
+            status.HTTP_404_NOT_FOUND,
+            success=False,
+            message="Shared workspace 9999 not found.",
+        )
+
+    def test_workspace_invalid_put_type_put(self):
+        self.client.force_authenticate(user=self.user_2)
+        response = self.client.put(
+            reverse("shared_workspaces_put_type", args=[self.shared_workspace.pk, "test"])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message="Invalid PUT type passed.",
+        )
+
+    def test_shared_workspace_put_type_accept(self):
+        self.client.force_authenticate(user=self.user_2)
+        response = self.client.put(
+            reverse("shared_workspaces_put_type", args=[self.shared_workspace.pk, "accept"])
+        )
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+
+
+class SharedWorkspaceDELETEAPITests(SharedWorkspaceAPITestCase):
+    def test_shared_workspace_not_found_delete(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(reverse("shared_workspaces_with_id", args=[9999]))
+        self.assertValidResponse(
+            response,
+            status.HTTP_404_NOT_FOUND,
+            success=False,
+            message="Shared workspace 9999 not found.",
+        )
+
+    def test_shared_workspace_delete_accepted_workspace(self):
+        self.shared_workspace_mapping.is_accepted = True
+        self.shared_workspace_mapping.save()
+
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(
+            reverse("shared_workspaces_with_id", args=[self.shared_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message=f"Shared workspace {self.shared_workspace.pk} has been accepted and cannot be deleted.",
+        )
+
+    def test_shared_workspace_delete_invalid_path(self):
+        self.shared_workspace.file_path = "."
+        self.shared_workspace.save()
+
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(
+            reverse("shared_workspaces_with_id", args=[self.shared_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            success=False,
+            message="Please contact a system administrator there is a failure with "
+            "the workspace directory that will not allow for this workspace to be deleted.",
+        )
+
+    def test_shared_workspace_delete_invalid_user(self):
+        invalid_user = User.objects.create_user("invalid_user", email="invalid@test.com")
+        self.client.force_authenticate(user=invalid_user)
+        response = self.client.delete(
+            reverse("shared_workspaces_with_id", args=[self.shared_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_403_FORBIDDEN,
+            success=False,
+            message=f"User does not have permissions for shared workspace {self.shared_workspace.pk}.",
+        )
+
+    def test_shared_workspace_delete_original_user(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(
+            reverse("shared_workspaces_with_id", args=[self.shared_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message=f"Shared workspace {self.shared_workspace.pk} queued for deletion.",
+        )
+
+    def test_shared_workspace_delete_shared_user(self):
+        self.client.force_authenticate(user=self.user_2)
+        response = self.client.delete(
+            reverse("shared_workspaces_with_id", args=[self.shared_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message=f"Shared workspace {self.shared_workspace.pk} queued for deletion.",
+        )
+
+
+class WorkspaceAndSharedWorkspaceAPITests(SharedWorkspaceAPITestCase):
+    def test_workspace_put_not_accepted_shared_workspace(self):
+        self.client.force_authenticate(user=self.user_2)
+        response = self.client.put(reverse("workspaces_with_id", args=[self.shared_workspace.pk]))
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message=f"Workspace {self.shared_workspace.pk} is a shared workspace and has not been accepted.",
+        )
+
+    def test_workspace_delete_not_accepted_shared_workspace(self):
+        self.client.force_authenticate(user=self.user_2)
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.shared_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message=f"Workspace {self.shared_workspace.pk} is a shared workspace and has not been accepted.",
+        )
+
+    def test_workspace_delete_original_workspace_with_not_accepted_shared_workspace(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.original_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_400_BAD_REQUEST,
+            success=False,
+            message=f"Workspace {self.original_workspace.pk} has shared workspaces associated with it, that have not yet been accepted. Please cancel those shares to delete this workspace.",
+        )
+
+    def test_workspace_delete_original_workspace_with_accepted_shared_workspace(self):
+        self.client.force_authenticate(user=self.user)
+        self.shared_workspace_mapping.is_accepted = True
+        self.shared_workspace_mapping.save()
+        response = self.client.delete(
+            reverse("workspaces_with_id", args=[self.original_workspace.pk])
+        )
+        self.assertValidResponse(
+            response,
+            status.HTTP_200_OK,
+            success=True,
+            message=f"Workspace {self.original_workspace.pk} queued for deletion.",
+        )
+
+
+class ParameterGETAPITest(UserWorkspacesAPITestCase):
+    parameters_url = reverse("parameters")
+    params_config = apps.get_app_config("user_workspaces_server").parameters
+
+    def test_parameters_get(self):
+        response = self.client.get(self.parameters_url)
+        self.assertValidResponse(response, status.HTTP_200_OK, success=True, message="Successful.")
+        self.assertContains(response, "data")
+        response_data = response.json()["data"]
+        self.assertIn("parameters", response_data)
+        self.assertEqual(response_data["parameters"], self.params_config)

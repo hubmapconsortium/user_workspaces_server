@@ -3,6 +3,7 @@ import logging
 from django.apps import apps
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django_q.tasks import async_task
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.exceptions import AuthenticationFailed
@@ -28,6 +29,10 @@ class UserWorkspacesServerTokenView(ObtainAuthToken):
                     "message": "Successful authentication.",
                     "token": token.key,
                 }
+            )
+
+            async_task(
+                "user_workspaces_server.tasks.check_main_storage_user", api_user, cluster="long"
             )
         elif isinstance(api_user, Response):
             result = api_user

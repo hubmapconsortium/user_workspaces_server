@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 
 from user_workspaces_server import models, utils
 from user_workspaces_server.exceptions import WorkspaceClientException
+from user_workspaces_server.tasks import async_update_workspace
 
 logger = logging.getLogger(__name__)
 
@@ -32,18 +33,24 @@ class WorkspaceView(APIView):
             ):
                 workspace = workspace.filter(**{key: params[key]})
 
-        workspaces = list(workspace.all().values(*models.Workspace.get_dict_fields()))
+        workspaces = list(
+            workspace.exclude(shared_workspace_set__is_accepted=False)
+            .all()
+            .values(*models.Workspace.get_dict_fields())
+        )
+
+        response = {
+            "message": "Successful.",
+            "success": True,
+            "data": {"workspaces": []},
+        }
 
         if workspaces:
-            return JsonResponse(
-                {
-                    "message": "Successful.",
-                    "success": True,
-                    "data": {"workspaces": workspaces},
-                }
-            )
+            response["data"]["workspaces"] = workspaces
         else:
-            raise NotFound("Workspace matching given parameters could not be found.")
+            response["message"] = "Workspace matching given parameters could not be found."
+
+        return JsonResponse(response)
 
     def post(self, request):
         try:
@@ -83,7 +90,7 @@ class WorkspaceView(APIView):
                 "request_workspace_details": request_workspace_details,
                 "current_workspace_details": {"files": [], "symlinks": []},
             },
-            "status": "idle",
+            "status": "initializing",
             "default_job_type": default_job_type,
         }
 
@@ -126,6 +133,8 @@ class WorkspaceView(APIView):
             )
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
+            # TODO: Set workspace status to idle
+            workspace.status = "idle"
             workspace.save()
         except Exception:
             # If there was a failure here, then we need to delete this workspace
@@ -133,7 +142,7 @@ class WorkspaceView(APIView):
             workspace.delete()
             raise
 
-        async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
+        async_update_workspace(workspace.pk)
 
         return JsonResponse(
             {
@@ -161,6 +170,16 @@ class WorkspaceView(APIView):
             workspace = models.Workspace.objects.get(id=workspace_id, user_id=request.user)
         except models.Workspace.DoesNotExist:
             raise NotFound(f"Workspace {workspace_id} not found for user.")
+
+        try:
+            if models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id=workspace, is_accepted=False
+            ):
+                raise WorkspaceClientException(
+                    f"Workspace {workspace_id} is a shared workspace and has not been accepted."
+                )
+        except models.SharedWorkspaceMapping.DoesNotExist:
+            pass
 
         if not put_type:
             try:
@@ -215,10 +234,11 @@ class WorkspaceView(APIView):
                 }
             ]
 
+            workspace.datetime_last_modified = datetime.now()
             workspace.save()
 
             logger.info(workspace.workspace_details)
-            async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
+            async_update_workspace(workspace.pk)
 
             return JsonResponse({"message": "Update successful.", "success": True})
         if put_type.lower() == "start":
@@ -245,12 +265,22 @@ class WorkspaceView(APIView):
                 )
 
             job_details = body.get("job_details", {})
+            resource_options = body.get("resource_options", {})
 
             if not isinstance(job_details, dict):
                 raise ParseError("Job details not JSON.")
+            if not isinstance(resource_options, dict):
+                raise ParseError("Resource options not JSON.")
 
             # TODO: Grabbing the resource needs to be a bit more intelligent
             resource = apps.get_app_config("user_workspaces_server").main_resource
+
+            # TODO: GPU support "gpu_enabled": true,
+            # {"num_cpus": 0, "memory_mb": 0, "time_limit_minutes": 30}
+
+            if not resource.validate_options(resource_options):
+                raise ParseError("Invalid resource options found.")
+            translated_options = resource.translate_options(resource_options)
 
             # TODO: Check whether user has permission for this resource (and resource storage).
 
@@ -264,6 +294,7 @@ class WorkspaceView(APIView):
                     "request_job_details": job_details,
                     "current_job_details": {},
                 },
+                "resource_options": translated_options,
                 "resource_name": type(resource).__name__,
                 "status": "pending",
                 "resource_job_id": -1,
@@ -290,11 +321,11 @@ class WorkspaceView(APIView):
                     },
                 )
             except Exception:
-                job.status = "failed"
-                job.save()
-                raise WorkspaceClientException("Invalid job type specified")
+                raise WorkspaceClientException(
+                    "Job Type improperly configured. Please contact a system administrator to resolve this."
+                )
 
-            resource_job_id = resource.launch_job(job_to_launch, workspace)
+            resource_job_id = resource.launch_job(job_to_launch, workspace, resource_options)
 
             job.resource_job_id = resource_job_id
             job.save()
@@ -307,6 +338,7 @@ class WorkspaceView(APIView):
             )
 
             workspace.status = models.Workspace.Status.ACTIVE
+            workspace.datetime_last_job_launch = datetime.now()
             workspace.save()
 
             return JsonResponse(
@@ -320,12 +352,15 @@ class WorkspaceView(APIView):
             if not request.FILES:
                 raise WorkspaceClientException("No files found in request.")
 
-            for file_index, file in request.FILES.items():
+            for file in request.FILES.values():
                 main_storage.create_file(workspace.file_path, file)
 
             main_storage.set_ownership(workspace.file_path, external_user_mapping, recursive=True)
 
-            async_task("user_workspaces_server.tasks.update_workspace", workspace.pk)
+            async_update_workspace(workspace.pk)
+
+            workspace.datetime_last_modified = datetime.now()
+            workspace.save()
 
             return JsonResponse({"message": "Successful upload.", "success": True})
         else:
@@ -336,6 +371,25 @@ class WorkspaceView(APIView):
             workspace = models.Workspace.objects.get(user_id=request.user, id=workspace_id)
         except models.Workspace.DoesNotExist:
             raise NotFound(f"Workspace {workspace_id} not found for user.")
+
+        # If this is a shared workspace that has not been accepted, error out.
+        try:
+            if models.SharedWorkspaceMapping.objects.get(
+                shared_workspace_id=workspace, is_accepted=False
+            ):
+                raise WorkspaceClientException(
+                    f"Workspace {workspace_id} is a shared workspace and has not been accepted."
+                )
+        except models.SharedWorkspaceMapping.DoesNotExist:
+            pass
+
+        # If this is a workspace that has shared workspaces associated that have not been accepted, error out
+        if models.SharedWorkspaceMapping.objects.filter(
+            original_workspace_id=workspace, is_accepted=False
+        ).exists():
+            raise WorkspaceClientException(
+                f"Workspace {workspace_id} has shared workspaces associated with it, that have not yet been accepted. Please cancel those shares to delete this workspace."
+            )
 
         if models.Job.objects.filter(
             workspace_id=workspace, status__in=["pending", "running"]
@@ -366,7 +420,11 @@ class WorkspaceView(APIView):
         workspace.status = models.Workspace.Status.DELETING
         workspace.save()
 
-        async_task("user_workspaces_server.tasks.delete_workspace", workspace.pk)
+        async_task(
+            "user_workspaces_server.tasks.delete_workspace",
+            workspace.pk,
+            cluster="long",
+        )
 
         return JsonResponse(
             {

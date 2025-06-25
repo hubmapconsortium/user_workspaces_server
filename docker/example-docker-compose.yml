@@ -1,4 +1,3 @@
-version: '3'
 name: uws
 services:
   nginx:
@@ -36,8 +35,20 @@ services:
       - ../src:/code
 #     - This line should mount root_dir of main_storage onto docker container
     environment:
-      - POSTGRES_PASSWORD=blank
-      - POSTGRES_USER=blank
+      POSTGRES_PASSWORD: blank
+      POSTGRES_USER: blank
+      GRAFANA_PASSWORD: blank
+      GRAFANA_USER: blank
     depends_on:
       - redis
       - postgres
+  grafana:
+    image: grafana/grafana
+    build:
+      context: ./grafana_dir
+    ports:
+      - "3000:3000"
+    volumes:
+      - 'grafana_storage:/var/lib/grafana'
+volumes:
+  grafana_storage:

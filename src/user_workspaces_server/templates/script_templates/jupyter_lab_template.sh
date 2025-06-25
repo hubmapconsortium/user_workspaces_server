@@ -3,44 +3,47 @@
 VENV_PATH="{{ workspace_full_path }}/${ENV_NAME}_venv"
 
 echo "STARTED @ $(date)"
+
 ### Environment initialization
-{% if module_manager == "tar" %}
-  if [ ! -d "$VENV_PATH" ]; then
-    mkdir -p "$VENV_PATH"
-    tar -xf {{ tar_file_path }} -C "$VENV_PATH"
-    echo "VENV COPIED @ $(date)"
-    source "$VENV_PATH/bin/activate"
-    conda-unpack
-    echo "VENV UNPACKED @ $(date)"
-    source "$VENV_PATH/bin/deactivate"
-  fi
-  source "$VENV_PATH/bin/activate"
-{% endif %}
-{% if module_manager == "lmod" %}
-  module load {{ modules|join:" " }}
-  {% if use_local_environment %}
+install_environment() {
+  {% if module_manager == "tar" %}
     if [ ! -d "$VENV_PATH" ]; then
-      export PYTHONNOUSERSITE=True
-      conda create --prefix "$VENV_PATH" python={{ python_version }} -y
+      mkdir -p "$VENV_PATH"
+      tar -xf {{ tar_file_path }} -C "$VENV_PATH"
+      echo "VENV COPIED @ $(date)"
+      source "$VENV_PATH/bin/activate"
+      conda-unpack
+      echo "VENV UNPACKED @ $(date)"
+      source "$VENV_PATH/bin/deactivate"
     fi
-    source activate "$VENV_PATH"
+    source "$VENV_PATH/bin/activate"
+  {% endif %}
+  {% if module_manager == "lmod" %}
+    module load {{ modules|join:" " }}
+    {% if use_local_environment %}
+      if [ ! -d "$VENV_PATH" ]; then
+        export PYTHONNOUSERSITE=True
+        conda create --prefix "$VENV_PATH" python={{ python_version }} -y
+      fi
+      source activate "$VENV_PATH"
+      pip install {{ python_packages|join:" " }}
+    {% endif %}
+  {% elif module_manager == "virtualenv" %}
+    if [ ! -d "$VENV_PATH" ]; then
+      virtualenv -p {{ python_version }} "$VENV_PATH"
+    fi
+    source "$VENV_PATH/bin/activate"
     pip install {{ python_packages|join:" " }}
   {% endif %}
-{% elif module_manager == "virtualenv" %}
-  if [ ! -d "$VENV_PATH" ]; then
-    virtualenv -p {{ python_version }} "$VENV_PATH"
-  fi
-  source "$VENV_PATH/bin/activate"
-  pip install {{ python_packages|join:" " }}
-{% endif %}
+}
+
+install_environment
 
 ### Jupyter configuration
 CONFIG_FILE="$(pwd)/JupyterLabJob_{{ job_id }}_config.py"
 
-VERSION=$(python -m jupyterlab --version)
-
 random_number () {
-    shuf -i ${1}-${2} -n 1
+  shuf -i ${1}-${2} -n 1
 }
 
 port_used_python() {
@@ -99,7 +102,27 @@ find_port () {
 
 PORT=$(find_port)
 
+set -x
+
+# Check if Python is installed
+if command -v python &>/dev/null; then
+  # Check if Jupyter is installed in the Python environment
+  if python -m jupyterlab --version &>/dev/null; then
+    echo "Python & Jupyter installed"
+  else
+    # Delete the environment
+    rm -rf "$VENV_PATH"
+    install_environment
+  fi
+else
+  # Delete the environment
+  rm -rf "$VENV_PATH"
+  install_environment
+fi
+
+
 # Generate Jupyter configuration file with secure file permissions based on JupyterLab version
+VERSION=$(python -m jupyterlab --version)
 (
 umask 077
 cat > "${CONFIG_FILE}" << EOL
@@ -109,7 +132,7 @@ if ${VERSION:0:1} < 3:
   c.NotebookApp.allow_origin = '*'
   c.NotebookApp.notebook_dir = "{{ workspace_full_path }}"
   c.NotebookApp.disable_check_xsrf = True
-  c.NotebookApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
+  c.NotebookApp.base_url = "/passthrough/$(hostname)/${PORT}"
   c.NotebookApp.port = ${PORT}
 else:
   c.ServerApp.ip = '*'
@@ -117,12 +140,13 @@ else:
   c.ServerApp.allow_origin = '*'
   c.ServerApp.root_dir = "{{ workspace_full_path }}"
   c.ServerApp.disable_check_xsrf = True
-  c.ServerApp.base_url = "/passthrough/$(hostname)/{{ job_id }}"
+  c.ServerApp.base_url = "/passthrough/$(hostname)/${PORT}"
   c.ServerApp.port = ${PORT}
 EOL
 )
 
 # Launch the Jupyter Notebook Server
-set -x
 export JUPYTER_DATA_DIR="$VENV_PATH/share/jupyter"
+export SSL_CERT_FILE="$VENV_PATH/ssl/cert.pem"
+
 python -m jupyterlab --config="${CONFIG_FILE}" &> "$(pwd)/JupyterLabJob_{{ job_id }}_output.log"

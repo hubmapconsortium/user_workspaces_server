@@ -4,6 +4,7 @@ from django.db import models
 
 class Workspace(models.Model):
     class Status(models.TextChoices):
+        INITIALIZING = "initializing"
         IDLE = "idle"
         ACTIVE = "active"
         DELETING = "deleting"
@@ -13,8 +14,10 @@ class Workspace(models.Model):
     name = models.CharField(max_length=64, default="")
     description = models.TextField(default="")
     file_path = models.CharField(max_length=64, default="")
-    disk_space = models.IntegerField(default=0)
+    disk_space = models.BigIntegerField(default=0)
     datetime_created = models.DateTimeField()
+    datetime_last_modified = models.DateTimeField(null=True)
+    datetime_last_job_launch = models.DateTimeField(null=True)
     workspace_details = models.JSONField()
     status = models.CharField(max_length=64, default=Status.IDLE, choices=Status.choices)
     default_job_type = models.CharField(max_length=64, null=True)
@@ -34,6 +37,8 @@ class Workspace(models.Model):
             "description",
             "disk_space",
             "datetime_created",
+            "datetime_last_modified",
+            "datetime_last_job_launch",
             "workspace_details",
             "status",
             "default_job_type",
@@ -59,6 +64,7 @@ class Job(models.Model):
     datetime_end = models.DateTimeField(null=True)
     core_hours = models.DecimalField(max_digits=10, decimal_places=5)
     job_details = models.JSONField()
+    resource_options = models.JSONField()
 
     def __str__(self):
         return (
@@ -106,3 +112,31 @@ class ExternalUserMapping(models.Model):
             f"{self.id}: {self.user_id.username if self.user_id else 'User Missing'} -"
             f" {self.user_authentication_name}"
         )
+
+
+class SharedWorkspaceMapping(models.Model):
+    original_workspace_id = models.ForeignKey(
+        Workspace,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="original_workspace_set",
+    )
+    shared_workspace_id = models.ForeignKey(
+        Workspace, on_delete=models.CASCADE, related_name="shared_workspace_set"
+    )
+    last_resource_options = models.JSONField(blank=True, null=True)
+    last_job_type = models.CharField(max_length=64, null=True)
+    is_accepted = models.BooleanField(default=False)
+    datetime_share_created = models.DateTimeField(null=True)
+
+    @staticmethod
+    def get_query_param_fields():
+        return ["is_accepted"]
+
+    @staticmethod
+    def get_dict_fields():
+        return [
+            "is_accepted",
+            "last_resource_options",
+            "last_job_type",
+        ]
