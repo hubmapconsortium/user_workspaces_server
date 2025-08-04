@@ -93,7 +93,7 @@ class JupyterLabJob(AbstractJob):
             datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
         ).total_seconds()
 
-        passthrough_url = parse.urlparse(resource.passthrough_url)
+        passthrough_url = parse.urlparse(resource.passthrough_domain)
         url_domain = (
             resource.passthrough_url
             if subdomain is None
