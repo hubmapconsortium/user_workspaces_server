@@ -150,7 +150,7 @@ EOL
 (
 umask 077
 cat > "$(pwd)/.network_config" << EOL
-"$(hostname)-${PORT}"
+$(hostname)-${PORT}
 EOL
 )
 
