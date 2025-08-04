@@ -132,7 +132,7 @@ if ${VERSION:0:1} < 3:
   c.NotebookApp.allow_origin = '*'
   c.NotebookApp.notebook_dir = "{{ workspace_full_path }}"
   c.NotebookApp.disable_check_xsrf = True
-  c.NotebookApp.base_url = "/passthrough/$(hostname)/${PORT}"
+  c.NotebookApp.base_url = "/passthrough"
   c.NotebookApp.port = ${PORT}
 else:
   c.ServerApp.ip = '*'
@@ -140,8 +140,17 @@ else:
   c.ServerApp.allow_origin = '*'
   c.ServerApp.root_dir = "{{ workspace_full_path }}"
   c.ServerApp.disable_check_xsrf = True
-  c.ServerApp.base_url = "/passthrough/$(hostname)/${PORT}"
+  c.ServerApp.base_url = "/passthrough"
   c.ServerApp.port = ${PORT}
+EOL
+)
+
+# Write a file with the network config specifically. This way we can avoid trying to decipher the values from the URL
+# TODO: Consider making the delimiter configurable
+(
+umask 077
+cat > "$(pwd)/.network_config" << EOL
+"$(hostname)-${PORT}"
 EOL
 )
 
