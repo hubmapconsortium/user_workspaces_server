@@ -77,6 +77,8 @@ class JupyterLabJob(AbstractJob):
                 subdomain = f.readline().strip()
                 # TODO: Consider making the delimiter configurable
                 hostname, port = subdomain.split("-")
+                # We have to replace the periods with dashes for the dynamic naming
+                subdomain = subdomain.replace(".", "-")
         except FileNotFoundError:
             logger.warning(f"Jupyter network config missing.")
             return {"current_job_details": {"message": "No network config found."}}
