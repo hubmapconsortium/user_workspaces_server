@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from datetime import datetime
@@ -80,7 +79,7 @@ class JupyterLabJob(AbstractJob):
                 # We have to replace the periods with dashes for the dynamic naming
                 subdomain = subdomain.replace(".", "-")
         except FileNotFoundError:
-            logger.warning(f"Jupyter network config missing.")
+            logger.warning("Jupyter network config missing.")
             return {"current_job_details": {"message": "No network config found."}}
 
         try:
