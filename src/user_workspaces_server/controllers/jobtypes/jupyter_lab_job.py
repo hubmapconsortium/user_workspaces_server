@@ -40,12 +40,15 @@ class JupyterLabJob(AbstractJob):
         if "connection_details" in job_model.job_details["current_job_details"]:
             return {}
 
+        job_dir_path = os.path.join(
+            resource.resource_storage.root_dir,
+            job_model.workspace_id.file_path,
+            f".{job_model.id}",
+        )
         try:
             with open(
                 os.path.join(
-                    resource.resource_storage.root_dir,
-                    job_model.workspace_id.file_path,
-                    f".{job_model.id}",
+                    job_dir_path,
                     output_file_name,
                 )
             ) as f:
@@ -66,8 +69,18 @@ class JupyterLabJob(AbstractJob):
         if not url:
             return {"current_job_details": {"message": "No url found."}}
 
-        port = url.port
-        hostname = url.hostname
+        # Open up the network_config file
+        subdomain = None
+        try:
+            with open(os.path.join(job_dir_path, ".network_config")) as f:
+                subdomain = f.readline().strip()
+                # TODO: Consider making the delimiter configurable
+                hostname, port = subdomain.split("-")
+                # We have to replace the periods with dashes for the dynamic naming
+                subdomain = subdomain.replace(".", "-")
+        except FileNotFoundError:
+            logger.warning("Jupyter network config missing.")
+            return {"current_job_details": {"message": "No network config found."}}
 
         try:
             token = parse.parse_qs(url.query)["token"][0].strip()
@@ -80,6 +93,13 @@ class JupyterLabJob(AbstractJob):
         time_init = (
             datetime.now(job_model.datetime_start.tzinfo) - job_model.datetime_start
         ).total_seconds()
+
+        passthrough_url = parse.urlparse(resource.passthrough_domain)
+        url_domain = (
+            resource.passthrough_url
+            if subdomain is None
+            else f"{passthrough_url.scheme}://{subdomain}.{passthrough_url.netloc}"
+        )
 
         return {
             "metrics": {
@@ -94,6 +114,7 @@ class JupyterLabJob(AbstractJob):
                 },
                 "connection_details": {
                     "url_path": connection_string,
+                    "url_domain": url_domain,
                 },
             },
         }
