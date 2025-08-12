@@ -113,4 +113,4 @@ EOL
 
 # Launch the Jupyter Notebook Server
 set -x
-python -m appyter --watch false --port ${PORT} --host ${HOST} --proxy true --cwd "{{ workspace_full_path }}" "{{ notebook_path }}"
+python -m appyter --watch false --port ${PORT} --host 0.0.0.0 --proxy true --cwd "{{ workspace_full_path }}" "{{ notebook_path }}"

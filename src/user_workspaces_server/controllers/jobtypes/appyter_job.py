@@ -91,9 +91,6 @@ class AppyterJob(AbstractJob):
                     "port": port,
                     "path": "",
                 },
-                "connection_details": {
-                    "url_path": "",
-                    "url_domain": url_domain
-                },
+                "connection_details": {"url_path": "", "url_domain": url_domain},
             },
         }
