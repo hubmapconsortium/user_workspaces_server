@@ -93,9 +93,11 @@ def update_job_status(job_id):
     job.job_details["current_job_details"].update(resource_job_info.get("current_job_details", {}))
 
     if job.job_details["current_job_details"].get("connection_details", {}):
-        job.job_details["current_job_details"]["connection_details"][
-            "url_domain"
-        ] = resource.passthrough_domain
+        # Check whether the url_domain is set. Maybe some jobtypes set their own url_domain
+        if job.job_details["current_job_details"]["connection_details"].get("url_domain") is None:
+            job.job_details["current_job_details"]["connection_details"][
+                "url_domain"
+            ] = resource.passthrough_domain
 
     job.save()
 
