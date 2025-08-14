@@ -4,35 +4,35 @@ VENV_PATH="{{ workspace_full_path }}/${ENV_NAME}_venv"
 
 echo "STARTED @ $(date)"
 ### Environment initialization
-{% if module_manager == "tar" %}
-  if [ ! -d "$VENV_PATH" ]; then
-    mkdir -p "$VENV_PATH"
-    tar -xf {{ tar_file_path }} -C "$VENV_PATH"
-    echo "VENV COPIED @ $(date)"
-    source "$VENV_PATH/bin/activate"
-    conda-unpack
-    echo "VENV UNPACKED @ $(date)"
-    source "$VENV_PATH/bin/deactivate"
-  fi
-  source "$VENV_PATH/bin/activate"
-{% endif %}
-{% if module_manager == "lmod" %}
-  module load {{ modules|join:" " }}
-  {% if use_local_environment %}
-    if [ ! -d "$VENV_PATH" ]; then
-      export PYTHONNOUSERSITE=True
-      conda create --prefix "$VENV_PATH" python={{ python_version }} -y
-    fi
-    source activate "$VENV_PATH"
-    pip install {{ python_packages|join:" " }}
-  {% endif %}
-{% elif module_manager == "virtualenv" %}
-  if [ ! -d "$VENV_PATH" ]; then
-    virtualenv -p {{ python_version }} "$VENV_PATH"
-  fi
-  source "$VENV_PATH/bin/activate"
-  pip install {{ python_packages|join:" " }}
-{% endif %}
+#{% if module_manager == "tar" %}
+#  if [ ! -d "$VENV_PATH" ]; then
+#    mkdir -p "$VENV_PATH"
+#    tar -xf {{ tar_file_path }} -C "$VENV_PATH"
+#    echo "VENV COPIED @ $(date)"
+#    source "$VENV_PATH/bin/activate"
+#    conda-unpack
+#    echo "VENV UNPACKED @ $(date)"
+#    source "$VENV_PATH/bin/deactivate"
+#  fi
+#  source "$VENV_PATH/bin/activate"
+#{% endif %}
+#{% if module_manager == "lmod" %}
+#  module load {{ modules|join:" " }}
+#  {% if use_local_environment %}
+#    if [ ! -d "$VENV_PATH" ]; then
+#      export PYTHONNOUSERSITE=True
+#      conda create --prefix "$VENV_PATH" python={{ python_version }} -y
+#    fi
+#    source activate "$VENV_PATH"
+#    pip install {{ python_packages|join:" " }}
+#  {% endif %}
+#{% elif module_manager == "virtualenv" %}
+#  if [ ! -d "$VENV_PATH" ]; then
+#    virtualenv -p {{ python_version }} "$VENV_PATH"
+#  fi
+#  source "$VENV_PATH/bin/activate"
+#  pip install {{ python_packages|join:" " }}
+#{% endif %}
 
 random_number () {
     shuf -i ${1}-${2} -n 1
@@ -113,4 +113,6 @@ EOL
 
 # Launch the Jupyter Notebook Server
 set -x
-python -m appyter --watch false --port ${PORT} --host 0.0.0.0 --proxy true --cwd "{{ workspace_full_path }}" "{{ notebook_path }}"
+
+#python -m appyter --watch false --port ${PORT} --host 0.0.0.0 --proxy true --cwd "{{ workspace_full_path }}" "{{ notebook_path }}"
+apptainer run --writable-tmpfs --env APPYTER_DATA_DIR={{ workspace_full_path }} --env APPYTER_PORT=5001 --env APPYTER_CWD=/app --env APPYTER_DEBUG=True {{ sif_file_path }}
