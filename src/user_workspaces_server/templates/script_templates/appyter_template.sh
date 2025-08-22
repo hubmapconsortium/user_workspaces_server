@@ -60,15 +60,6 @@ find_port () {
 }
 
 PORT=$(find_port)
-HOST=$(uname -n)
-
-(
-umask 077
-cat > "$(pwd)/.env" << EOL
-APPYTER_PORT=${PORT}
-APPYTER_HOST=${HOST}
-EOL
-)
 
 (
 umask 077
