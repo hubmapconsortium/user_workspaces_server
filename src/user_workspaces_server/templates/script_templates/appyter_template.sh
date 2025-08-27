@@ -72,4 +72,4 @@ EOL
 # Launch the Apptainer Appyter container
 set -x
 
-apptainer run --writable-tmpfs --env APPYTER_DATA_DIR={{ workspace_full_path }} --env APPYTER_PORT=${PORT} --env APPYTER_CWD=/app --env APPYTER_DEBUG=True {{ sif_file_path }}
+apptainer run --writable-tmpfs --env APPYTER_DATA_DIR={{ workspace_full_path }} --env APPYTER_PORT=${PORT} {{ sif_file_path }}
