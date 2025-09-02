@@ -300,7 +300,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
     def get_allocation(self):
         body = {
-            "operationName": "",
+            "operationName": "GetAllocationAndAllocationUsers",
             "query": """
                 query GetAllocationAndAllocationUsers($components: AllocationComponentsInput!) {
                     allocation(components: $components) {
