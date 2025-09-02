@@ -60,7 +60,7 @@ class AppyterJob(AbstractJob):
                 # We have to replace the periods with dashes for the dynamic naming
                 subdomain = subdomain.replace(".", "-")
         except FileNotFoundError:
-            logger.warning("Jupyter network config missing.")
+            logger.warning("Appyter network config missing.")
             return {"current_job_details": {"message": "No network config found."}}
 
         if not os.path.exists(os.path.join(job_dir_path, ".env")):
