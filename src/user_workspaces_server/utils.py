@@ -9,6 +9,7 @@ def translate_class_to_module(class_name):
         "PSCAPIUserAuthentication": "psc_api_user_authentication",
         "JupyterLabJob": "jupyter_lab_job",
         "LocalTestJob": "local_test_job",
+        "AppyterJob": "appyter_job",
     }
 
     try:

@@ -19,7 +19,7 @@ class PassthroughView(APIView):
             proxy_details = job_model.job_details["current_job_details"]["proxy_details"]
             port = proxy_details["port"]
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.get(url, cookies=request.COOKIES)
+            response = http_r.get(url, cookies=request.COOKIES, headers=request.headers)
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception:
             logger.exception("Passthrough GET failure")
@@ -31,7 +31,9 @@ class PassthroughView(APIView):
             proxy_details = job_model.job_details["current_job_details"]["proxy_details"]
             port = proxy_details["port"]
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.post(url, data=request.body, cookies=request.COOKIES)
+            response = http_r.post(
+                url, data=request.body, cookies=request.COOKIES, headers=request.headers
+            )
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception:
             logger.exception("Passthrough POST failure")
@@ -43,7 +45,9 @@ class PassthroughView(APIView):
             proxy_details = job_model.job_details["current_job_details"]["proxy_details"]
             port = proxy_details["port"]
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.patch(url, data=request.body, cookies=request.COOKIES)
+            response = http_r.patch(
+                url, data=request.body, cookies=request.COOKIES, headers=request.headers
+            )
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception:
             logger.exception("Passthrough PATCH failure")
@@ -55,7 +59,9 @@ class PassthroughView(APIView):
             proxy_details = job_model.job_details["current_job_details"]["proxy_details"]
             port = proxy_details["port"]
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.put(url, data=request.body, cookies=request.COOKIES)
+            response = http_r.put(
+                url, data=request.body, cookies=request.COOKIES, headers=request.headers
+            )
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception:
             logger.exception("Passthrough PUT failure")
@@ -67,7 +73,9 @@ class PassthroughView(APIView):
             proxy_details = job_model.job_details["current_job_details"]["proxy_details"]
             port = proxy_details["port"]
             url = f'{request.scheme}://{hostname}:{port}{request.path}?{request.META.get("QUERY_STRING")}'
-            response = http_r.delete(url, data=request.body, cookies=request.COOKIES)
+            response = http_r.delete(
+                url, data=request.body, cookies=request.COOKIES, headers=request.headers
+            )
             return HttpResponse(response, headers=response.headers, status=response.status_code)
         except Exception:
             logger.exception("Passthrough DELETE failure")
