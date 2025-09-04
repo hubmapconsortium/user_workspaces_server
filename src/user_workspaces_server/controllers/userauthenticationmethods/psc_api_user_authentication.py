@@ -409,14 +409,14 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             conn = ldap.initialize(self.ldap_uri)
             conn.simple_bind_s(self.ldap_user_dn, self.ldap_password)
 
-            search_filter = f"(uid={external_user['uid']})"
+            search_filter = f"(uidNumber={external_user.external_user_details.get('uid')})"
             results = conn.search_s(self.ldap_base, ldap.SCOPE_SUBTREE, search_filter)
             user = results[0][1]
             conn.unbind_s()
 
         except ldap.LDAPError as e:
-            print(f"LDAP error: {e}")
-
-        print(user)
+            logger.error(f"LDAP error: {repr(e)}")
+        except Exception as e:
+            logger.error(f"General error: {repr(e)}")
 
         return external_user if user else user
