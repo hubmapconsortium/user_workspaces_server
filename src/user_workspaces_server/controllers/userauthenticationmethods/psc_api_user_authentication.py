@@ -64,7 +64,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             return (
                 external_user_mapping
                 # Look for user using LDAP rather than the API. Should be updated more quickly.
-                if self.get_external_user_ldap({"external_user_id": external_user_mapping})
+                if self.get_external_user_ldap(external_user_mapping)
                 else False
             )
         else:
