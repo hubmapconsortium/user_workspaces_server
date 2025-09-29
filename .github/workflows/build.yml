@@ -5,9 +5,8 @@ name: Generate Build File
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "development" branch
-  push:
+  pull_request:
     branches:
-      - main
       - development
 
   # Allows you to run this workflow manually from the Actions tab
@@ -28,13 +27,7 @@ jobs:
       - name: Generate the build file
         run: |
           echo $(git describe --always --dirty --abbrev) > BUILD
-      - name: Git Commit Push Action
-        # You may pin to the exact commit or the version.
-        # uses: GuillaumeFalourd/git-commit-push@205c043bca2f932f7a48a28a8d619ba30eb84baf
-        uses: GuillaumeFalourd/git-commit-push@v1.3
+      - name: Git Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v7-next
         with:
-          commit_message: "Auto generate BUILD file."
-          # Files to add separated by space
-          files: BUILD
-        
-        
+          commit_message: "Generate new BUILD file"
