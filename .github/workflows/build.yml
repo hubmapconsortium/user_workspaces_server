@@ -27,13 +27,14 @@ jobs:
       - name: Generate the build file
         run: |
           echo $(git describe --always --dirty --abbrev) > BUILD
-      - name: Git Commit Push Action
+      - name: Git Auto Commit
         # You may pin to the exact commit or the version.
-        # uses: GuillaumeFalourd/git-commit-push@205c043bca2f932f7a48a28a8d619ba30eb84baf
-        uses: GuillaumeFalourd/git-commit-push@v1.3
+        # uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0
+        uses: stefanzweifel/git-auto-commit-action@v6.0.1
         with:
-          commit_message: "Auto generate BUILD file."
-          # Files to add separated by space
-          files: BUILD
+          # Commit message
+          commit_message: "Generate new BUILD file"
+          # Git branch name, where changes should be pushed too. Required if Action is used on the `pull_request` event
+          branch: ${{ github.head_ref }}
         
         
