@@ -1,6 +1,7 @@
 import logging
-import requests as http_r
 from abc import ABC, abstractmethod
+
+import requests as http_r
 
 from user_workspaces_server.controllers.jobtypes.abstract_job import AbstractJob
 from user_workspaces_server.exceptions import ValidationException

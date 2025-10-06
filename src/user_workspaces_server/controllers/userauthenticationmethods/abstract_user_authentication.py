@@ -1,7 +1,7 @@
 import logging
-import requests as http_r
 from abc import ABC, abstractmethod
 
+import requests as http_r
 from django.contrib.auth.models import User
 
 from user_workspaces_server import models
@@ -71,7 +71,7 @@ class AbstractUserAuthentication(ABC):
     def health_check(self):
         connected = True
         try:
-            response = http_r.get(self.config.get("health_check_url")).json()
+            response = http_r.get(self.connection_details.get("health_check_url")).json()
             message = response.json()
         except Exception as e:
             logger.info(f"Issue with health check {repr(e)}")

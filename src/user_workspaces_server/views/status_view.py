@@ -2,8 +2,8 @@ import logging
 import os
 from pathlib import Path
 
-from django.http import JsonResponse
 from django.apps import apps
+from django.http import JsonResponse
 from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
