@@ -28,13 +28,6 @@ class StatusView(APIView):
             else "invalid_build"
         )
 
-        dependencies = {
-            # Maybe we only check the main resource/storage/auth?
-            # Should we do health checks for storage?
-            #     Resources
-            #     User Auth
-            #
-        }
         main_resource = apps.get_app_config("user_workspaces_server").main_resource
         api_user_authentication = apps.get_app_config(
             "user_workspaces_server"
