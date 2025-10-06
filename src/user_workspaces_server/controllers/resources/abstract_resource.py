@@ -1,4 +1,5 @@
 import logging
+import requests as http_r
 from abc import ABC, abstractmethod
 
 from user_workspaces_server.controllers.jobtypes.abstract_job import AbstractJob
@@ -15,6 +16,7 @@ class AbstractResource(ABC):
         self.resource_storage = resource_storage
         self.resource_user_authentication = resource_user_authentication
         self.passthrough_domain = config.get("passthrough_domain", "")
+        self.connection_details = self.config.get("connection_details", {})
 
     @abstractmethod
     def translate_status(self, status: str) -> Job.Status:
@@ -59,3 +61,15 @@ class AbstractResource(ABC):
                 translated_options[updated_option_name] = option_value
 
         return translated_options
+
+    def health_check(self):
+        connected = True
+        try:
+            response = http_r.get(self.connection_details.get("health_check_url")).json()
+            message = response.json()
+        except Exception as e:
+            logger.info(f"Issue with health check {repr(e)}")
+            connected = False
+            message = repr(e)
+
+        return {"connected": connected, "message": message}

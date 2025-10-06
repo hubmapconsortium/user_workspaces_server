@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from django.http import JsonResponse
+from django.apps import apps
 from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
@@ -27,11 +28,27 @@ class StatusView(APIView):
             else "invalid_build"
         )
 
+        dependencies = {
+            # Maybe we only check the main resource/storage/auth?
+            # Should we do health checks for storage?
+            #     Resources
+            #     User Auth
+            #
+        }
+        main_resource = apps.get_app_config("user_workspaces_server").main_resource
+        api_user_authentication = apps.get_app_config(
+            "user_workspaces_server"
+        ).api_user_authentication
+
         response_data = {
             "message": "",
             "success": True,
             "version": version,
             "build": build,
+            "dependencies": {
+                "main_resource": main_resource.health_check(),
+                "api_user_authentication": api_user_authentication.health_check(),
+            }
         }
 
         return JsonResponse(response_data)
