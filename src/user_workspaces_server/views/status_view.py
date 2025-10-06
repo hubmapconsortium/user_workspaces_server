@@ -48,7 +48,7 @@ class StatusView(APIView):
             "dependencies": {
                 "main_resource": main_resource.health_check(),
                 "api_user_authentication": api_user_authentication.health_check(),
-            }
+            },
         }
 
         return JsonResponse(response_data)
