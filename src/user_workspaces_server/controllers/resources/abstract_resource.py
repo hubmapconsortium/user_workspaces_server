@@ -66,8 +66,12 @@ class AbstractResource(ABC):
     def health_check(self):
         connected = True
         try:
-            response = http_r.get(self.connection_details.get("health_check_url")).json()
-            message = response.json()
+            response = http_r.get(self.connection_details.get("health_check_url"))
+            if response.status_code != 200:
+                connected = False
+                message = f"Invalid status code: {response.status_code}"
+            else:
+                message = "Connected successfully."
         except Exception as e:
             logger.info(f"Issue with health check {repr(e)}")
             connected = False
