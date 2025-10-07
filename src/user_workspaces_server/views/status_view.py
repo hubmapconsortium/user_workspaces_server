@@ -42,6 +42,10 @@ class StatusView(APIView):
                     resource_id: resource.health_check()
                     for resource_id, resource in app_config.available_resources.items()
                 },
+                "storage_methods": {
+                    storage_id: storage.health_check()
+                    for storage_id, storage in app_config.available_storage_methods.items()
+                },
                 "user_authentication_methods": {
                     uam_id: uam.health_check()
                     for uam_id, uam in app_config.available_user_authentication_methods.items()
