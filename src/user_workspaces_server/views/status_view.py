@@ -28,10 +28,7 @@ class StatusView(APIView):
             else "invalid_build"
         )
 
-        main_resource = apps.get_app_config("user_workspaces_server").main_resource
-        api_user_authentication = apps.get_app_config(
-            "user_workspaces_server"
-        ).api_user_authentication
+        app_config = apps.get_app_config("user_workspaces_server")
 
         response_data = {
             "message": "",
@@ -39,8 +36,16 @@ class StatusView(APIView):
             "version": version,
             "build": build,
             "dependencies": {
-                "main_resource": main_resource.health_check(),
-                "api_user_authentication": api_user_authentication.health_check(),
+                "main_resource": app_config.main_resource.health_check(),
+                "api_user_authentication": app_config.api_user_authentication.health_check(),
+                "resources": {
+                    resource_id: resource.health_check()
+                    for resource_id, resource in app_config.available_resources.items()
+                },
+                "user_authentication_methods": {
+                    uam_id: uam.health_check()
+                    for uam_id, uam in app_config.available_user_authentication_methods.items()
+                },
             },
         }
 
