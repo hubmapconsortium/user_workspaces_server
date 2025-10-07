@@ -37,3 +37,6 @@ class TestStorage(AbstractStorage):
 
     def create_file(self, path, file):
         pass
+
+    def health_check(self):
+        pass

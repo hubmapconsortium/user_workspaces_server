@@ -89,3 +89,19 @@ class LocalResource(AbstractResource):
         except Exception as e:
             logger.error(repr(e))
             return False
+
+    def health_check(self):
+        connected = True
+        try:
+            cpu_count = psutil.cpu_count()
+            if cpu_count < 1:
+                connected = False
+                message = f"No CPUs detected on system. CPU Count: {cpu_count}"
+            else:
+                message = "Connected successfully."
+        except Exception as e:
+            logger.info(f"Issue with health check {repr(e)}")
+            connected = False
+            message = repr(e)
+
+        return {"connected": connected, "message": message}

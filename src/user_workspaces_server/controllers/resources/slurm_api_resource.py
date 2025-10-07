@@ -16,9 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class SlurmAPIResource(AbstractResource):
-    def __init__(self, config, resource_storage, resource_user_authentication):
-        super().__init__(config, resource_storage, resource_user_authentication)
-        self.connection_details = self.config.get("connection_details")
 
     def translate_status(self, status):
         status_list = {

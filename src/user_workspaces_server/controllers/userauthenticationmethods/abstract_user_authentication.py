@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
+import requests as http_r
 from django.contrib.auth.models import User
 
 from user_workspaces_server import models
@@ -66,3 +67,19 @@ class AbstractUserAuthentication(ABC):
     @abstractmethod
     def delete_external_user(self, user_id):
         pass
+
+    def health_check(self):
+        connected = True
+        try:
+            response = http_r.get(self.connection_details.get("health_check_url"))
+            if response.status_code != 200:
+                connected = False
+                message = f"Invalid status code: {response.status_code}"
+            else:
+                message = "Connected successfully."
+        except Exception as e:
+            logger.info(f"Issue with health check {repr(e)}")
+            connected = False
+            message = repr(e)
+
+        return {"status": connected, "message": message}
