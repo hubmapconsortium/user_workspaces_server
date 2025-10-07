@@ -79,6 +79,6 @@ class AbstractStorage(ABC):
     def create_file(self, path, file):
         pass
 
+    @abstractmethod
     def health_check(self):
-
-        return {}
+        pass

@@ -154,3 +154,18 @@ class LocalFileSystemStorage(AbstractStorage):
         with open(os.path.join(file_full_dest_path, file_name), "wb") as new_file:
             for chunk in file.chunks():
                 new_file.write(chunk)
+
+    def health_check(self):
+        connected = True
+        try:
+            if not os.path.isdir(self.root_dir):
+                connected = False
+                message = f"Could not access critical directories."
+            else:
+                message = "Connected successfully."
+        except Exception as e:
+            logger.info(f"Issue with health check {repr(e)}")
+            connected = False
+            message = repr(e)
+
+        return {"connected": connected, "message": message}
