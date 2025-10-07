@@ -160,7 +160,7 @@ class LocalFileSystemStorage(AbstractStorage):
         try:
             if not os.path.isdir(self.root_dir):
                 connected = False
-                message = f"Could not access critical directories."
+                message = "Could not access critical directories."
             else:
                 message = "Connected successfully."
         except Exception as e:
