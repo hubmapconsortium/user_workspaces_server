@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>user_workspaces_server.tasks &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">user_workspaces_server.tasks</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for user_workspaces_server.tasks</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">asgiref.sync</span><span class="w"> </span><span class="kn">import</span> <span class="n">async_to_sync</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">channels.layers</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_channel_layer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.apps</span><span class="w"> </span><span class="kn">import</span> <span class="n">apps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.forms.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">model_to_dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.template.loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_to_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django_q.brokers</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_broker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django_q.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">async_task</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">utils</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="update_job_status">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_job_status">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_job_status</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> status on </span><span class="si">{</span><span class="n">get_broker</span><span class="p">()</span><span class="o">.</span><span class="n">list_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">resource</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_resource</span>
+    <span class="n">resource_job_info</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">get_resource_job</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+    <span class="n">current_job_status</span> <span class="o">=</span> <span class="n">resource_job_info</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Check the existing job status</span>
+    <span class="c1"># If the job is STOPPING, FAILED, or COMPLETE</span>
+    <span class="c1"># Status should only ever be one of the following:</span>
+    <span class="c1"># pending, running, complete, failed, stopping</span>
+
+    <span class="n">job</span><span class="o">.</span><span class="n">refresh_from_db</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">current_job_status</span> <span class="o">==</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span> <span class="ow">and</span> <span class="n">job</span><span class="o">.</span><span class="n">datetime_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">datetime_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">datetime_created</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">)</span>
+        <span class="n">time_pending</span> <span class="o">=</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">datetime_start</span> <span class="o">-</span> <span class="n">job</span><span class="o">.</span><span class="n">datetime_created</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">][</span><span class="s2">&quot;time_pending&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_pending</span>
+    <span class="k">elif</span> <span class="n">current_job_status</span> <span class="ow">in</span> <span class="p">[</span><span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COMPLETE</span><span class="p">,</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span><span class="p">]:</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">datetime_end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">current_job_status</span> <span class="o">==</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">PENDING</span><span class="p">:</span>
+        <span class="n">current_time_pending</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">datetime_created</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">)</span> <span class="o">-</span> <span class="n">job</span><span class="o">.</span><span class="n">datetime_created</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+        <span class="n">time_pending_catch</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;time_pending_catch&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_pending_catch</span><span class="p">)</span> <span class="ow">and</span> <span class="n">current_time_pending</span> <span class="o">&gt;</span> <span class="n">time_pending_catch</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> for user </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">user_id</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2"> has been pending more than </span><span class="si">{</span><span class="n">time_pending_catch</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">current_job_status</span> <span class="o">==</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> for user </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">user_id</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2"> has failed.&quot;</span><span class="p">)</span>
+
+    <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">status</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">STOPPING</span>
+            <span class="ow">and</span> <span class="n">current_job_status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COMPLETE</span><span class="p">,</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">else</span> <span class="n">current_job_status</span>
+    <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job_type_config</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">available_job_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">job_type</span>
+        <span class="p">)</span>
+
+        <span class="n">job_type</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_controller_object</span><span class="p">(</span>
+            <span class="n">job_type_config</span><span class="p">[</span><span class="s2">&quot;job_type&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;jobtypes&quot;</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="n">job_type_config</span><span class="p">[</span><span class="s2">&quot;environment_details&quot;</span><span class="p">][</span>
+                    <span class="n">settings</span><span class="o">.</span><span class="n">UWS_CONFIG</span><span class="p">[</span><span class="s2">&quot;main_resource&quot;</span><span class="p">]</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;job_details&quot;</span><span class="p">:</span> <span class="n">model_to_dict</span><span class="p">(</span><span class="n">job</span><span class="p">),</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid job type specified&quot;</span><span class="p">)</span>
+
+    <span class="c1"># TODO: Make sure that we&#39;re using the resource to do this type of status check</span>
+    <span class="n">job_status</span> <span class="o">=</span> <span class="n">job_type</span><span class="o">.</span><span class="n">status_check</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+
+    <span class="n">job</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">job_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+    <span class="n">job</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">job_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metrics&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+
+    <span class="c1"># TODO: At some point we will have metrics returned by resource_job_info</span>
+    <span class="n">job</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">resource_job_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+
+    <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;connection_details&quot;</span><span class="p">,</span> <span class="p">{}):</span>
+        <span class="c1"># Check whether the url_domain is set. Maybe some jobtypes set their own url_domain</span>
+        <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">][</span><span class="s2">&quot;connection_details&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url_domain&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">][</span><span class="s2">&quot;connection_details&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;url_domain&quot;</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">passthrough_domain</span>
+
+    <span class="n">job</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="n">channel_layer</span> <span class="o">=</span> <span class="n">get_channel_layer</span><span class="p">()</span>
+
+    <span class="n">async_to_sync</span><span class="p">(</span><span class="n">channel_layer</span><span class="o">.</span><span class="n">group_send</span><span class="p">)(</span>
+        <span class="sa">f</span><span class="s2">&quot;job_status_</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;job_status_update&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                <span class="s2">&quot;current_job_details&quot;</span><span class="p">:</span> <span class="n">job</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="queue_job_update">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.queue_job_update">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">queue_job_update</span><span class="p">(</span><span class="n">task</span><span class="p">):</span>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">args</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">PENDING</span><span class="p">,</span>
+        <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">,</span>
+        <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">STOPPING</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="n">async_task</span><span class="p">(</span>
+            <span class="s2">&quot;user_workspaces_server.tasks.update_job_status&quot;</span><span class="p">,</span>
+            <span class="n">job_id</span><span class="p">,</span>
+            <span class="n">hook</span><span class="o">=</span><span class="s2">&quot;user_workspaces_server.tasks.queue_job_update&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="ow">in</span> <span class="p">[</span><span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COMPLETE</span><span class="p">,</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span><span class="p">]:</span>
+        <span class="n">workspace</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">workspace_id</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">workspace_id</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">workspace_id</span><span class="p">,</span>
+                <span class="n">status__in</span><span class="o">=</span><span class="p">[</span><span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">PENDING</span><span class="p">,</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">],</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">workspace</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">DELETING</span>
+        <span class="p">):</span>
+            <span class="n">workspace</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">IDLE</span>
+            <span class="n">workspace</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">async_update_workspace</span><span class="p">(</span><span class="n">workspace</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+            <span class="n">async_task</span><span class="p">(</span>
+                <span class="s2">&quot;user_workspaces_server.tasks.update_job_core_hours&quot;</span><span class="p">,</span>
+                <span class="n">job_id</span><span class="p">,</span>
+                <span class="n">cluster</span><span class="o">=</span><span class="s2">&quot;myproject&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="update_job_core_hours">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_job_core_hours">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_job_core_hours</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> core hours on </span><span class="si">{</span><span class="n">get_broker</span><span class="p">()</span><span class="o">.</span><span class="n">list_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">resource</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_resource</span>
+    <span class="n">job</span><span class="o">.</span><span class="n">core_hours</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">get_job_core_hours</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+    <span class="n">job</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">user_quota</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">UserQuota</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">workspace_id</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="c1"># If this user has a quota spawn a routine to update the core hours.</span>
+    <span class="k">if</span> <span class="n">user_quota</span><span class="p">:</span>
+        <span class="n">async_task</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server.tasks.update_user_quota_core_hours&quot;</span><span class="p">,</span> <span class="n">user_quota</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="stop_job">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.stop_job">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stop_job</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stopping job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">get_broker</span><span class="p">()</span><span class="o">.</span><span class="n">list_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">resource</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_resource</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">resource</span><span class="o">.</span><span class="n">stop_job</span><span class="p">(</span><span class="n">job</span><span class="p">):</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="delete_workspace">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.delete_workspace">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_workspace</span><span class="p">(</span><span class="n">workspace_id</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deleting workspace </span><span class="si">{</span><span class="n">workspace_id</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">get_broker</span><span class="p">()</span><span class="o">.</span><span class="n">list_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">workspace</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">workspace_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Workspace </span><span class="si">{</span><span class="n">workspace_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">main_storage</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_storage</span>
+    <span class="n">external_user_mapping</span> <span class="o">=</span> <span class="n">main_storage</span><span class="o">.</span><span class="n">storage_user_authentication</span><span class="o">.</span><span class="n">has_permission</span><span class="p">(</span>
+        <span class="n">workspace</span><span class="o">.</span><span class="n">user_id</span>
+    <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">main_storage</span><span class="o">.</span><span class="n">delete_dir</span><span class="p">(</span><span class="n">workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">external_user_mapping</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">workspace</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">ERROR</span>
+        <span class="n">workspace</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not delete workspace </span><span class="si">{</span><span class="n">workspace_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">workspace</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+    <span class="n">user_quota</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">UserQuota</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">workspace</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="c1"># If this user has a quota spawn a routine to update the disk space.</span>
+    <span class="k">if</span> <span class="n">user_quota</span><span class="p">:</span>
+        <span class="n">async_task</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server.tasks.update_user_quota_disk_space&quot;</span><span class="p">,</span> <span class="n">user_quota</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="async_update_workspace">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.async_update_workspace">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">async_update_workspace</span><span class="p">(</span><span class="n">workspace_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="c1"># Helper that makes sure updates go to the &quot;long&quot; cluster</span>
+    <span class="n">async_task</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server.tasks.update_workspace&quot;</span><span class="p">,</span> <span class="n">workspace_id</span><span class="p">,</span> <span class="n">cluster</span><span class="o">=</span><span class="s2">&quot;long&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="update_workspace">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_workspace">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_workspace</span><span class="p">(</span><span class="n">workspace_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating workspace </span><span class="si">{</span><span class="n">workspace_id</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">get_broker</span><span class="p">()</span><span class="o">.</span><span class="n">list_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">workspace</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">workspace_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Workspace </span><span class="si">{</span><span class="n">workspace_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">main_storage</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_storage</span>
+    <span class="n">current_details</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;symlinks&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+    <span class="c1"># This will IGNORE dot directories and files</span>
+    <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span><span class="p">,</span> <span class="n">dirfd</span> <span class="ow">in</span> <span class="n">main_storage</span><span class="o">.</span><span class="n">get_dir_tree</span><span class="p">(</span><span class="n">workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="n">dirnames</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">dirname</span> <span class="k">for</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="n">dirnames</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">dirname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">]</span>
+        <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">symlink</span> <span class="ow">in</span> <span class="n">dirnames</span><span class="p">:</span>
+            <span class="n">symlink_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">symlink</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">symlink_path</span><span class="p">):</span>
+                <span class="n">relative_path</span> <span class="o">=</span> <span class="n">symlink_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_storage</span><span class="o">.</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">),</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">)</span>
+                <span class="n">current_details</span><span class="p">[</span><span class="s2">&quot;symlinks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">relative_path</span><span class="p">})</span>
+
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="n">relative_path</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_storage</span><span class="o">.</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">),</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">current_details</span><span class="p">[</span><span class="s2">&quot;symlinks&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">relative_path</span><span class="p">}</span>
+            <span class="p">)</span>
+
+    <span class="n">workspace</span><span class="o">.</span><span class="n">workspace_details</span><span class="p">[</span><span class="s2">&quot;current_workspace_details&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_details</span>
+
+    <span class="n">dir_size</span> <span class="o">=</span> <span class="n">main_storage</span><span class="o">.</span><span class="n">get_dir_size</span><span class="p">(</span><span class="n">workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">workspace</span><span class="o">.</span><span class="n">disk_space</span> <span class="o">=</span> <span class="n">dir_size</span>
+    <span class="n">workspace</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="n">user_quota</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">UserQuota</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">workspace</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="c1"># If this user has a quota spawn a routine to update the disk space.</span>
+    <span class="k">if</span> <span class="n">user_quota</span><span class="p">:</span>
+        <span class="n">async_task</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server.tasks.update_user_quota_disk_space&quot;</span><span class="p">,</span> <span class="n">user_quota</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="update_user_quota_disk_space">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_user_quota_disk_space">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_user_quota_disk_space</span><span class="p">(</span><span class="n">user_quota_id</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating user quota </span><span class="si">{</span><span class="n">user_quota_id</span><span class="si">}</span><span class="s2"> disk space on </span><span class="si">{</span><span class="n">get_broker</span><span class="p">()</span><span class="o">.</span><span class="n">list_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">user_quota</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">UserQuota</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">user_quota_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">UserQuota</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;UserQuota </span><span class="si">{</span><span class="n">user_quota_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">user_quota</span><span class="o">.</span><span class="n">used_disk_space</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="n">user_id</span><span class="o">=</span><span class="n">user_quota</span><span class="o">.</span><span class="n">user_id</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;disk_space&quot;</span><span class="p">))[</span><span class="s2">&quot;disk_space__sum&quot;</span><span class="p">]</span>
+    <span class="n">user_quota</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="update_user_quota_core_hours">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_user_quota_core_hours">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_user_quota_core_hours</span><span class="p">(</span><span class="n">user_quota_id</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating user quota </span><span class="si">{</span><span class="n">user_quota_id</span><span class="si">}</span><span class="s2"> core hours on </span><span class="si">{</span><span class="n">get_broker</span><span class="p">()</span><span class="o">.</span><span class="n">list_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">user_quota</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">UserQuota</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">user_quota_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">UserQuota</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;UserQuota </span><span class="si">{</span><span class="n">user_quota_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">user_quota</span><span class="o">.</span><span class="n">used_core_hours</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="n">workspace_id__user_id</span><span class="o">=</span><span class="n">user_quota</span><span class="o">.</span><span class="n">user_id</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;core_hours&quot;</span><span class="p">))[</span><span class="s2">&quot;core_hours__sum&quot;</span><span class="p">]</span>
+    <span class="n">user_quota</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="initialize_shared_workspace">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.initialize_shared_workspace">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialize_shared_workspace</span><span class="p">(</span><span class="n">shared_workspace_mapping_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">shared_workspace_mapping</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SharedWorkspaceMapping</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="n">pk</span><span class="o">=</span><span class="n">shared_workspace_mapping_id</span>
+    <span class="p">)</span>
+    <span class="n">original_workspace</span> <span class="o">=</span> <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">original_workspace_id</span>
+    <span class="n">shared_workspace</span> <span class="o">=</span> <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">shared_workspace_id</span>
+
+    <span class="n">main_storage</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_storage</span>
+    <span class="n">external_user_mapping</span> <span class="o">=</span> <span class="n">main_storage</span><span class="o">.</span><span class="n">storage_user_authentication</span><span class="o">.</span><span class="n">has_permission</span><span class="p">(</span>
+        <span class="n">shared_workspace</span><span class="o">.</span><span class="n">user_id</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Set the shared_workspace file path</span>
+    <span class="n">shared_workspace</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">external_user_mapping</span><span class="o">.</span><span class="n">external_username</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">shared_workspace</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Copy non . directories</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_storage</span><span class="o">.</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">original_workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">),</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_storage</span><span class="o">.</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">shared_workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">),</span>
+            <span class="n">ignore</span><span class="o">=</span><span class="n">shutil</span><span class="o">.</span><span class="n">ignore_patterns</span><span class="p">(</span><span class="s2">&quot;.*&quot;</span><span class="p">),</span>
+            <span class="n">symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">main_storage</span><span class="o">.</span><span class="n">set_ownership</span><span class="p">(</span>
+            <span class="n">shared_workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">external_user_mapping</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Copying files for </span><span class="si">{</span><span class="n">shared_workspace_mapping</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">async_update_workspace</span><span class="p">(</span><span class="n">shared_workspace</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">render_to_string</span><span class="p">(</span>
+        <span class="s2">&quot;email_templates/share_email.txt&quot;</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;sharer&quot;</span><span class="p">:</span> <span class="n">original_workspace</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
+            <span class="s2">&quot;receiver&quot;</span><span class="p">:</span> <span class="n">shared_workspace</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
+            <span class="s2">&quot;mapping_details&quot;</span><span class="p">:</span> <span class="n">shared_workspace_mapping</span><span class="p">,</span>
+            <span class="s2">&quot;original_workspace&quot;</span><span class="p">:</span> <span class="n">original_workspace</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">async_task</span><span class="p">(</span>
+        <span class="s2">&quot;django.core.mail.send_mail&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Invitation to Share a Workspace&quot;</span><span class="p">,</span>
+        <span class="n">message</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">shared_workspace</span><span class="o">.</span><span class="n">user_id</span><span class="o">.</span><span class="n">email</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># TODO: Set shared_workspace status to idle</span>
+    <span class="n">shared_workspace</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;idle&quot;</span>
+    <span class="n">shared_workspace</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="check_main_storage_user">
+<a class="viewcode-back" href="../../user_workspaces_server.tasks.html#user_workspaces_server.tasks.check_main_storage_user">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_main_storage_user</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+    <span class="n">main_storage</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_storage</span>
+
+    <span class="n">external_user_mapping</span> <span class="o">=</span> <span class="n">main_storage</span><span class="o">.</span><span class="n">storage_user_authentication</span><span class="o">.</span><span class="n">has_permission</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">external_user_mapping</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2"> could not be authenticated on </span><span class="si">{</span><span class="n">main_storage</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

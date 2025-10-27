@@ -1,0 +1,1317 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module Reference" href="modules.html" />
+    <link rel="prev" title="Architecture" href="architecture.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authentication-endpoints">Authentication Endpoints</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.user_workspaces_server_token_view.UserWorkspacesServerTokenView"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerTokenView</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#workspace-management">Workspace Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.views.workspace_view.WorkspaceView"><code class="docutils literal notranslate"><span class="pre">WorkspaceView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.workspace_view.WorkspaceView.permission_classes"><code class="docutils literal notranslate"><span class="pre">WorkspaceView.permission_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.workspace_view.WorkspaceView.get"><code class="docutils literal notranslate"><span class="pre">WorkspaceView.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.workspace_view.WorkspaceView.post"><code class="docutils literal notranslate"><span class="pre">WorkspaceView.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.workspace_view.WorkspaceView.put"><code class="docutils literal notranslate"><span class="pre">WorkspaceView.put()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.workspace_view.WorkspaceView.delete"><code class="docutils literal notranslate"><span class="pre">WorkspaceView.delete()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#shared-workspace-management">Shared Workspace Management</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceView</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#job-management">Job Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.views.job_view.JobView"><code class="docutils literal notranslate"><span class="pre">JobView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.job_view.JobView.permission_classes"><code class="docutils literal notranslate"><span class="pre">JobView.permission_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.job_view.JobView.get"><code class="docutils literal notranslate"><span class="pre">JobView.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.job_view.JobView.put"><code class="docutils literal notranslate"><span class="pre">JobView.put()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#job-type-information">Job Type Information</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.job_type_view.JobTypeView"><code class="docutils literal notranslate"><span class="pre">JobTypeView</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#user-management">User Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.views.user_view.UserView"><code class="docutils literal notranslate"><span class="pre">UserView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.user_view.UserView.permission_classes"><code class="docutils literal notranslate"><span class="pre">UserView.permission_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.user_view.UserView.return_user_fields"><code class="docutils literal notranslate"><span class="pre">UserView.return_user_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.user_view.UserView.get"><code class="docutils literal notranslate"><span class="pre">UserView.get()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#system-information">System Information</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.views.status_view.StatusView"><code class="docutils literal notranslate"><span class="pre">StatusView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.status_view.StatusView.permission_classes"><code class="docutils literal notranslate"><span class="pre">StatusView.permission_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.status_view.StatusView.get"><code class="docutils literal notranslate"><span class="pre">StatusView.get()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#parameter-validation">Parameter Validation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.parameter_view.ParameterView"><code class="docutils literal notranslate"><span class="pre">ParameterView</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#websocket-support">WebSocket Support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.ws_consumers.JobStatusConsumer"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.ws_consumers.JobStatusConsumer.connect"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.ws_consumers.JobStatusConsumer.disconnect"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer.disconnect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.ws_consumers.JobStatusConsumer.receive"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer.receive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.ws_consumers.JobStatusConsumer.job_status_update"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer.job_status_update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.ws_consumers.PassthroughConsumer"><code class="docutils literal notranslate"><span class="pre">PassthroughConsumer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.ws_consumers.PassthroughConsumer.connect"><code class="docutils literal notranslate"><span class="pre">PassthroughConsumer.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.ws_consumers.PassthroughConsumer.disconnect"><code class="docutils literal notranslate"><span class="pre">PassthroughConsumer.disconnect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.ws_consumers.PassthroughConsumer.receive"><code class="docutils literal notranslate"><span class="pre">PassthroughConsumer.receive()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#passthrough-proxy">Passthrough Proxy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.views.passthrough_view.PassthroughView"><code class="docutils literal notranslate"><span class="pre">PassthroughView</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-models">Data Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.models.Workspace"><code class="docutils literal notranslate"><span class="pre">Workspace</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.Status"><code class="docutils literal notranslate"><span class="pre">Workspace.Status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.user_id"><code class="docutils literal notranslate"><span class="pre">Workspace.user_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.name"><code class="docutils literal notranslate"><span class="pre">Workspace.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.description"><code class="docutils literal notranslate"><span class="pre">Workspace.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.file_path"><code class="docutils literal notranslate"><span class="pre">Workspace.file_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.disk_space"><code class="docutils literal notranslate"><span class="pre">Workspace.disk_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.datetime_created"><code class="docutils literal notranslate"><span class="pre">Workspace.datetime_created</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.datetime_last_modified"><code class="docutils literal notranslate"><span class="pre">Workspace.datetime_last_modified</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.datetime_last_job_launch"><code class="docutils literal notranslate"><span class="pre">Workspace.datetime_last_job_launch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.workspace_details"><code class="docutils literal notranslate"><span class="pre">Workspace.workspace_details</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.status"><code class="docutils literal notranslate"><span class="pre">Workspace.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.default_job_type"><code class="docutils literal notranslate"><span class="pre">Workspace.default_job_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.get_query_param_fields"><code class="docutils literal notranslate"><span class="pre">Workspace.get_query_param_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.get_dict_fields"><code class="docutils literal notranslate"><span class="pre">Workspace.get_dict_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Workspace.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Workspace.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.get_next_by_datetime_created"><code class="docutils literal notranslate"><span class="pre">Workspace.get_next_by_datetime_created()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.get_previous_by_datetime_created"><code class="docutils literal notranslate"><span class="pre">Workspace.get_previous_by_datetime_created()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.get_status_display"><code class="docutils literal notranslate"><span class="pre">Workspace.get_status_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.id"><code class="docutils literal notranslate"><span class="pre">Workspace.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.job_set"><code class="docutils literal notranslate"><span class="pre">Workspace.job_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.objects"><code class="docutils literal notranslate"><span class="pre">Workspace.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.original_workspace_set"><code class="docutils literal notranslate"><span class="pre">Workspace.original_workspace_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.shared_workspace_set"><code class="docutils literal notranslate"><span class="pre">Workspace.shared_workspace_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Workspace.user_id_id"><code class="docutils literal notranslate"><span class="pre">Workspace.user_id_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.models.Job"><code class="docutils literal notranslate"><span class="pre">Job</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.Status"><code class="docutils literal notranslate"><span class="pre">Job.Status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.user_id"><code class="docutils literal notranslate"><span class="pre">Job.user_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.workspace_id"><code class="docutils literal notranslate"><span class="pre">Job.workspace_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.resource_job_id"><code class="docutils literal notranslate"><span class="pre">Job.resource_job_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.job_type"><code class="docutils literal notranslate"><span class="pre">Job.job_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.resource_name"><code class="docutils literal notranslate"><span class="pre">Job.resource_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.status"><code class="docutils literal notranslate"><span class="pre">Job.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.datetime_created"><code class="docutils literal notranslate"><span class="pre">Job.datetime_created</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.datetime_start"><code class="docutils literal notranslate"><span class="pre">Job.datetime_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.datetime_end"><code class="docutils literal notranslate"><span class="pre">Job.datetime_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.core_hours"><code class="docutils literal notranslate"><span class="pre">Job.core_hours</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.job_details"><code class="docutils literal notranslate"><span class="pre">Job.job_details</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.resource_options"><code class="docutils literal notranslate"><span class="pre">Job.resource_options</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.get_query_param_fields"><code class="docutils literal notranslate"><span class="pre">Job.get_query_param_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.get_dict_fields"><code class="docutils literal notranslate"><span class="pre">Job.get_dict_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Job.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Job.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.get_next_by_datetime_created"><code class="docutils literal notranslate"><span class="pre">Job.get_next_by_datetime_created()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.get_previous_by_datetime_created"><code class="docutils literal notranslate"><span class="pre">Job.get_previous_by_datetime_created()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.get_status_display"><code class="docutils literal notranslate"><span class="pre">Job.get_status_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.id"><code class="docutils literal notranslate"><span class="pre">Job.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.objects"><code class="docutils literal notranslate"><span class="pre">Job.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.user_id_id"><code class="docutils literal notranslate"><span class="pre">Job.user_id_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.Job.workspace_id_id"><code class="docutils literal notranslate"><span class="pre">Job.workspace_id_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.models.UserQuota"><code class="docutils literal notranslate"><span class="pre">UserQuota</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.user_id"><code class="docutils literal notranslate"><span class="pre">UserQuota.user_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.max_disk_space"><code class="docutils literal notranslate"><span class="pre">UserQuota.max_disk_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.max_core_hours"><code class="docutils literal notranslate"><span class="pre">UserQuota.max_core_hours</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.used_disk_space"><code class="docutils literal notranslate"><span class="pre">UserQuota.used_disk_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.used_core_hours"><code class="docutils literal notranslate"><span class="pre">UserQuota.used_core_hours</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">UserQuota.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">UserQuota.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.id"><code class="docutils literal notranslate"><span class="pre">UserQuota.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.objects"><code class="docutils literal notranslate"><span class="pre">UserQuota.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.UserQuota.user_id_id"><code class="docutils literal notranslate"><span class="pre">UserQuota.user_id_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.user_id"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.user_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.external_user_id"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.external_user_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.external_username"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.external_username</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.user_authentication_name"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.user_authentication_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.external_user_details"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.external_user_details</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.id"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.objects"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.ExternalUserMapping.user_id_id"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.user_id_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.original_workspace_id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.original_workspace_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.shared_workspace_id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.shared_workspace_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.last_resource_options"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.last_resource_options</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.last_job_type"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.last_job_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.is_accepted"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.is_accepted</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.datetime_share_created"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.datetime_share_created</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.get_query_param_fields"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.get_query_param_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.get_dict_fields"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.get_dict_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.objects"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.original_workspace_id_id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.original_workspace_id_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.models.SharedWorkspaceMapping.shared_workspace_id_id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.shared_workspace_id_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#serializers">Serializers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.serializers.UserSerializer"><code class="docutils literal notranslate"><span class="pre">UserSerializer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.serializers.UserSerializer.Meta"><code class="docutils literal notranslate"><span class="pre">UserSerializer.Meta</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.serializers.WorkspaceSerializer"><code class="docutils literal notranslate"><span class="pre">WorkspaceSerializer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.serializers.WorkspaceSerializer.Meta"><code class="docutils literal notranslate"><span class="pre">WorkspaceSerializer.Meta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.serializers.WorkspaceSerializer.__init__"><code class="docutils literal notranslate"><span class="pre">WorkspaceSerializer.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMappingSerializer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMappingSerializer.Meta</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<p>The User Workspaces Server provides a RESTful API for managing workspaces, jobs, users, and system resources. All endpoints use JSON for request and response payloads.</p>
+<section id="authentication">
+<h2>Authentication<a class="headerlink" href="#authentication" title="Link to this heading"></a></h2>
+<p>The API uses custom token-based authentication with the <code class="docutils literal notranslate"><span class="pre">UWS-Authorization</span></code> header:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">UWS-Authorization: &lt;token&gt;</span>
+</pre></div>
+</div>
+<section id="authentication-endpoints">
+<h3>Authentication Endpoints<a class="headerlink" href="#authentication-endpoints" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.user_workspaces_server_token_view.UserWorkspacesServerTokenView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.user_workspaces_server_token_view.</span></span><span class="sig-name descname"><span class="pre">UserWorkspacesServerTokenView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/user_workspaces_server_token_view.html#UserWorkspacesServerTokenView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.user_workspaces_server_token_view.UserWorkspacesServerTokenView" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.user_workspaces_server_token_view.UserWorkspacesServerTokenView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/user_workspaces_server_token_view.html#UserWorkspacesServerTokenView.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.user_workspaces_server_token_view.UserWorkspacesServerTokenView.post" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="workspace-management">
+<h2>Workspace Management<a class="headerlink" href="#workspace-management" title="Link to this heading"></a></h2>
+<p>Workspaces represent user environments with isolated storage and compute access.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.workspace_view.WorkspaceView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.workspace_view.</span></span><span class="sig-name descname"><span class="pre">WorkspaceView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/workspace_view.html#WorkspaceView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.workspace_view.WorkspaceView" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.views.workspace_view.WorkspaceView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'rest_framework.permissions.IsAuthenticated'&gt;]</span></em><a class="headerlink" href="#user_workspaces_server.views.workspace_view.WorkspaceView.permission_classes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.workspace_view.WorkspaceView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workspace_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/workspace_view.html#WorkspaceView.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.workspace_view.WorkspaceView.get" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.workspace_view.WorkspaceView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/workspace_view.html#WorkspaceView.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.workspace_view.WorkspaceView.post" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.workspace_view.WorkspaceView.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workspace_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">put_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/workspace_view.html#WorkspaceView.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.workspace_view.WorkspaceView.put" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.workspace_view.WorkspaceView.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workspace_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/workspace_view.html#WorkspaceView.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.workspace_view.WorkspaceView.delete" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<section id="shared-workspace-management">
+<h3>Shared Workspace Management<a class="headerlink" href="#shared-workspace-management" title="Link to this heading"></a></h3>
+<p>Collaborative workspace features for sharing between users.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.shared_workspace_view.</span></span><span class="sig-name descname"><span class="pre">SharedWorkspaceView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/shared_workspace_view.html#SharedWorkspaceView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'rest_framework.permissions.IsAuthenticated'&gt;]</span></em><a class="headerlink" href="#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.permission_classes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_workspace_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/shared_workspace_view.html#SharedWorkspaceView.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.get" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/shared_workspace_view.html#SharedWorkspaceView.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.post" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_workspace_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">put_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/shared_workspace_view.html#SharedWorkspaceView.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.put" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_workspace_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/shared_workspace_view.html#SharedWorkspaceView.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.delete" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="job-management">
+<h2>Job Management<a class="headerlink" href="#job-management" title="Link to this heading"></a></h2>
+<p>Jobs represent computational tasks executed within workspaces.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.job_view.JobView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.job_view.</span></span><span class="sig-name descname"><span class="pre">JobView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/job_view.html#JobView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.job_view.JobView" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.views.job_view.JobView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'rest_framework.permissions.IsAuthenticated'&gt;]</span></em><a class="headerlink" href="#user_workspaces_server.views.job_view.JobView.permission_classes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.job_view.JobView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/job_view.html#JobView.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.job_view.JobView.get" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.job_view.JobView.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">put_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/job_view.html#JobView.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.job_view.JobView.put" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<section id="job-type-information">
+<h3>Job Type Information<a class="headerlink" href="#job-type-information" title="Link to this heading"></a></h3>
+<p>Information about available job types and their parameters.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.job_type_view.JobTypeView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.job_type_view.</span></span><span class="sig-name descname"><span class="pre">JobTypeView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/job_type_view.html#JobTypeView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.job_type_view.JobTypeView" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.job_type_view.JobTypeView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/job_type_view.html#JobTypeView.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.job_type_view.JobTypeView.get" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="user-management">
+<h2>User Management<a class="headerlink" href="#user-management" title="Link to this heading"></a></h2>
+<p>User information, quotas, and authentication details.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.user_view.UserView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.user_view.</span></span><span class="sig-name descname"><span class="pre">UserView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/user_view.html#UserView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.user_view.UserView" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.views.user_view.UserView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'rest_framework.permissions.IsAuthenticated'&gt;]</span></em><a class="headerlink" href="#user_workspaces_server.views.user_view.UserView.permission_classes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.views.user_view.UserView.return_user_fields">
+<span class="sig-name descname"><span class="pre">return_user_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'first_name',</span> <span class="pre">'last_name',</span> <span class="pre">'username',</span> <span class="pre">'email']</span></em><a class="headerlink" href="#user_workspaces_server.views.user_view.UserView.return_user_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.user_view.UserView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/user_view.html#UserView.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.user_view.UserView.get" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="system-information">
+<h2>System Information<a class="headerlink" href="#system-information" title="Link to this heading"></a></h2>
+<p>System status and configuration information.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.status_view.StatusView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.status_view.</span></span><span class="sig-name descname"><span class="pre">StatusView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/status_view.html#StatusView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.status_view.StatusView" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.views.status_view.StatusView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#user_workspaces_server.views.status_view.StatusView.permission_classes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.status_view.StatusView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/status_view.html#StatusView.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.status_view.StatusView.get" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<section id="parameter-validation">
+<h3>Parameter Validation<a class="headerlink" href="#parameter-validation" title="Link to this heading"></a></h3>
+<p>Parameter and configuration validation endpoints.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.parameter_view.ParameterView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.parameter_view.</span></span><span class="sig-name descname"><span class="pre">ParameterView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/parameter_view.html#ParameterView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.parameter_view.ParameterView" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.parameter_view.ParameterView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/parameter_view.html#ParameterView.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.parameter_view.ParameterView.get" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="websocket-support">
+<h2>WebSocket Support<a class="headerlink" href="#websocket-support" title="Link to this heading"></a></h2>
+<p>Real-time communication for job status updates and interactive sessions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.JobStatusConsumer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.ws_consumers.</span></span><span class="sig-name descname"><span class="pre">JobStatusConsumer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#JobStatusConsumer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.JobStatusConsumer" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.JobStatusConsumer.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#JobStatusConsumer.connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.JobStatusConsumer.connect" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.JobStatusConsumer.disconnect">
+<span class="sig-name descname"><span class="pre">disconnect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">close_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#JobStatusConsumer.disconnect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.JobStatusConsumer.disconnect" title="Link to this definition"></a></dt>
+<dd><p>Called when a WebSocket connection is closed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.JobStatusConsumer.receive">
+<span class="sig-name descname"><span class="pre">receive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#JobStatusConsumer.receive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.JobStatusConsumer.receive" title="Link to this definition"></a></dt>
+<dd><p>Called with a decoded WebSocket frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.JobStatusConsumer.job_status_update">
+<span class="sig-name descname"><span class="pre">job_status_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#JobStatusConsumer.job_status_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.JobStatusConsumer.job_status_update" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.PassthroughConsumer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.ws_consumers.</span></span><span class="sig-name descname"><span class="pre">PassthroughConsumer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#PassthroughConsumer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.PassthroughConsumer" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.PassthroughConsumer.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#PassthroughConsumer.connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.PassthroughConsumer.connect" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.PassthroughConsumer.disconnect">
+<span class="sig-name descname"><span class="pre">disconnect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">close_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#PassthroughConsumer.disconnect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.PassthroughConsumer.disconnect" title="Link to this definition"></a></dt>
+<dd><p>Called when a WebSocket connection is closed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.ws_consumers.PassthroughConsumer.receive">
+<span class="sig-name descname"><span class="pre">receive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/ws_consumers.html#PassthroughConsumer.receive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.ws_consumers.PassthroughConsumer.receive" title="Link to this definition"></a></dt>
+<dd><p>Called with a decoded WebSocket frame.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="passthrough-proxy">
+<h3>Passthrough Proxy<a class="headerlink" href="#passthrough-proxy" title="Link to this heading"></a></h3>
+<p>HTTP proxy for forwarding requests to running jobs.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.views.passthrough_view.PassthroughView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.views.passthrough_view.</span></span><span class="sig-name descname"><span class="pre">PassthroughView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/passthrough_view.html#PassthroughView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.passthrough_view.PassthroughView" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.views.passthrough_view.PassthroughView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#user_workspaces_server.views.passthrough_view.PassthroughView.permission_classes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.passthrough_view.PassthroughView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remainder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/passthrough_view.html#PassthroughView.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.passthrough_view.PassthroughView.get" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.passthrough_view.PassthroughView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remainder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/passthrough_view.html#PassthroughView.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.passthrough_view.PassthroughView.post" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.passthrough_view.PassthroughView.patch">
+<span class="sig-name descname"><span class="pre">patch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remainder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/passthrough_view.html#PassthroughView.patch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.passthrough_view.PassthroughView.patch" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.passthrough_view.PassthroughView.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remainder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/passthrough_view.html#PassthroughView.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.passthrough_view.PassthroughView.put" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.views.passthrough_view.PassthroughView.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remainder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/views/passthrough_view.html#PassthroughView.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.views.passthrough_view.PassthroughView.delete" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="data-models">
+<h2>Data Models<a class="headerlink" href="#data-models" title="Link to this heading"></a></h2>
+<p>Core data models used by the API.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.models.</span></span><span class="sig-name descname"><span class="pre">Workspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disk_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_created</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_last_modified</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_last_job_launch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workspace_details</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_job_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#Workspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.Workspace" title="Link to this definition"></a></dt>
+<dd><dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.Status">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#Workspace.Status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.Workspace.Status" title="Link to this definition"></a></dt>
+<dd><p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.Status.INITIALIZING">
+<span class="sig-name descname"><span class="pre">INITIALIZING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'initializing'</span></em><a class="headerlink" href="#user_workspaces_server.models.Workspace.Status.INITIALIZING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.Status.IDLE">
+<span class="sig-name descname"><span class="pre">IDLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'idle'</span></em><a class="headerlink" href="#user_workspaces_server.models.Workspace.Status.IDLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.Status.ACTIVE">
+<span class="sig-name descname"><span class="pre">ACTIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'active'</span></em><a class="headerlink" href="#user_workspaces_server.models.Workspace.Status.ACTIVE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.Status.DELETING">
+<span class="sig-name descname"><span class="pre">DELETING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'deleting'</span></em><a class="headerlink" href="#user_workspaces_server.models.Workspace.Status.DELETING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.Status.ERROR">
+<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'error'</span></em><a class="headerlink" href="#user_workspaces_server.models.Workspace.Status.ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.user_id" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.name" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.description" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.file_path">
+<span class="sig-name descname"><span class="pre">file_path</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.file_path" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.disk_space">
+<span class="sig-name descname"><span class="pre">disk_space</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.disk_space" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.datetime_created">
+<span class="sig-name descname"><span class="pre">datetime_created</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.datetime_created" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.datetime_last_modified">
+<span class="sig-name descname"><span class="pre">datetime_last_modified</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.datetime_last_modified" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.datetime_last_job_launch">
+<span class="sig-name descname"><span class="pre">datetime_last_job_launch</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.datetime_last_job_launch" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.workspace_details">
+<span class="sig-name descname"><span class="pre">workspace_details</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.workspace_details" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.status">
+<span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.status" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.default_job_type">
+<span class="sig-name descname"><span class="pre">default_job_type</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.default_job_type" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.get_query_param_fields">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_query_param_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#Workspace.get_query_param_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.Workspace.get_query_param_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.get_dict_fields">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_dict_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#Workspace.get_dict_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.Workspace.get_dict_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.get_next_by_datetime_created">
+<span class="sig-name descname"><span class="pre">get_next_by_datetime_created</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">datetime_created&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#user_workspaces_server.models.Workspace.get_next_by_datetime_created" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.get_previous_by_datetime_created">
+<span class="sig-name descname"><span class="pre">get_previous_by_datetime_created</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">datetime_created&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#user_workspaces_server.models.Workspace.get_previous_by_datetime_created" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.get_status_display">
+<span class="sig-name descname"><span class="pre">get_status_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.CharField:</span> <span class="pre">status&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#user_workspaces_server.models.Workspace.get_status_display" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.job_set">
+<span class="sig-name descname"><span class="pre">job_set</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.job_set" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#user_workspaces_server.models.Workspace.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.original_workspace_set">
+<span class="sig-name descname"><span class="pre">original_workspace_set</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.original_workspace_set" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.shared_workspace_set">
+<span class="sig-name descname"><span class="pre">shared_workspace_set</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.shared_workspace_set" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Workspace.user_id_id">
+<span class="sig-name descname"><span class="pre">user_id_id</span></span><a class="headerlink" href="#user_workspaces_server.models.Workspace.user_id_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.models.</span></span><span class="sig-name descname"><span class="pre">Job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workspace_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_created</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_hours</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_details</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#Job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.Job" title="Link to this definition"></a></dt>
+<dd><dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.Status">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#Job.Status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.Job.Status" title="Link to this definition"></a></dt>
+<dd><p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.Status.PENDING">
+<span class="sig-name descname"><span class="pre">PENDING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pending'</span></em><a class="headerlink" href="#user_workspaces_server.models.Job.Status.PENDING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.Status.RUNNING">
+<span class="sig-name descname"><span class="pre">RUNNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'running'</span></em><a class="headerlink" href="#user_workspaces_server.models.Job.Status.RUNNING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.Status.COMPLETE">
+<span class="sig-name descname"><span class="pre">COMPLETE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'complete'</span></em><a class="headerlink" href="#user_workspaces_server.models.Job.Status.COMPLETE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.Status.FAILED">
+<span class="sig-name descname"><span class="pre">FAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'failed'</span></em><a class="headerlink" href="#user_workspaces_server.models.Job.Status.FAILED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.Status.STOPPING">
+<span class="sig-name descname"><span class="pre">STOPPING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stopping'</span></em><a class="headerlink" href="#user_workspaces_server.models.Job.Status.STOPPING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.user_id" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.workspace_id">
+<span class="sig-name descname"><span class="pre">workspace_id</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.workspace_id" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.resource_job_id">
+<span class="sig-name descname"><span class="pre">resource_job_id</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.resource_job_id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.job_type">
+<span class="sig-name descname"><span class="pre">job_type</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.job_type" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.resource_name">
+<span class="sig-name descname"><span class="pre">resource_name</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.resource_name" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.status">
+<span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.status" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.datetime_created">
+<span class="sig-name descname"><span class="pre">datetime_created</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.datetime_created" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.datetime_start">
+<span class="sig-name descname"><span class="pre">datetime_start</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.datetime_start" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.datetime_end">
+<span class="sig-name descname"><span class="pre">datetime_end</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.datetime_end" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.core_hours">
+<span class="sig-name descname"><span class="pre">core_hours</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.core_hours" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.job_details">
+<span class="sig-name descname"><span class="pre">job_details</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.job_details" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.resource_options">
+<span class="sig-name descname"><span class="pre">resource_options</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.resource_options" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.get_query_param_fields">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_query_param_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#Job.get_query_param_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.Job.get_query_param_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.get_dict_fields">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_dict_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#Job.get_dict_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.Job.get_dict_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.get_next_by_datetime_created">
+<span class="sig-name descname"><span class="pre">get_next_by_datetime_created</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">datetime_created&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#user_workspaces_server.models.Job.get_next_by_datetime_created" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.get_previous_by_datetime_created">
+<span class="sig-name descname"><span class="pre">get_previous_by_datetime_created</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">datetime_created&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#user_workspaces_server.models.Job.get_previous_by_datetime_created" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.get_status_display">
+<span class="sig-name descname"><span class="pre">get_status_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.CharField:</span> <span class="pre">status&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#user_workspaces_server.models.Job.get_status_display" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#user_workspaces_server.models.Job.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.user_id_id">
+<span class="sig-name descname"><span class="pre">user_id_id</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.user_id_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.Job.workspace_id_id">
+<span class="sig-name descname"><span class="pre">workspace_id_id</span></span><a class="headerlink" href="#user_workspaces_server.models.Job.workspace_id_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.models.</span></span><span class="sig-name descname"><span class="pre">UserQuota</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_disk_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_core_hours</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">used_disk_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">used_core_hours</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#UserQuota"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.UserQuota" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.user_id" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.max_disk_space">
+<span class="sig-name descname"><span class="pre">max_disk_space</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.max_disk_space" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.max_core_hours">
+<span class="sig-name descname"><span class="pre">max_core_hours</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.max_core_hours" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.used_disk_space">
+<span class="sig-name descname"><span class="pre">used_disk_space</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.used_disk_space" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.used_core_hours">
+<span class="sig-name descname"><span class="pre">used_core_hours</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.used_core_hours" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#user_workspaces_server.models.UserQuota.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.UserQuota.user_id_id">
+<span class="sig-name descname"><span class="pre">user_id_id</span></span><a class="headerlink" href="#user_workspaces_server.models.UserQuota.user_id_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.models.</span></span><span class="sig-name descname"><span class="pre">ExternalUserMapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_authentication_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_user_details</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#ExternalUserMapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.user_id" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.external_user_id">
+<span class="sig-name descname"><span class="pre">external_user_id</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.external_user_id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.external_username">
+<span class="sig-name descname"><span class="pre">external_username</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.external_username" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.user_authentication_name">
+<span class="sig-name descname"><span class="pre">user_authentication_name</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.user_authentication_name" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.external_user_details">
+<span class="sig-name descname"><span class="pre">external_user_details</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.external_user_details" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.ExternalUserMapping.user_id_id">
+<span class="sig-name descname"><span class="pre">user_id_id</span></span><a class="headerlink" href="#user_workspaces_server.models.ExternalUserMapping.user_id_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.models.</span></span><span class="sig-name descname"><span class="pre">SharedWorkspaceMapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_workspace_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_workspace_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_resource_options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_job_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_accepted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_share_created</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#SharedWorkspaceMapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.original_workspace_id">
+<span class="sig-name descname"><span class="pre">original_workspace_id</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.original_workspace_id" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.shared_workspace_id">
+<span class="sig-name descname"><span class="pre">shared_workspace_id</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.shared_workspace_id" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.last_resource_options">
+<span class="sig-name descname"><span class="pre">last_resource_options</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.last_resource_options" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.last_job_type">
+<span class="sig-name descname"><span class="pre">last_job_type</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.last_job_type" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.is_accepted">
+<span class="sig-name descname"><span class="pre">is_accepted</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.is_accepted" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.datetime_share_created">
+<span class="sig-name descname"><span class="pre">datetime_share_created</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.datetime_share_created" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.get_query_param_fields">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_query_param_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#SharedWorkspaceMapping.get_query_param_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.get_query_param_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.get_dict_fields">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_dict_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/models.html#SharedWorkspaceMapping.get_dict_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.get_dict_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.original_workspace_id_id">
+<span class="sig-name descname"><span class="pre">original_workspace_id_id</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.original_workspace_id_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.models.SharedWorkspaceMapping.shared_workspace_id_id">
+<span class="sig-name descname"><span class="pre">shared_workspace_id_id</span></span><a class="headerlink" href="#user_workspaces_server.models.SharedWorkspaceMapping.shared_workspace_id_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="serializers">
+<h2>Serializers<a class="headerlink" href="#serializers" title="Link to this heading"></a></h2>
+<p>Request/response serialization classes.</p>
+<dl class="py class" id="module-user_workspaces_server.serializers">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.UserSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.serializers.</span></span><span class="sig-name descname"><span class="pre">UserSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/serializers.html#UserSerializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.serializers.UserSerializer" title="Link to this definition"></a></dt>
+<dd><dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.UserSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="_modules/user_workspaces_server/serializers.html#UserSerializer.Meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.serializers.UserSerializer.Meta" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.UserSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#user_workspaces_server.serializers.UserSerializer.Meta.model" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/contrib/auth/#django.contrib.auth.models.User" title="(in Django v5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.UserSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['username',</span> <span class="pre">'first_name',</span> <span class="pre">'last_name',</span> <span class="pre">'email']</span></em><a class="headerlink" href="#user_workspaces_server.serializers.UserSerializer.Meta.fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.WorkspaceSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.serializers.</span></span><span class="sig-name descname"><span class="pre">WorkspaceSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/serializers.html#WorkspaceSerializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.serializers.WorkspaceSerializer" title="Link to this definition"></a></dt>
+<dd><dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.WorkspaceSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="_modules/user_workspaces_server/serializers.html#WorkspaceSerializer.Meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.serializers.WorkspaceSerializer.Meta" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.WorkspaceSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#user_workspaces_server.serializers.WorkspaceSerializer.Meta.model" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace" title="user_workspaces_server.models.Workspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Workspace</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.WorkspaceSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'description',</span> <span class="pre">'disk_space',</span> <span class="pre">'datetime_created',</span> <span class="pre">'datetime_last_modified',</span> <span class="pre">'datetime_last_job_launch',</span> <span class="pre">'workspace_details',</span> <span class="pre">'status',</span> <span class="pre">'default_job_type',</span> <span class="pre">'user_id']</span></em><a class="headerlink" href="#user_workspaces_server.serializers.WorkspaceSerializer.Meta.fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.WorkspaceSerializer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/serializers.html#WorkspaceSerializer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.serializers.WorkspaceSerializer.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.SharedWorkspaceMappingSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.serializers.</span></span><span class="sig-name descname"><span class="pre">SharedWorkspaceMappingSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/serializers.html#SharedWorkspaceMappingSerializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer" title="Link to this definition"></a></dt>
+<dd><dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="_modules/user_workspaces_server/serializers.html#SharedWorkspaceMappingSerializer.Meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta.model" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping" title="user_workspaces_server.models.SharedWorkspaceMapping"><code class="xref py py-class docutils literal notranslate"><span class="pre">SharedWorkspaceMapping</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta.exclude">
+<span class="sig-name descname"><span class="pre">exclude</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id']</span></em><a class="headerlink" href="#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta.exclude" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="architecture.html" class="btn btn-neutral float-left" title="Architecture" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="Module Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

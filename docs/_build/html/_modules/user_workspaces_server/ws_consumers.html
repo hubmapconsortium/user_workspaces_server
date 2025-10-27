@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>user_workspaces_server.ws_consumers &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">user_workspaces_server.ws_consumers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for user_workspaces_server.ws_consumers</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">websocket</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">asgiref.sync</span><span class="w"> </span><span class="kn">import</span> <span class="n">async_to_sync</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">channels.generic.websocket</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebsocketConsumer</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+
+
+<div class="viewcode-block" id="PassthroughConsumer">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.PassthroughConsumer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PassthroughConsumer</span><span class="p">(</span><span class="n">WebsocketConsumer</span><span class="p">):</span>
+<div class="viewcode-block" id="PassthroughConsumer.connect">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.PassthroughConsumer.connect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">&quot;url_route&quot;</span><span class="p">][</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;hostname&quot;</span><span class="p">]</span>
+        <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">&quot;url_route&quot;</span><span class="p">][</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;job_id&quot;</span><span class="p">]</span>
+        <span class="n">job_model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="n">connection_details</span> <span class="o">=</span> <span class="n">job_model</span><span class="o">.</span><span class="n">job_details</span><span class="p">[</span><span class="s2">&quot;current_job_details&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;proxy_details&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">connection_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]:</span>
+            <span class="n">headers</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Define WebSocket callback functions</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">ws_message</span><span class="p">(</span><span class="n">ws</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="c1"># Start a new thread for the WebSocket interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ws</span> <span class="o">=</span> <span class="n">websocket</span><span class="o">.</span><span class="n">WebSocketApp</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;ws://</span><span class="si">{</span><span class="n">hostname</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">port</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">?</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">&quot;query_string&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">cookie</span><span class="o">=</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;cookie&quot;</span><span class="p">],</span>
+            <span class="n">on_message</span><span class="o">=</span><span class="n">ws_message</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response_ws_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ws</span><span class="o">.</span><span class="n">run_forever</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response_ws_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PassthroughConsumer.disconnect">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.PassthroughConsumer.disconnect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">close_code</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ws</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response_ws_thread</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+    <span class="c1"># Receive message from WebSocket</span>
+<div class="viewcode-block" id="PassthroughConsumer.receive">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.PassthroughConsumer.receive">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bytes_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ws</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">text_data</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="JobStatusConsumer">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JobStatusConsumer</span><span class="p">(</span><span class="n">WebsocketConsumer</span><span class="p">):</span>
+<div class="viewcode-block" id="JobStatusConsumer.connect">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer.connect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">&quot;url_route&quot;</span><span class="p">][</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;job_id&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">room_group_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;job_status_</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">async_to_sync</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_layer</span><span class="o">.</span><span class="n">group_add</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">room_group_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="JobStatusConsumer.disconnect">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer.disconnect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">close_code</span><span class="p">):</span>
+        <span class="n">async_to_sync</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_layer</span><span class="o">.</span><span class="n">group_discard</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">room_group_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_name</span><span class="p">)</span></div>
+
+
+    <span class="c1"># Receive message from WebSocket</span>
+<div class="viewcode-block" id="JobStatusConsumer.receive">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer.receive">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bytes_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># TODO: What would a client want to get from this.</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="c1"># Receive message from room group</span>
+<div class="viewcode-block" id="JobStatusConsumer.job_status_update">
+<a class="viewcode-back" href="../../user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer.job_status_update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">job_status_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">job_details</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Send message to WebSocket</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">text_data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">job_details</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

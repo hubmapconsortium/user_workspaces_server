@@ -1,0 +1,470 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>user_workspaces_server package &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="user_workspaces_server.migrations package" href="user_workspaces_server.migrations.html" />
+    <link rel="prev" title="Module Reference" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Module Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">user_workspaces_server package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.html">user_workspaces_server.migrations package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.admin.html">user_workspaces_server.admin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.apps.html">user_workspaces_server.apps module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.auth.html">user_workspaces_server.auth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.exceptions.html">user_workspaces_server.exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.logging.html">user_workspaces_server.logging module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html">user_workspaces_server.models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.serializers.html">user_workspaces_server.serializers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.tasks.html">user_workspaces_server.tasks module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.urls.html">user_workspaces_server.urls module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.utils.html">user_workspaces_server.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.ws_consumers.html">user_workspaces_server.ws_consumers module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-user_workspaces_server">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">Module Reference</a></li>
+      <li class="breadcrumb-item active">user_workspaces_server package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/user_workspaces_server.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-workspaces-server-package">
+<h1>user_workspaces_server package<a class="headerlink" href="#user-workspaces-server-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.migrations.html">user_workspaces_server.migrations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.migrations.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0001_initial.html">user_workspaces_server.migrations.0001_initial module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0001_initial.html#user_workspaces_server.migrations.0001_initial.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0002_auto_20211214_2112.html">user_workspaces_server.migrations.0002_auto_20211214_2112 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0002_auto_20211214_2112.html#user_workspaces_server.migrations.0002_auto_20211214_2112.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0003_remove_job_user_id.html">user_workspaces_server.migrations.0003_remove_job_user_id module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0003_remove_job_user_id.html#user_workspaces_server.migrations.0003_remove_job_user_id.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0004_auto_20220131_2151.html">user_workspaces_server.migrations.0004_auto_20220131_2151 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0004_auto_20220131_2151.html#user_workspaces_server.migrations.0004_auto_20220131_2151.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0005_alter_job_datetime_start.html">user_workspaces_server.migrations.0005_alter_job_datetime_start module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0005_alter_job_datetime_start.html#user_workspaces_server.migrations.0005_alter_job_datetime_start.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0006_externalusermapping_external_user_details.html">user_workspaces_server.migrations.0006_externalusermapping_external_user_details module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0006_externalusermapping_external_user_details.html#user_workspaces_server.migrations.0006_externalusermapping_external_user_details.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0007_workspace_status.html">user_workspaces_server.migrations.0007_workspace_status module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0007_workspace_status.html#user_workspaces_server.migrations.0007_workspace_status.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0008_alter_job_core_hours_alter_userquota_max_core_hours_and_more.html">user_workspaces_server.migrations.0008_alter_job_core_hours_alter_userquota_max_core_hours_and_more module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0008_alter_job_core_hours_alter_userquota_max_core_hours_and_more.html#user_workspaces_server.migrations.0008_alter_job_core_hours_alter_userquota_max_core_hours_and_more.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0009_alter_job_status_alter_workspace_status.html">user_workspaces_server.migrations.0009_alter_job_status_alter_workspace_status module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0009_alter_job_status_alter_workspace_status.html#user_workspaces_server.migrations.0009_alter_job_status_alter_workspace_status.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0010_job_user_id_alter_job_status.html">user_workspaces_server.migrations.0010_job_user_id_alter_job_status module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0010_job_user_id_alter_job_status.html#user_workspaces_server.migrations.0010_job_user_id_alter_job_status.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0011_workspace_default_job_type.html">user_workspaces_server.migrations.0011_workspace_default_job_type module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0011_workspace_default_job_type.html#user_workspaces_server.migrations.0011_workspace_default_job_type.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0012_job_resource_options.html">user_workspaces_server.migrations.0012_job_resource_options module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0012_job_resource_options.html#user_workspaces_server.migrations.0012_job_resource_options.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0013_alter_workspace_disk_space.html">user_workspaces_server.migrations.0013_alter_workspace_disk_space module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0013_alter_workspace_disk_space.html#user_workspaces_server.migrations.0013_alter_workspace_disk_space.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0014_sharedworkspacemapping.html">user_workspaces_server.migrations.0014_sharedworkspacemapping module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0014_sharedworkspacemapping.html#user_workspaces_server.migrations.0014_sharedworkspacemapping.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0015_sharedworkspacemapping_is_accepted.html">user_workspaces_server.migrations.0015_sharedworkspacemapping_is_accepted module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0015_sharedworkspacemapping_is_accepted.html#user_workspaces_server.migrations.0015_sharedworkspacemapping_is_accepted.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0016_rename_last_params_sharedworkspacemapping_last_resource_options.html">user_workspaces_server.migrations.0016_rename_last_params_sharedworkspacemapping_last_resource_options module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0016_rename_last_params_sharedworkspacemapping_last_resource_options.html#user_workspaces_server.migrations.0016_rename_last_params_sharedworkspacemapping_last_resource_options.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0017_sharedworkspacemapping_datetime_share_created.html">user_workspaces_server.migrations.0017_sharedworkspacemapping_datetime_share_created module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0017_sharedworkspacemapping_datetime_share_created.html#user_workspaces_server.migrations.0017_sharedworkspacemapping_datetime_share_created.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0018_workspace_datetime_last_job_launch_and_more.html">user_workspaces_server.migrations.0018_workspace_datetime_last_job_launch_and_more module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0018_workspace_datetime_last_job_launch_and_more.html#user_workspaces_server.migrations.0018_workspace_datetime_last_job_launch_and_more.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.migrations.0019_alter_workspace_status.html">user_workspaces_server.migrations.0019_alter_workspace_status module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.migrations.0019_alter_workspace_status.html#user_workspaces_server.migrations.0019_alter_workspace_status.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.migrations.html#module-user_workspaces_server.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.admin.html">user_workspaces_server.admin module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.apps.html">user_workspaces_server.apps module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.default_auto_field"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.default_auto_field</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.name"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.api_user_authentication"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.api_user_authentication</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.main_storage"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.main_storage</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.main_resource"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.main_resource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.available_resources"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.available_resources</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.available_storage_methods"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.available_storage_methods</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.available_user_authentication_methods"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.available_user_authentication_methods</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.available_job_types"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.available_job_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.apps.html#user_workspaces_server.apps.UserWorkspacesServerConfig.ready"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig.ready()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.auth.html">user_workspaces_server.auth module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.auth.html#user_workspaces_server.auth.UserWorkspacesTokenAuthentication"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesTokenAuthentication</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.auth.html#user_workspaces_server.auth.UserWorkspacesTokenAuthentication.authenticate"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesTokenAuthentication.authenticate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.exceptions.html">user_workspaces_server.exceptions module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.workspaces_exception_handler"><code class="docutils literal notranslate"><span class="pre">workspaces_exception_handler()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.WorkspaceClientException"><code class="docutils literal notranslate"><span class="pre">WorkspaceClientException</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.WorkspaceClientException.status_code"><code class="docutils literal notranslate"><span class="pre">WorkspaceClientException.status_code</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.WorkspaceClientException.default_detail"><code class="docutils literal notranslate"><span class="pre">WorkspaceClientException.default_detail</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.WorkspaceClientException.default_code"><code class="docutils literal notranslate"><span class="pre">WorkspaceClientException.default_code</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.ValidationException"><code class="docutils literal notranslate"><span class="pre">ValidationException</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.ValidationException.status_code"><code class="docutils literal notranslate"><span class="pre">ValidationException.status_code</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.ValidationException.default_detail"><code class="docutils literal notranslate"><span class="pre">ValidationException.default_detail</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.exceptions.html#user_workspaces_server.exceptions.ValidationException.default_code"><code class="docutils literal notranslate"><span class="pre">ValidationException.default_code</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.logging.html">user_workspaces_server.logging module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.logging.html#user_workspaces_server.logging.AsyncEmailHandler"><code class="docutils literal notranslate"><span class="pre">AsyncEmailHandler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.logging.html#user_workspaces_server.logging.AsyncEmailHandler.__init__"><code class="docutils literal notranslate"><span class="pre">AsyncEmailHandler.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.logging.html#user_workspaces_server.logging.AsyncEmailHandler.emit"><code class="docutils literal notranslate"><span class="pre">AsyncEmailHandler.emit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.models.html">user_workspaces_server.models module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace"><code class="docutils literal notranslate"><span class="pre">Workspace</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.Status"><code class="docutils literal notranslate"><span class="pre">Workspace.Status</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.Status.INITIALIZING"><code class="docutils literal notranslate"><span class="pre">Workspace.Status.INITIALIZING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.Status.IDLE"><code class="docutils literal notranslate"><span class="pre">Workspace.Status.IDLE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.Status.ACTIVE"><code class="docutils literal notranslate"><span class="pre">Workspace.Status.ACTIVE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.Status.DELETING"><code class="docutils literal notranslate"><span class="pre">Workspace.Status.DELETING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.Status.ERROR"><code class="docutils literal notranslate"><span class="pre">Workspace.Status.ERROR</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.user_id"><code class="docutils literal notranslate"><span class="pre">Workspace.user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.name"><code class="docutils literal notranslate"><span class="pre">Workspace.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.description"><code class="docutils literal notranslate"><span class="pre">Workspace.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.file_path"><code class="docutils literal notranslate"><span class="pre">Workspace.file_path</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.disk_space"><code class="docutils literal notranslate"><span class="pre">Workspace.disk_space</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.datetime_created"><code class="docutils literal notranslate"><span class="pre">Workspace.datetime_created</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.datetime_last_modified"><code class="docutils literal notranslate"><span class="pre">Workspace.datetime_last_modified</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.datetime_last_job_launch"><code class="docutils literal notranslate"><span class="pre">Workspace.datetime_last_job_launch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.workspace_details"><code class="docutils literal notranslate"><span class="pre">Workspace.workspace_details</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.status"><code class="docutils literal notranslate"><span class="pre">Workspace.status</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.default_job_type"><code class="docutils literal notranslate"><span class="pre">Workspace.default_job_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.get_query_param_fields"><code class="docutils literal notranslate"><span class="pre">Workspace.get_query_param_fields()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.get_dict_fields"><code class="docutils literal notranslate"><span class="pre">Workspace.get_dict_fields()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Workspace.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Workspace.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.get_next_by_datetime_created"><code class="docutils literal notranslate"><span class="pre">Workspace.get_next_by_datetime_created()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.get_previous_by_datetime_created"><code class="docutils literal notranslate"><span class="pre">Workspace.get_previous_by_datetime_created()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.get_status_display"><code class="docutils literal notranslate"><span class="pre">Workspace.get_status_display()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.id"><code class="docutils literal notranslate"><span class="pre">Workspace.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.job_set"><code class="docutils literal notranslate"><span class="pre">Workspace.job_set</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.objects"><code class="docutils literal notranslate"><span class="pre">Workspace.objects</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.original_workspace_set"><code class="docutils literal notranslate"><span class="pre">Workspace.original_workspace_set</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.shared_workspace_set"><code class="docutils literal notranslate"><span class="pre">Workspace.shared_workspace_set</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Workspace.user_id_id"><code class="docutils literal notranslate"><span class="pre">Workspace.user_id_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job"><code class="docutils literal notranslate"><span class="pre">Job</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.Status"><code class="docutils literal notranslate"><span class="pre">Job.Status</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.Status.PENDING"><code class="docutils literal notranslate"><span class="pre">Job.Status.PENDING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.Status.RUNNING"><code class="docutils literal notranslate"><span class="pre">Job.Status.RUNNING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.Status.COMPLETE"><code class="docutils literal notranslate"><span class="pre">Job.Status.COMPLETE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.Status.FAILED"><code class="docutils literal notranslate"><span class="pre">Job.Status.FAILED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.Status.STOPPING"><code class="docutils literal notranslate"><span class="pre">Job.Status.STOPPING</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.user_id"><code class="docutils literal notranslate"><span class="pre">Job.user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.workspace_id"><code class="docutils literal notranslate"><span class="pre">Job.workspace_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.resource_job_id"><code class="docutils literal notranslate"><span class="pre">Job.resource_job_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.job_type"><code class="docutils literal notranslate"><span class="pre">Job.job_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.resource_name"><code class="docutils literal notranslate"><span class="pre">Job.resource_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.status"><code class="docutils literal notranslate"><span class="pre">Job.status</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.datetime_created"><code class="docutils literal notranslate"><span class="pre">Job.datetime_created</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.datetime_start"><code class="docutils literal notranslate"><span class="pre">Job.datetime_start</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.datetime_end"><code class="docutils literal notranslate"><span class="pre">Job.datetime_end</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.core_hours"><code class="docutils literal notranslate"><span class="pre">Job.core_hours</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.job_details"><code class="docutils literal notranslate"><span class="pre">Job.job_details</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.resource_options"><code class="docutils literal notranslate"><span class="pre">Job.resource_options</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.get_query_param_fields"><code class="docutils literal notranslate"><span class="pre">Job.get_query_param_fields()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.get_dict_fields"><code class="docutils literal notranslate"><span class="pre">Job.get_dict_fields()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Job.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Job.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.get_next_by_datetime_created"><code class="docutils literal notranslate"><span class="pre">Job.get_next_by_datetime_created()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.get_previous_by_datetime_created"><code class="docutils literal notranslate"><span class="pre">Job.get_previous_by_datetime_created()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.get_status_display"><code class="docutils literal notranslate"><span class="pre">Job.get_status_display()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.id"><code class="docutils literal notranslate"><span class="pre">Job.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.objects"><code class="docutils literal notranslate"><span class="pre">Job.objects</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.user_id_id"><code class="docutils literal notranslate"><span class="pre">Job.user_id_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.Job.workspace_id_id"><code class="docutils literal notranslate"><span class="pre">Job.workspace_id_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota"><code class="docutils literal notranslate"><span class="pre">UserQuota</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.user_id"><code class="docutils literal notranslate"><span class="pre">UserQuota.user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.max_disk_space"><code class="docutils literal notranslate"><span class="pre">UserQuota.max_disk_space</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.max_core_hours"><code class="docutils literal notranslate"><span class="pre">UserQuota.max_core_hours</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.used_disk_space"><code class="docutils literal notranslate"><span class="pre">UserQuota.used_disk_space</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.used_core_hours"><code class="docutils literal notranslate"><span class="pre">UserQuota.used_core_hours</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">UserQuota.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">UserQuota.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.id"><code class="docutils literal notranslate"><span class="pre">UserQuota.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.objects"><code class="docutils literal notranslate"><span class="pre">UserQuota.objects</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.UserQuota.user_id_id"><code class="docutils literal notranslate"><span class="pre">UserQuota.user_id_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.user_id"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.external_user_id"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.external_user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.external_username"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.external_username</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.user_authentication_name"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.user_authentication_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.external_user_details"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.external_user_details</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.id"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.objects"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.objects</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.ExternalUserMapping.user_id_id"><code class="docutils literal notranslate"><span class="pre">ExternalUserMapping.user_id_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.original_workspace_id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.original_workspace_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.shared_workspace_id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.shared_workspace_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.last_resource_options"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.last_resource_options</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.last_job_type"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.last_job_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.is_accepted"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.is_accepted</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.datetime_share_created"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.datetime_share_created</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.get_query_param_fields"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.get_query_param_fields()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.get_dict_fields"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.get_dict_fields()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.objects"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.objects</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.original_workspace_id_id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.original_workspace_id_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.models.html#user_workspaces_server.models.SharedWorkspaceMapping.shared_workspace_id_id"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMapping.shared_workspace_id_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.serializers.html">user_workspaces_server.serializers module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.UserSerializer"><code class="docutils literal notranslate"><span class="pre">UserSerializer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.UserSerializer.Meta"><code class="docutils literal notranslate"><span class="pre">UserSerializer.Meta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.UserSerializer.Meta.model"><code class="docutils literal notranslate"><span class="pre">UserSerializer.Meta.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.UserSerializer.Meta.fields"><code class="docutils literal notranslate"><span class="pre">UserSerializer.Meta.fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.WorkspaceSerializer"><code class="docutils literal notranslate"><span class="pre">WorkspaceSerializer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.WorkspaceSerializer.Meta"><code class="docutils literal notranslate"><span class="pre">WorkspaceSerializer.Meta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.WorkspaceSerializer.Meta.model"><code class="docutils literal notranslate"><span class="pre">WorkspaceSerializer.Meta.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.WorkspaceSerializer.Meta.fields"><code class="docutils literal notranslate"><span class="pre">WorkspaceSerializer.Meta.fields</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.WorkspaceSerializer.__init__"><code class="docutils literal notranslate"><span class="pre">WorkspaceSerializer.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMappingSerializer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMappingSerializer.Meta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta.model"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMappingSerializer.Meta.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.serializers.html#user_workspaces_server.serializers.SharedWorkspaceMappingSerializer.Meta.exclude"><code class="docutils literal notranslate"><span class="pre">SharedWorkspaceMappingSerializer.Meta.exclude</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.tasks.html">user_workspaces_server.tasks module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_job_status"><code class="docutils literal notranslate"><span class="pre">update_job_status()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.queue_job_update"><code class="docutils literal notranslate"><span class="pre">queue_job_update()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_job_core_hours"><code class="docutils literal notranslate"><span class="pre">update_job_core_hours()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.stop_job"><code class="docutils literal notranslate"><span class="pre">stop_job()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.delete_workspace"><code class="docutils literal notranslate"><span class="pre">delete_workspace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.async_update_workspace"><code class="docutils literal notranslate"><span class="pre">async_update_workspace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_workspace"><code class="docutils literal notranslate"><span class="pre">update_workspace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_user_quota_disk_space"><code class="docutils literal notranslate"><span class="pre">update_user_quota_disk_space()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.update_user_quota_core_hours"><code class="docutils literal notranslate"><span class="pre">update_user_quota_core_hours()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.initialize_shared_workspace"><code class="docutils literal notranslate"><span class="pre">initialize_shared_workspace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.tasks.html#user_workspaces_server.tasks.check_main_storage_user"><code class="docutils literal notranslate"><span class="pre">check_main_storage_user()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.urls.html">user_workspaces_server.urls module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.utils.html">user_workspaces_server.utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.utils.html#user_workspaces_server.utils.translate_class_to_module"><code class="docutils literal notranslate"><span class="pre">translate_class_to_module()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.utils.html#user_workspaces_server.utils.generate_controller_object"><code class="docutils literal notranslate"><span class="pre">generate_controller_object()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.ws_consumers.html">user_workspaces_server.ws_consumers module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.PassthroughConsumer"><code class="docutils literal notranslate"><span class="pre">PassthroughConsumer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.PassthroughConsumer.connect"><code class="docutils literal notranslate"><span class="pre">PassthroughConsumer.connect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.PassthroughConsumer.disconnect"><code class="docutils literal notranslate"><span class="pre">PassthroughConsumer.disconnect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.PassthroughConsumer.receive"><code class="docutils literal notranslate"><span class="pre">PassthroughConsumer.receive()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer.connect"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer.connect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer.disconnect"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer.disconnect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer.receive"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer.receive()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.ws_consumers.html#user_workspaces_server.ws_consumers.JobStatusConsumer.job_status_update"><code class="docutils literal notranslate"><span class="pre">JobStatusConsumer.job_status_update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-user_workspaces_server">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-user_workspaces_server" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="Module Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="user_workspaces_server.migrations.html" class="btn btn-neutral float-right" title="user_workspaces_server.migrations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

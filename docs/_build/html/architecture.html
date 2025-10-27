@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-driven-plugin-system">Configuration-Driven Plugin System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#abstract-controller-pattern">Abstract Controller Pattern</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authentication-methods">Authentication Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storage-methods">Storage Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#job-types">Job Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#dependency-injection-chain">Dependency Injection Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#background-task-architecture">Background Task Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#django-q-integration">Django-Q Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key-background-operations">Key Background Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#database-design">Database Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#core-models">Core Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-management">Status Management</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api-structure">API Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#restful-endpoints">RESTful Endpoints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#websocket-integration">WebSocket Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#security-model">Security Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#custom-authentication">Custom Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#permission-validation">Permission Validation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#development-patterns">Development Patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adding-new-controllers">Adding New Controllers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#background-task-development">Background Task Development</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#websocket-development">WebSocket Development</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Architecture</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/architecture.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Link to this heading"></a></h1>
+<p>The User Workspaces Server follows a modular, plugin-based architecture that allows for flexible configuration and extensibility. This section describes the core architectural patterns and components.</p>
+<section id="configuration-driven-plugin-system">
+<h2>Configuration-Driven Plugin System<a class="headerlink" href="#configuration-driven-plugin-system" title="Link to this heading"></a></h2>
+<p>The system uses dynamic configuration to load controllers at runtime:</p>
+<ul class="simple">
+<li><p><strong>Configuration Files</strong>: <code class="docutils literal notranslate"><span class="pre">config.json</span></code> and <code class="docutils literal notranslate"><span class="pre">django_config.json</span></code> in the <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory</p></li>
+<li><p><strong>Dynamic Loading</strong>: <code class="docutils literal notranslate"><span class="pre">utils.generate_controller_object()</span></code> instantiates controllers based on class names</p></li>
+<li><p><strong>Controller Registry</strong>: <code class="docutils literal notranslate"><span class="pre">apps.py</span></code> loads and registers all configured components during Django startup</p></li>
+</ul>
+</section>
+<section id="abstract-controller-pattern">
+<h2>Abstract Controller Pattern<a class="headerlink" href="#abstract-controller-pattern" title="Link to this heading"></a></h2>
+<p>All major components follow an abstract base class pattern for extensibility:</p>
+<section id="authentication-methods">
+<h3>Authentication Methods<a class="headerlink" href="#authentication-methods" title="Link to this heading"></a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">controllers/userauthenticationmethods/</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Abstract</strong>: <code class="docutils literal notranslate"><span class="pre">AbstractUserAuthentication</span></code></p></li>
+<li><p><strong>Implementations</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">GlobusUserAuthentication</span></code> - Globus OAuth integration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PSCAPIUserAuthentication</span></code> - Pittsburgh Supercomputing Center API</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalUserAuthentication</span></code> - Local user management</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="storage-methods">
+<h3>Storage Methods<a class="headerlink" href="#storage-methods" title="Link to this heading"></a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">controllers/storagemethods/</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Abstract</strong>: <code class="docutils literal notranslate"><span class="pre">AbstractStorage</span></code></p></li>
+<li><p><strong>Implementations</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalFileSystemStorage</span></code> - Standard filesystem storage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HubmapLocalFileSystemStorage</span></code> - HuBMAP-specific storage with custom features</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="resources">
+<h3>Resources<a class="headerlink" href="#resources" title="Link to this heading"></a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">controllers/resources/</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Abstract</strong>: <code class="docutils literal notranslate"><span class="pre">AbstractResource</span></code></p></li>
+<li><p><strong>Implementations</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalResource</span></code> - Local process execution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SlurmAPIResource</span></code> - SLURM cluster integration</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="job-types">
+<h3>Job Types<a class="headerlink" href="#job-types" title="Link to this heading"></a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">controllers/jobtypes/</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Abstract</strong>: <code class="docutils literal notranslate"><span class="pre">AbstractJob</span></code></p></li>
+<li><p><strong>Implementations</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">JupyterLabJob</span></code> - JupyterLab notebook environment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalTestJob</span></code> - Testing and development jobs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AppyterJob</span></code> - Appyter application support</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="dependency-injection-chain">
+<h2>Dependency Injection Chain<a class="headerlink" href="#dependency-injection-chain" title="Link to this heading"></a></h2>
+<p>Controllers are composed with dependencies injected during initialization:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Resources → depend on → Storage + UserAuthentication
+Storage → depends on → UserAuthentication
+All controllers receive configuration dictionaries
+</pre></div>
+</div>
+</section>
+<section id="background-task-architecture">
+<h2>Background Task Architecture<a class="headerlink" href="#background-task-architecture" title="Link to this heading"></a></h2>
+<section id="django-q-integration">
+<h3>Django-Q Integration<a class="headerlink" href="#django-q-integration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Queue Management</strong>: Uses Redis as message broker</p></li>
+<li><p><strong>Task Registration</strong>: All background tasks defined in <code class="docutils literal notranslate"><span class="pre">tasks.py</span></code></p></li>
+<li><p><strong>Automatic Recovery</strong>: On qcluster startup, automatically queues monitoring for active jobs</p></li>
+<li><p><strong>Hook System</strong>: Tasks can specify completion hooks for chaining operations</p></li>
+</ul>
+</section>
+<section id="key-background-operations">
+<h3>Key Background Operations<a class="headerlink" href="#key-background-operations" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Job Status Monitoring</strong>: Continuous polling of job states via <code class="docutils literal notranslate"><span class="pre">update_job_status()</span></code></p></li>
+<li><p><strong>Workspace Management</strong>: Directory synchronization and quota tracking</p></li>
+<li><p><strong>User Quota Updates</strong>: Real-time disk space and core hours calculation</p></li>
+<li><p><strong>Shared Workspace Creation</strong>: Asynchronous workspace copying and email notifications</p></li>
+</ul>
+</section>
+</section>
+<section id="database-design">
+<h2>Database Design<a class="headerlink" href="#database-design" title="Link to this heading"></a></h2>
+<section id="core-models">
+<h3>Core Models<a class="headerlink" href="#core-models" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Workspace</strong>: User workspace containers with status tracking and JSON metadata</p></li>
+<li><p><strong>Job</strong>: Execution units linking workspaces to compute resources</p></li>
+<li><p><strong>UserQuota</strong>: Resource limits and usage tracking</p></li>
+<li><p><strong>ExternalUserMapping</strong>: Links Django users to external authentication systems</p></li>
+<li><p><strong>SharedWorkspaceMapping</strong>: Workspace sharing relationships</p></li>
+</ul>
+</section>
+<section id="status-management">
+<h3>Status Management<a class="headerlink" href="#status-management" title="Link to this heading"></a></h3>
+<p>Both Workspaces and Jobs use TextChoices enums for status tracking:</p>
+<ul class="simple">
+<li><p><strong>Workspace States</strong>: <code class="docutils literal notranslate"><span class="pre">initializing</span></code>, <code class="docutils literal notranslate"><span class="pre">idle</span></code>, <code class="docutils literal notranslate"><span class="pre">active</span></code>, <code class="docutils literal notranslate"><span class="pre">deleting</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code></p></li>
+<li><p><strong>Job States</strong>: <code class="docutils literal notranslate"><span class="pre">pending</span></code>, <code class="docutils literal notranslate"><span class="pre">running</span></code>, <code class="docutils literal notranslate"><span class="pre">complete</span></code>, <code class="docutils literal notranslate"><span class="pre">failed</span></code>, <code class="docutils literal notranslate"><span class="pre">stopping</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="api-structure">
+<h2>API Structure<a class="headerlink" href="#api-structure" title="Link to this heading"></a></h2>
+<section id="restful-endpoints">
+<h3>RESTful Endpoints<a class="headerlink" href="#restful-endpoints" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/tokens/</span></code> - Authentication token management</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/workspaces/</span></code> - Workspace CRUD operations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/jobs/</span></code> - Job lifecycle management</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/users/</span></code> - User information and quotas</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/shared_workspaces/</span></code> - Collaborative workspace features</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/status/</span></code> - System health checks</p></li>
+</ul>
+</section>
+<section id="websocket-integration">
+<h3>WebSocket Integration<a class="headerlink" href="#websocket-integration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Real-time Updates</strong>: Job status changes broadcasted via Django Channels</p></li>
+<li><p><strong>Passthrough Support</strong>: WebSocket proxying for interactive sessions</p></li>
+<li><p><strong>Channel Groups</strong>: Per-job status update channels</p></li>
+</ul>
+</section>
+</section>
+<section id="security-model">
+<h2>Security Model<a class="headerlink" href="#security-model" title="Link to this heading"></a></h2>
+<section id="custom-authentication">
+<h3>Custom Authentication<a class="headerlink" href="#custom-authentication" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Token System</strong>: <code class="docutils literal notranslate"><span class="pre">UserWorkspacesTokenAuthentication</span></code> with custom <code class="docutils literal notranslate"><span class="pre">UWS-Authorization</span></code> header</p></li>
+<li><p><strong>Multi-Provider Support</strong>: Pluggable authentication backends</p></li>
+<li><p><strong>External User Mapping</strong>: Links internal Django users with external identity providers</p></li>
+</ul>
+</section>
+<section id="permission-validation">
+<h3>Permission Validation<a class="headerlink" href="#permission-validation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Storage methods validate user ownership of workspaces</p></li>
+<li><p>Resource methods enforce user authentication for job execution</p></li>
+<li><p>Path traversal protection prevents directory escape attacks</p></li>
+</ul>
+</section>
+</section>
+<section id="development-patterns">
+<h2>Development Patterns<a class="headerlink" href="#development-patterns" title="Link to this heading"></a></h2>
+<section id="adding-new-controllers">
+<h3>Adding New Controllers<a class="headerlink" href="#adding-new-controllers" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Implement the appropriate abstract base class</p></li>
+<li><p>Add class name mapping in <code class="docutils literal notranslate"><span class="pre">utils.translate_class_to_module()</span></code></p></li>
+<li><p>Update configuration JSON files to register the new controller</p></li>
+<li><p>The system will automatically discover and load the controller at startup</p></li>
+</ol>
+</section>
+<section id="background-task-development">
+<h3>Background Task Development<a class="headerlink" href="#background-task-development" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All tasks must be idempotent and handle failures gracefully</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">async_task()</span></code> for queueing with optional hooks for task chaining</p></li>
+<li><p>Tasks automatically retry on failure based on Django-Q configuration</p></li>
+</ul>
+</section>
+<section id="websocket-development">
+<h3>WebSocket Development<a class="headerlink" href="#websocket-development" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Consumer classes in <code class="docutils literal notranslate"><span class="pre">ws_consumers.py</span></code> handle WebSocket connections</p></li>
+<li><p>Use channel groups for broadcasting updates to multiple clients</p></li>
+<li><p>Passthrough consumers proxy WebSocket connections to running jobs</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

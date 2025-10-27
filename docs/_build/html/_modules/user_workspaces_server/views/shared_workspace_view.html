@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>user_workspaces_server.views.shared_workspace_view &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">user_workspaces_server.views.shared_workspace_view</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for user_workspaces_server.views.shared_workspace_view</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.apps</span><span class="w"> </span><span class="kn">import</span> <span class="n">apps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django_q.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">async_task</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">APIException</span><span class="p">,</span>
+    <span class="n">NotFound</span><span class="p">,</span>
+    <span class="n">ParseError</span><span class="p">,</span>
+    <span class="n">PermissionDenied</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.permissions</span><span class="w"> </span><span class="kn">import</span> <span class="n">IsAuthenticated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIView</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">user_workspaces_server</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">serializers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">user_workspaces_server.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorkspaceClientException</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SharedWorkspaceView">
+<a class="viewcode-back" href="../../../api.html#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SharedWorkspaceView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">IsAuthenticated</span><span class="p">]</span>
+
+<div class="viewcode-block" id="SharedWorkspaceView.get">
+<a class="viewcode-back" href="../../../api.html#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">shared_workspace_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># For a given user we need to return:</span>
+        <span class="c1"># - The shared workspaces for which they&#39;ve sent requests</span>
+        <span class="c1"># - The shared workspaces for which they&#39;ve received requests</span>
+        <span class="c1"># We need to filter based on whether they&#39;ve been accepted or not</span>
+        <span class="c1"># We need to allow for a single shared workspace to be returned</span>
+
+        <span class="n">original_workspaces</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SharedWorkspaceMapping</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">original_workspace_id__user_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="p">)</span>
+
+        <span class="n">shared_workspaces</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SharedWorkspaceMapping</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">shared_workspace_id__user_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">shared_workspace_id</span><span class="p">:</span>
+            <span class="n">shared_workspaces</span> <span class="o">=</span> <span class="n">shared_workspaces</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">shared_workspace_id__pk</span><span class="o">=</span><span class="n">shared_workspace_id</span>
+            <span class="p">)</span>
+            <span class="n">original_workspaces</span> <span class="o">=</span> <span class="n">original_workspaces</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">shared_workspace_id__pk</span><span class="o">=</span><span class="n">shared_workspace_id</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">params</span> <span class="o">:=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+                <span class="n">models</span><span class="o">.</span><span class="n">SharedWorkspaceMapping</span><span class="o">.</span><span class="n">get_query_param_fields</span><span class="p">()</span>
+            <span class="p">):</span>
+                <span class="n">original_workspaces</span> <span class="o">=</span> <span class="n">original_workspaces</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]})</span>
+                <span class="n">shared_workspaces</span> <span class="o">=</span> <span class="n">shared_workspaces</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]})</span>
+
+        <span class="n">original_workspaces</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SharedWorkspaceMappingSerializer</span><span class="p">(</span>
+            <span class="n">original_workspaces</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">shared_workspaces</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SharedWorkspaceMappingSerializer</span><span class="p">(</span>
+            <span class="n">shared_workspaces</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Successful.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;original_workspaces&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;shared_workspaces&quot;</span><span class="p">:</span> <span class="p">[]},</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">original_workspaces</span> <span class="ow">or</span> <span class="n">shared_workspaces</span><span class="p">:</span>
+            <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;original_workspaces&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_workspaces</span>
+            <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;shared_workspaces&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shared_workspaces</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Shared workspace matching given parameters could not be found.&quot;</span>
+
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SharedWorkspaceView.post">
+<a class="viewcode-back" href="../../../api.html#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.post">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1"># Begin Validity check section</span>
+        <span class="c1"># Basic validity checks</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid JSON: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;shared_user_ids&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">body</span> <span class="ow">or</span> <span class="s2">&quot;original_workspace_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">body</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="s2">&quot;Missing required fields.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check workspace_id is valid/owned by current user</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">workspace</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">user_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">body</span><span class="p">[</span><span class="s2">&quot;original_workspace_id&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotFound</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Workspace </span><span class="si">{</span><span class="n">body</span><span class="p">[</span><span class="s1">&#39;original_workspace_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> not found for user.&quot;</span><span class="p">)</span>
+
+        <span class="n">shared_user_ids</span> <span class="o">=</span> <span class="n">body</span><span class="p">[</span><span class="s2">&quot;shared_user_ids&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Check user_ids_to_share are valid</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared_user_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="s2">&quot;shared_user_ids is not a list.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">shared_users</span> <span class="o">:=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pk__in</span><span class="o">=</span><span class="n">shared_user_ids</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">shared_user_ids</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="s2">&quot;Invalid user id provided.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">shared_users</span><span class="p">:</span>
+            <span class="c1"># Check whether user has permission</span>
+            <span class="n">main_storage</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_storage</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">main_storage</span><span class="o">.</span><span class="n">storage_user_authentication</span><span class="o">.</span><span class="n">has_permission</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">WorkspaceClientException</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">first_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">last_name</span><span class="si">}</span><span class="s2"> does not have permission on the file system.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Begin DAO inserts</span>
+        <span class="c1"># Get latest job for last_params and last_job_type</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">latest_job</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">workspace_id</span><span class="o">=</span><span class="n">workspace</span><span class="p">)</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span>
+                <span class="s2">&quot;datetime_created&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">latest_job</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Same set of data will be used across all shared_workspace entries</span>
+        <span class="n">workspace_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">workspace</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">workspace</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="s2">&quot;workspace_details&quot;</span><span class="p">:</span> <span class="n">workspace</span><span class="o">.</span><span class="n">workspace_details</span><span class="p">,</span>
+            <span class="s2">&quot;default_job_type&quot;</span><span class="p">:</span> <span class="n">workspace</span><span class="o">.</span><span class="n">default_job_type</span><span class="p">,</span>
+            <span class="s2">&quot;datetime_created&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;initializing&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">shared_workspace_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;original_workspace_id&quot;</span><span class="p">:</span> <span class="n">workspace</span><span class="p">,</span>
+            <span class="s2">&quot;shared_workspace_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;last_resource_options&quot;</span><span class="p">:</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">latest_job</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">latest_job</span><span class="o">.</span><span class="n">resource_options</span><span class="p">,</span>
+            <span class="s2">&quot;last_job_type&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">latest_job</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">latest_job</span><span class="o">.</span><span class="n">job_type</span><span class="p">,</span>
+            <span class="s2">&quot;is_accepted&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">shared_workspaces_created</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">shared_users</span><span class="p">:</span>
+            <span class="c1"># Prepare workspace model creation</span>
+            <span class="n">workspace_data_copy</span> <span class="o">=</span> <span class="n">workspace_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">workspace_data_copy</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span>
+            <span class="n">new_workspace</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">workspace_data_copy</span><span class="p">)</span>
+
+            <span class="c1"># Create shared workspace mapping</span>
+            <span class="n">shared_workspace_data_copy</span> <span class="o">=</span> <span class="n">shared_workspace_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">shared_workspace_data_copy</span><span class="p">[</span><span class="s2">&quot;shared_workspace_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_workspace</span>
+            <span class="n">shared_workspace_data_copy</span><span class="p">[</span><span class="s2">&quot;datetime_share_created&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">shared_workspace</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SharedWorkspaceMapping</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="o">**</span><span class="n">shared_workspace_data_copy</span>
+            <span class="p">)</span>
+            <span class="n">shared_workspaces_created</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shared_workspace</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">shared_workspace_created</span> <span class="ow">in</span> <span class="n">shared_workspaces_created</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Shared workspace created, sending to initialize: </span><span class="si">{</span><span class="n">shared_workspace_created</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">async_task</span><span class="p">(</span>
+                <span class="s2">&quot;user_workspaces_server.tasks.initialize_shared_workspace&quot;</span><span class="p">,</span>
+                <span class="n">shared_workspace_created</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">cluster</span><span class="o">=</span><span class="s2">&quot;long&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">shared_workspaces_created</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SharedWorkspaceMappingSerializer</span><span class="p">(</span>
+            <span class="n">shared_workspaces_created</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Successful.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;shared_workspaces&quot;</span><span class="p">:</span> <span class="n">shared_workspaces_created</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SharedWorkspaceView.put">
+<a class="viewcode-back" href="../../../api.html#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.put">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">shared_workspace_id</span><span class="p">,</span> <span class="n">put_type</span><span class="p">):</span>
+        <span class="c1"># Basic validation checks</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shared_workspace_mapping</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SharedWorkspaceMapping</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">shared_workspace_id</span><span class="o">=</span><span class="n">shared_workspace_id</span><span class="p">,</span>
+                <span class="n">shared_workspace_id__user_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotFound</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shared workspace </span><span class="si">{</span><span class="n">shared_workspace_id</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">put_type</span> <span class="o">==</span> <span class="s2">&quot;accept&quot;</span><span class="p">:</span>
+            <span class="c1"># Set is_accepted to true for shared_workspace_id</span>
+            <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">is_accepted</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+            <span class="c1"># Update the created timestamp for the workspace once they accept the request</span>
+            <span class="n">shared_workspace</span> <span class="o">=</span> <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">shared_workspace_id</span>
+            <span class="n">shared_workspace</span><span class="o">.</span><span class="n">datetime_created</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">shared_workspace</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WorkspaceClientException</span><span class="p">(</span><span class="s2">&quot;Invalid PUT type passed.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Successful.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="SharedWorkspaceView.delete">
+<a class="viewcode-back" href="../../../api.html#user_workspaces_server.views.shared_workspace_view.SharedWorkspaceView.delete">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">shared_workspace_id</span><span class="p">):</span>
+        <span class="c1"># Basic validation checks</span>
+
+        <span class="c1"># Check that the workspace exists</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shared_workspace_mapping</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SharedWorkspaceMapping</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">shared_workspace_id</span><span class="o">=</span><span class="n">shared_workspace_id</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">models</span><span class="o">.</span><span class="n">SharedWorkspaceMapping</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotFound</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shared workspace </span><span class="si">{</span><span class="n">shared_workspace_id</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check ownership of either original workspace or shared workspace</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">shared_workspace_id</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
+            <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">original_workspace_id</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">PermissionDenied</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;User does not have permissions for shared workspace </span><span class="si">{</span><span class="n">shared_workspace_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check that the workspace hasn&#39;t been accepted</span>
+        <span class="k">if</span> <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">is_accepted</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WorkspaceClientException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Shared workspace </span><span class="si">{</span><span class="n">shared_workspace_id</span><span class="si">}</span><span class="s2"> has been accepted and cannot be deleted.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">shared_workspace</span> <span class="o">=</span> <span class="n">shared_workspace_mapping</span><span class="o">.</span><span class="n">shared_workspace_id</span>
+        <span class="n">main_storage</span> <span class="o">=</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s2">&quot;user_workspaces_server&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">main_storage</span>
+        <span class="n">external_user_mapping</span> <span class="o">=</span> <span class="n">main_storage</span><span class="o">.</span><span class="n">storage_user_authentication</span><span class="o">.</span><span class="n">has_permission</span><span class="p">(</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">external_user_mapping</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WorkspaceClientException</span><span class="p">(</span>
+                <span class="s2">&quot;User could not be found/created on main storage system.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">main_storage</span><span class="o">.</span><span class="n">is_valid_path</span><span class="p">(</span><span class="n">shared_workspace</span><span class="o">.</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Workspace </span><span class="si">{</span><span class="n">shared_workspace</span><span class="o">.</span><span class="n">pk</span><span class="si">}</span><span class="s2"> deletion failed due to invalid path&quot;</span><span class="p">)</span>
+            <span class="n">shared_workspace</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">ERROR</span>
+            <span class="n">shared_workspace</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span>
+                <span class="s2">&quot;Please contact a system administrator there is a failure with &quot;</span>
+                <span class="s2">&quot;the workspace directory that will not allow for this workspace to be deleted.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">shared_workspace</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Workspace</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">DELETING</span>
+        <span class="n">shared_workspace</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="n">async_task</span><span class="p">(</span>
+            <span class="s2">&quot;user_workspaces_server.tasks.delete_workspace&quot;</span><span class="p">,</span> <span class="n">shared_workspace</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">cluster</span><span class="o">=</span><span class="s2">&quot;long&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Shared workspace </span><span class="si">{</span><span class="n">shared_workspace_id</span><span class="si">}</span><span class="s2"> queued for deletion.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
