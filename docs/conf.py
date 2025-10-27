@@ -5,65 +5,69 @@
 
 import os
 import sys
-import django
 
-# -- Path setup --------------------------------------------------------------
-# Add the project root and src directory to Python path
-sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('../src'))
-
-# Setup Django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'user_workspaces_server_project.settings')
-try:
-    django.setup()
-except Exception as e:
-    print(f"Warning: Could not setup Django: {e}")
-    # Continue without Django setup for documentation generation
+# import django
+#
+# # -- Path setup --------------------------------------------------------------
+# # Add the project root and src directory to Python path
+# sys.path.insert(0, os.path.abspath('..'))
+# sys.path.insert(0, os.path.abspath('../src'))
+#
+# # Setup Django
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'user_workspaces_server_project.settings')
+# try:
+#     django.setup()
+# except Exception as e:
+#     print(f"Warning: Could not setup Django: {e}")
+#     # Continue without Django setup for documentation generation
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'User Workspaces Server'
-copyright = '2025, HuBMAP Consortium'
-author = 'HuBMAP Consortium'
-release = '1.0'
+project = "User Workspaces Server"
+copyright = "2025, HuBMAP Consortium"
+author = "HuBMAP Consortium"
+release = "1.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.imgmath',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon',
-    'sphinx_autodoc_typehints',
-    'myst_parser',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.imgmath",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
+    "sphinx.ext.napoleon",
+    "sphinx_autodoc_typehints",
+    "myst_parser",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-language = 'en'
+language = "en"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
 
 # -- Options for intersphinx extension ---------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#configuration
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'django': ('https://docs.djangoproject.com/en/stable/', 'https://docs.djangoproject.com/en/stable/_objects/'),
+    "python": ("https://docs.python.org/3", None),
+    "django": (
+        "https://docs.djangoproject.com/en/stable/",
+        "https://docs.djangoproject.com/en/stable/_objects/",
+    ),
 }
 
 # -- Options for todo extension ----------------------------------------------
@@ -75,11 +79,11 @@ todo_include_todos = True
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
 
 autodoc_default_options = {
-    'members': True,
-    'member-order': 'bysource',
-    'special-members': '__init__',
-    'undoc-members': True,
-    'exclude-members': '__weakref__'
+    "members": True,
+    "member-order": "bysource",
+    "special-members": "__init__",
+    "undoc-members": True,
+    "exclude-members": "__weakref__",
 }
 
 # -- Options for napoleon extension -----------------------------------------
@@ -99,8 +103,8 @@ napoleon_use_rtype = True
 
 # -- Options for MyST parser ------------------------------------------------
 source_suffix = {
-    '.rst': None,
-    '.md': 'myst-parser',
+    ".rst": None,
+    ".md": "myst-parser",
 }
 
 myst_enable_extensions = [
