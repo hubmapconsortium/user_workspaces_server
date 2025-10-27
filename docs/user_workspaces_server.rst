@@ -7,25 +7,98 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   user_workspaces_server.migrations
+   user_workspaces_server.controllers
 
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+user\_workspaces\_server.admin module
+-------------------------------------
 
-   user_workspaces_server.admin
-   user_workspaces_server.apps
-   user_workspaces_server.auth
-   user_workspaces_server.exceptions
-   user_workspaces_server.logging
-   user_workspaces_server.models
-   user_workspaces_server.serializers
-   user_workspaces_server.tasks
-   user_workspaces_server.urls
-   user_workspaces_server.utils
-   user_workspaces_server.ws_consumers
+.. automodule:: user_workspaces_server.admin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.apps module
+------------------------------------
+
+.. automodule:: user_workspaces_server.apps
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.auth module
+------------------------------------
+
+.. automodule:: user_workspaces_server.auth
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.exceptions module
+------------------------------------------
+
+.. automodule:: user_workspaces_server.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.logging module
+---------------------------------------
+
+.. automodule:: user_workspaces_server.logging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.models module
+--------------------------------------
+
+.. automodule:: user_workspaces_server.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.serializers module
+-------------------------------------------
+
+.. automodule:: user_workspaces_server.serializers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.tasks module
+-------------------------------------
+
+.. automodule:: user_workspaces_server.tasks
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.urls module
+------------------------------------
+
+.. automodule:: user_workspaces_server.urls
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.utils module
+-------------------------------------
+
+.. automodule:: user_workspaces_server.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.ws\_consumers module
+---------------------------------------------
+
+.. automodule:: user_workspaces_server.ws_consumers
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
