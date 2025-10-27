@@ -6,20 +6,20 @@
 import os
 import sys
 
-# import django
-#
-# # -- Path setup --------------------------------------------------------------
-# # Add the project root and src directory to Python path
-# sys.path.insert(0, os.path.abspath('..'))
-# sys.path.insert(0, os.path.abspath('../src'))
-#
-# # Setup Django
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'user_workspaces_server_project.settings')
-# try:
-#     django.setup()
-# except Exception as e:
-#     print(f"Warning: Could not setup Django: {e}")
-#     # Continue without Django setup for documentation generation
+import django
+
+# -- Path setup --------------------------------------------------------------
+# Add the project root and src directory to Python path
+sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../src"))
+
+# Setup Django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "user_workspaces_server_project.settings")
+try:
+    django.setup()
+except Exception as e:
+    print(f"Warning: Could not setup Django: {e}")
+    # Continue without Django setup for documentation generation
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -104,7 +104,7 @@ napoleon_use_rtype = True
 # -- Options for MyST parser ------------------------------------------------
 source_suffix = {
     ".rst": None,
-    ".md": "myst-parser",
+    ".md": "markdown",
 }
 
 myst_enable_extensions = [

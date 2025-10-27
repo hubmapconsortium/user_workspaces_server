@@ -1,7 +1,5 @@
-Module Reference
-================
-
-This section provides detailed documentation for all Python modules in the User Workspaces Server.
+user_workspaces_server
+======================
 
 .. toctree::
    :maxdepth: 4
