@@ -77,11 +77,11 @@ Code Formatting and Linting
 .. code-block:: bash
 
    # Format code
-   black .
-   isort .
+   black --line-length 99 src
+   isort --profile black src
 
    # Check code quality
-   flake8
+   flake8 --ignore=E501,W503 src
 
 Common Issues
 ---------------
