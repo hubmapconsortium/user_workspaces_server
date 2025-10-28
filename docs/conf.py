@@ -46,6 +46,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
     "myst_parser",
+    "sphinxcontrib.mermaid",
 ]
 
 templates_path = ["_templates"]

@@ -3,6 +3,111 @@ Architecture
 
 The User Workspaces Server follows a modular, plugin-based architecture that allows for flexible configuration and extensibility. This section describes the core architectural patterns and components.
 
+System Architecture Overview
+-----------------------------
+
+.. mermaid::
+
+   graph TB
+       subgraph "Client Layer"
+           Client[REST API Client]
+           WSClient[WebSocket Client]
+       end
+
+       subgraph "API Layer"
+           REST[REST API Endpoints]
+           WS[WebSocket Consumers]
+           Auth[Token Authentication]
+       end
+
+       subgraph "Application Layer"
+           Views[Views/ViewSets]
+           Serializers[Serializers]
+           Models[Django Models]
+       end
+
+       subgraph "Controller Layer - Plugin System"
+           subgraph "Job Types"
+               JobAbstract[AbstractJob]
+               JupyterJob[JupyterLabJob]
+               TestJob[LocalTestJob]
+               AppyterJob[AppyterJob]
+           end
+
+           subgraph "Resources"
+               ResourceAbstract[AbstractResource]
+               LocalRes[LocalResource]
+               SlurmRes[SlurmAPIResource]
+           end
+
+           subgraph "Storage Methods"
+               StorageAbstract[AbstractStorage]
+               LocalStorage[LocalFileSystemStorage]
+               HubmapStorage[HubmapLocalFileSystemStorage]
+           end
+
+           subgraph "Authentication Methods"
+               AuthAbstract[AbstractUserAuthentication]
+               GlobusAuth[GlobusUserAuthentication]
+               PSCAuth[PSCAPIUserAuthentication]
+               LocalAuth[LocalUserAuthentication]
+           end
+       end
+
+       subgraph "Background Processing"
+           DjangoQ[Django-Q Queue]
+           Redis[Redis Broker]
+           Tasks[Background Tasks]
+       end
+
+       subgraph "Data Layer"
+           PostgreSQL[(PostgreSQL Database)]
+           FileSystem[(File System)]
+       end
+
+       Client -->|HTTP/HTTPS| REST
+       WSClient -->|WebSocket| WS
+       REST --> Auth
+       WS --> Auth
+       Auth --> Views
+       Views --> Serializers
+       Serializers --> Models
+       Models --> PostgreSQL
+
+       Views --> JobAbstract
+       JobAbstract -.->|implements| JupyterJob
+       JobAbstract -.->|implements| TestJob
+       JobAbstract -.->|implements| AppyterJob
+
+       Views --> ResourceAbstract
+       ResourceAbstract -.->|implements| LocalRes
+       ResourceAbstract -.->|implements| SlurmRes
+       ResourceAbstract -->|depends on| StorageAbstract
+       ResourceAbstract -->|depends on| AuthAbstract
+
+       Views --> StorageAbstract
+       StorageAbstract -.->|implements| LocalStorage
+       StorageAbstract -.->|implements| HubmapStorage
+       StorageAbstract -->|depends on| AuthAbstract
+       StorageAbstract --> FileSystem
+
+       Views --> AuthAbstract
+       AuthAbstract -.->|implements| GlobusAuth
+       AuthAbstract -.->|implements| PSCAuth
+       AuthAbstract -.->|implements| LocalAuth
+
+       Views --> DjangoQ
+       DjangoQ --> Redis
+       Redis --> Tasks
+       Tasks --> Models
+       Tasks --> ResourceAbstract
+       Tasks --> StorageAbstract
+
+       style JobAbstract fill:#e1f5ff
+       style ResourceAbstract fill:#e1f5ff
+       style StorageAbstract fill:#e1f5ff
+       style AuthAbstract fill:#e1f5ff
+
 Configuration-Driven Plugin System
 -----------------------------------
 
