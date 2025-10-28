@@ -14,6 +14,7 @@ User Workspaces Server is a Django-based REST API that provides workspace and jo
 
    overview
    architecture
+   controllers
    api
    modules
 

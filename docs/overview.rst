@@ -20,7 +20,7 @@ Core Concepts
 Workspaces
 ~~~~~~~~~~
 
-Workspaces are containerized user environments that provide:
+Workspaces are user environments contained in directories that provide:
 
 * Isolated file storage with configurable quotas
 * User-specific configuration and state
@@ -36,16 +36,6 @@ Jobs represent computational tasks that:
 * Can be of different types (JupyterLab, custom applications)
 * Provide real-time status updates
 * Track resource usage (CPU hours, memory)
-
-Users and Authentication
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-The system supports:
-
-* External authentication provider integration
-* User quota management (disk space, compute hours)
-* Role-based access control
-* External user mapping for identity federation
 
 Architecture Principles
 -----------------------

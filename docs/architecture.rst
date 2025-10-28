@@ -26,32 +26,11 @@ System Architecture Overview
            Models[Django Models]
        end
 
-       subgraph "Controller Layer - Plugin System"
-           subgraph "Job Types"
-               JobAbstract[AbstractJob]
-               JupyterJob[JupyterLabJob]
-               TestJob[LocalTestJob]
-               AppyterJob[AppyterJob]
-           end
-
-           subgraph "Resources"
-               ResourceAbstract[AbstractResource]
-               LocalRes[LocalResource]
-               SlurmRes[SlurmAPIResource]
-           end
-
-           subgraph "Storage Methods"
-               StorageAbstract[AbstractStorage]
-               LocalStorage[LocalFileSystemStorage]
-               HubmapStorage[HubmapLocalFileSystemStorage]
-           end
-
-           subgraph "Authentication Methods"
-               AuthAbstract[AbstractUserAuthentication]
-               GlobusAuth[GlobusUserAuthentication]
-               PSCAuth[PSCAPIUserAuthentication]
-               LocalAuth[LocalUserAuthentication]
-           end
+       subgraph "Controller Layer"
+           JobTypes[Job Types]
+           Resources[Resources]
+           StorageMethods[Storage Methods]
+           AuthMethods[Authentication Methods]
        end
 
        subgraph "Background Processing"
@@ -61,8 +40,8 @@ System Architecture Overview
        end
 
        subgraph "Data Layer"
-           PostgreSQL[(PostgreSQL Database)]
            FileSystem[(File System)]
+           PostgreSQL[(PostgreSQL Database)]
        end
 
        Client -->|HTTP/HTTPS| REST
@@ -74,39 +53,32 @@ System Architecture Overview
        Serializers --> Models
        Models --> PostgreSQL
 
-       Views --> JobAbstract
-       JobAbstract -.->|implements| JupyterJob
-       JobAbstract -.->|implements| TestJob
-       JobAbstract -.->|implements| AppyterJob
+       Views --> JobTypes
+       Views --> Resources
+       Views --> StorageMethods
+       Views --> AuthMethods
 
-       Views --> ResourceAbstract
-       ResourceAbstract -.->|implements| LocalRes
-       ResourceAbstract -.->|implements| SlurmRes
-       ResourceAbstract -->|depends on| StorageAbstract
-       ResourceAbstract -->|depends on| AuthAbstract
-
-       Views --> StorageAbstract
-       StorageAbstract -.->|implements| LocalStorage
-       StorageAbstract -.->|implements| HubmapStorage
-       StorageAbstract -->|depends on| AuthAbstract
-       StorageAbstract --> FileSystem
-
-       Views --> AuthAbstract
-       AuthAbstract -.->|implements| GlobusAuth
-       AuthAbstract -.->|implements| PSCAuth
-       AuthAbstract -.->|implements| LocalAuth
+       Resources -->|depends on| StorageMethods
+       Resources -->|depends on| AuthMethods
+       Resources --> JobTypes
+       Resources --> Models
+       StorageMethods -->|depends on| AuthMethods
+       StorageMethods --> FileSystem
+       StorageMethods --> Models
+       AuthMethods --> Models
+       JobTypes --> Models
 
        Views --> DjangoQ
        DjangoQ --> Redis
        Redis --> Tasks
        Tasks --> Models
-       Tasks --> ResourceAbstract
-       Tasks --> StorageAbstract
+       Tasks --> Resources
+       Tasks --> StorageMethods
 
-       style JobAbstract fill:#e1f5ff
-       style ResourceAbstract fill:#e1f5ff
-       style StorageAbstract fill:#e1f5ff
-       style AuthAbstract fill:#e1f5ff
+       style JobTypes fill:#e1f5ff
+       style Resources fill:#e1f5ff
+       style StorageMethods fill:#e1f5ff
+       style AuthMethods fill:#e1f5ff
 
 Configuration-Driven Plugin System
 -----------------------------------
@@ -117,82 +89,12 @@ The system uses dynamic configuration to load controllers at runtime:
 * **Dynamic Loading**: ``utils.generate_controller_object()`` instantiates controllers based on class names
 * **Controller Registry**: ``apps.py`` loads and registers all configured components during Django startup
 
-Abstract Controller Pattern
+Controllers are composed with dependencies injected during initialization based on the configuration. All controllers receive configuration dictionaries.
+
+Background Tasks
 ----------------------------
 
-All major components follow an abstract base class pattern for extensibility:
-
-Authentication Methods
-~~~~~~~~~~~~~~~~~~~~~~
-
-Located in ``controllers/userauthenticationmethods/``:
-
-* **Abstract**: ``AbstractUserAuthentication``
-* **Implementations**:
-
-  * ``GlobusUserAuthentication`` - Globus OAuth integration
-  * ``PSCAPIUserAuthentication`` - Pittsburgh Supercomputing Center API
-  * ``LocalUserAuthentication`` - Local user management
-
-Storage Methods
-~~~~~~~~~~~~~~~
-
-Located in ``controllers/storagemethods/``:
-
-* **Abstract**: ``AbstractStorage``
-* **Implementations**:
-
-  * ``LocalFileSystemStorage`` - Standard filesystem storage
-  * ``HubmapLocalFileSystemStorage`` - HuBMAP-specific storage with custom features
-
-Resources
-~~~~~~~~~
-
-Located in ``controllers/resources/``:
-
-* **Abstract**: ``AbstractResource``
-* **Implementations**:
-
-  * ``LocalResource`` - Local process execution
-  * ``SlurmAPIResource`` - SLURM cluster integration
-
-Job Types
-~~~~~~~~~
-
-Located in ``controllers/jobtypes/``:
-
-* **Abstract**: ``AbstractJob``
-* **Implementations**:
-
-  * ``JupyterLabJob`` - JupyterLab notebook environment
-  * ``LocalTestJob`` - Testing and development jobs
-  * ``AppyterJob`` - Appyter application support
-
-Dependency Injection Chain
----------------------------
-
-Controllers are composed with dependencies injected during initialization:
-
-.. code-block:: text
-
-    Resources → depend on → Storage + UserAuthentication
-    Storage → depends on → UserAuthentication
-    All controllers receive configuration dictionaries
-
-Background Task Architecture
-----------------------------
-
-Django-Q Integration
-~~~~~~~~~~~~~~~~~~~~
-
-* **Queue Management**: Uses Redis as message broker
 * **Task Registration**: All background tasks defined in ``tasks.py``
-* **Automatic Recovery**: On qcluster startup, automatically queues monitoring for active jobs
-* **Hook System**: Tasks can specify completion hooks for chaining operations
-
-Key Background Operations
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
 * **Job Status Monitoring**: Continuous polling of job states via ``update_job_status()``
 * **Workspace Management**: Directory synchronization and quota tracking
 * **User Quota Updates**: Real-time disk space and core hours calculation
@@ -210,26 +112,13 @@ Core Models
 * **ExternalUserMapping**: Links Django users to external authentication systems
 * **SharedWorkspaceMapping**: Workspace sharing relationships
 
-Status Management
-~~~~~~~~~~~~~~~~~
-
-Both Workspaces and Jobs use TextChoices enums for status tracking:
-
-* **Workspace States**: ``initializing``, ``idle``, ``active``, ``deleting``, ``error``
-* **Job States**: ``pending``, ``running``, ``complete``, ``failed``, ``stopping``
-
 API Structure
 -------------
 
 RESTful Endpoints
 ~~~~~~~~~~~~~~~~~
 
-* ``/tokens/`` - Authentication token management
-* ``/workspaces/`` - Workspace CRUD operations
-* ``/jobs/`` - Job lifecycle management
-* ``/users/`` - User information and quotas
-* ``/shared_workspaces/`` - Collaborative workspace features
-* ``/status/`` - System health checks
+More information can be found at the `SmartAPI docs <https://smart-api.info/ui/bf965a56ce398f8b37de68c05b4ef125#>`_.
 
 WebSocket Integration
 ~~~~~~~~~~~~~~~~~~~~~
@@ -257,14 +146,6 @@ Permission Validation
 
 Development Patterns
 --------------------
-
-Adding New Controllers
-~~~~~~~~~~~~~~~~~~~~~~
-
-1. Implement the appropriate abstract base class
-2. Add class name mapping in ``utils.translate_class_to_module()``
-3. Update configuration JSON files to register the new controller
-4. The system will automatically discover and load the controller at startup
 
 Background Task Development
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
