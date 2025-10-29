@@ -163,3 +163,19 @@ class LocalUserAuthentication(AbstractUserAuthentication):
 
     def delete_external_user(self, user_id):
         pass
+
+    def health_check(self):
+        connected = True
+        try:
+            user_count = len(pwd.getpwall())
+            if user_count < 1:
+                connected = False
+                message = f"No users detected on system. User Count: {user_count}"
+            else:
+                message = "Connected successfully."
+        except Exception as e:
+            logger.info(f"Issue with health check {repr(e)}")
+            connected = False
+            message = repr(e)
+
+        return {"connected": connected, "message": message}

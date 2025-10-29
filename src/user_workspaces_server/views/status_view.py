@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 
+from django.apps import apps
 from django.http import JsonResponse
 from rest_framework.views import APIView
 
@@ -27,11 +28,29 @@ class StatusView(APIView):
             else "invalid_build"
         )
 
+        app_config = apps.get_app_config("user_workspaces_server")
+
         response_data = {
             "message": "",
             "success": True,
             "version": version,
             "build": build,
+            "dependencies": {
+                "main_resource": app_config.main_resource.health_check(),
+                "api_user_authentication": app_config.api_user_authentication.health_check(),
+                "resources": {
+                    resource_id: resource.health_check()
+                    for resource_id, resource in app_config.available_resources.items()
+                },
+                "storage_methods": {
+                    storage_id: storage.health_check()
+                    for storage_id, storage in app_config.available_storage_methods.items()
+                },
+                "user_authentication_methods": {
+                    uam_id: uam.health_check()
+                    for uam_id, uam in app_config.available_user_authentication_methods.items()
+                },
+            },
         }
 
         return JsonResponse(response_data)
