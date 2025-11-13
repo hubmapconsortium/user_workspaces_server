@@ -68,8 +68,18 @@ $(hostname)-${PORT}
 EOL
 )
 
+(
+umask 077
+cat > "$(pwd)/.env" << EOL
+VITE_LLM_API_BASE_URL="{{ backend_url }}"
+VITE_DATA_PACKAGE_PATH="{{ data_manifest_path }}"
+VITE_PRODUCTION=true
+EOL
+)
+
+mkdir "$(pwd)/build"
 
 # Launch the Apptainer YAC container
 set -x
 
-apptainer run --env YAC_PORT=${PORT} {{ sif_file_path }}
+apptainer run --writable-tmpfs --bind "$(pwd)/build:/app/dist" --bind "$(pwd)/.env:/app/.env" --env YAC_PORT=${PORT} {{ sif_file_path }}
