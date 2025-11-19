@@ -74,6 +74,7 @@ cat > "$(pwd)/.env" << EOL
 VITE_LLM_API_BASE_URL="{{ backend_url }}"
 VITE_DATA_PACKAGE_PATH="{{ data_manifest_path }}"
 VITE_PRODUCTION=true
+VITE_AUTH_TOKEN="{{ vite_auth_token }}"
 EOL
 )
 

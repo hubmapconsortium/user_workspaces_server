@@ -1,8 +1,9 @@
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from urllib import parse
 
+import jwt
 from django.apps import apps
 from django.template import loader
 
@@ -19,6 +20,17 @@ class YACJob(AbstractJob):
 
     def get_script(self, template_params=None):
         template_config = {"job_id": self.job_details["id"]}
+
+        # Generate JWT token for VITE authentication
+        if (jwt_secret_key := self.config.get("jwt_secret_key")) is None:
+            raise RuntimeError("jwt_secret_key is not set")
+
+        payload = {
+            "iat": datetime.now(timezone.utc),
+            "exp": datetime.now(timezone.utc) + timedelta(hours=6),
+        }
+        vite_auth_token = jwt.encode(payload, jwt_secret_key, algorithm="HS256")
+        template_config["vite_auth_token"] = vite_auth_token
 
         template_config.update(self.config)
         template_config.update(template_params)
