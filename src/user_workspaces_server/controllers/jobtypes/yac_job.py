@@ -86,7 +86,7 @@ class YACJob(AbstractJob):
         url_domain = (
             resource.passthrough_url
             if subdomain is None
-            else f"{passthrough_url.scheme}://{subdomain}.{passthrough_url.netloc}"
+            else f"http://{subdomain}.{passthrough_url.netloc}"
         )
 
         if http_r.get(url_domain).status_code != 200:
