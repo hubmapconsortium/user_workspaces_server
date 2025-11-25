@@ -86,10 +86,11 @@ class YACJob(AbstractJob):
         url_domain = (
             resource.passthrough_url
             if subdomain is None
-            else f"http://{subdomain}.{passthrough_url.netloc}"
+            else f"{passthrough_url.scheme}://{subdomain}.{passthrough_url.netloc}"
         )
 
-        if http_r.get(url_domain).status_code != 200:
+        # TODO: We need to turn off this verify False flag.
+        if http_r.get(url_domain, verify=False).status_code != 200:
             logger.warning("Webserver not ready yet.")
             return {"current_job_details": {"message": "Webserver not ready."}}
 
