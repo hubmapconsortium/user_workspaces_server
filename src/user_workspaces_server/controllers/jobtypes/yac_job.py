@@ -10,6 +10,8 @@ from django.template import loader
 from user_workspaces_server import models
 from user_workspaces_server.controllers.jobtypes.abstract_job import AbstractJob
 
+import requests as http_r
+
 logger = logging.getLogger(__name__)
 
 
@@ -86,6 +88,12 @@ class YACJob(AbstractJob):
             if subdomain is None
             else f"{passthrough_url.scheme}://{subdomain}.{passthrough_url.netloc}"
         )
+
+        if http_r.get(url_domain).status_code != 200:
+            logger.warning(
+                f"Webserver not ready yet."
+            )
+            return {"current_job_details": {"message": "Webserver not ready."}}
 
         return {
             "metrics": {
