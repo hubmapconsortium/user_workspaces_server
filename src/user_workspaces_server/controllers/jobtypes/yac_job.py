@@ -90,7 +90,7 @@ class YACJob(AbstractJob):
         )
 
         if http_r.get(url_domain).status_code != 200:
-            logger.warning(f"Webserver not ready yet.")
+            logger.warning("Webserver not ready yet.")
             return {"current_job_details": {"message": "Webserver not ready."}}
 
         return {
