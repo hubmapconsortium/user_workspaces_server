@@ -1,0 +1,87 @@
+#!/bin/bash
+echo "STARTED @ $(date)"
+
+random_number () {
+    shuf -i ${1}-${2} -n 1
+}
+
+port_used_python() {
+  python -c "import socket; socket.socket().connect(('$1',$2))" >/dev/null 2>&1
+}
+
+port_used_python3() {
+  python3 -c "import socket; socket.socket().connect(('$1',$2))" >/dev/null 2>&1
+}
+
+port_used_nc(){
+  nc -w 2 "$1" "$2" < /dev/null > /dev/null 2>&1
+}
+
+port_used_lsof(){
+  lsof -i :"$2" >/dev/null 2>&1
+}
+
+port_used_bash(){
+  local bash_supported=$(strings /bin/bash 2>/dev/null | grep tcp)
+  if [ "$bash_supported" == "/dev/tcp/*/*" ]; then
+    (: < /dev/tcp/$1/$2) >/dev/null 2>&1
+  else
+    return 127
+  fi
+}
+
+# Check if port $1 is in use
+port_used () {
+  local port="${1#*:}"
+  local host=$((expr "${1}" : '\(.*\):' || echo "localhost") | awk 'END{print $NF}')
+  local port_strategies=(port_used_nc port_used_lsof port_used_bash port_used_python port_used_python3)
+
+  for strategy in ${port_strategies[@]};
+  do
+    $strategy $host $port
+    status=$?
+    if [[ "$status" == "0" ]] || [[ "$status" == "1" ]]; then
+      return $status
+    fi
+  done
+
+  return 127
+}
+
+# Find available port in range [$2..$3] for host $1
+# Default: [2000..65535]
+find_port () {
+  local host="${1:-localhost}"
+  local port=$(random_number "${2:-2000}" "${3:-65535}")
+  while port_used "${host}:${port}"; do
+    port=$(random_number "${2:-2000}" "${3:-65535}")
+  done
+  echo "${port}"
+}
+
+PORT=$(find_port)
+
+(
+umask 077
+cat > "$(pwd)/.network_config" << EOL
+$(hostname)-${PORT}
+EOL
+)
+
+(
+umask 077
+cat > "$(pwd)/.env" << EOL
+VITE_LLM_API_BASE_URL="{{ backend_url }}"
+VITE_DATA_PACKAGE_PATH="{{ data_manifest_path }}"
+VITE_PRODUCTION=true
+VITE_AUTH_TOKEN="{{ vite_auth_token }}"
+VITE_LLM_API_PORT=443
+EOL
+)
+
+mkdir "$(pwd)/build"
+
+# Launch the Apptainer YAC container
+set -x
+
+apptainer run --writable-tmpfs --bind "$(pwd)/build:/app/dist" --bind "$(pwd)/.env:/app/.env" --env YAC_PORT=${PORT} {{ sif_file_path }}
