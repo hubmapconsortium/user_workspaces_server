@@ -4,13 +4,12 @@ from datetime import datetime, timedelta, timezone
 from urllib import parse
 
 import jwt
+import requests as http_r
 from django.apps import apps
 from django.template import loader
 
 from user_workspaces_server import models
 from user_workspaces_server.controllers.jobtypes.abstract_job import AbstractJob
-
-import requests as http_r
 
 logger = logging.getLogger(__name__)
 
