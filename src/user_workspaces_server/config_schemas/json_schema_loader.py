@@ -40,9 +40,7 @@ class JSONSchemaWrapper:
 
     def get_optional_fields(self) -> List[str]:
         """Get list of optional field names."""
-        return [
-            name for name in self.properties.keys() if name not in self.required_fields
-        ]
+        return [name for name in self.properties.keys() if name not in self.required_fields]
 
     def get_field(self, field_name: str) -> Optional[Dict[str, Any]]:
         """

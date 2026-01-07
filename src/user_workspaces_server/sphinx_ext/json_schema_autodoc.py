@@ -20,7 +20,9 @@ from user_workspaces_server.config_schemas.json_schema_loader import (
 logger = logging.getLogger(__name__)
 
 
-def generate_field_doc(field_name: str, field_def: Dict[str, Any], is_required: bool, indent: int = 0) -> str:
+def generate_field_doc(
+    field_name: str, field_def: Dict[str, Any], is_required: bool, indent: int = 0
+) -> str:
     """
     Generate RST documentation for a single configuration field.
 
@@ -51,14 +53,14 @@ def generate_field_doc(field_name: str, field_def: Dict[str, Any], is_required: 
     if not is_required and "default" in field_def:
         default_val = field_def["default"]
         if isinstance(default_val, str):
-            lines.append(f"{indent_str}  *Default:* ``\"{default_val}\"``")
+            lines.append(f'{indent_str}  *Default:* ``"{default_val}"``')
         else:
             lines.append(f"{indent_str}  *Default:* ``{default_val}``")
         lines.append("")
 
     # Enum choices
     if "enum" in field_def:
-        choices_str = ", ".join(f"``\"{c}\"``" for c in field_def["enum"])
+        choices_str = ", ".join(f'``"{c}"``' for c in field_def["enum"])
         lines.append(f"{indent_str}  *Allowed values:* {choices_str}")
         lines.append("")
 
@@ -82,7 +84,9 @@ def generate_field_doc(field_name: str, field_def: Dict[str, Any], is_required: 
         nested_required = field_def.get("required", [])
         for nested_name, nested_def in field_def["properties"].items():
             nested_is_required = nested_name in nested_required
-            lines.append(generate_field_doc(nested_name, nested_def, nested_is_required, indent + 2))
+            lines.append(
+                generate_field_doc(nested_name, nested_def, nested_is_required, indent + 2)
+            )
 
     return "\n".join(lines)
 

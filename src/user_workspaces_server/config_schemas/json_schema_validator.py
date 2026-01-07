@@ -30,9 +30,7 @@ class JSONSchemaConfigValidator:
         self.errors: List[str] = []
         self.schema_loader = get_schema_loader()
 
-    def _format_validation_error(
-        self, error: jsonschema.ValidationError, path: str = ""
-    ) -> str:
+    def _format_validation_error(self, error: jsonschema.ValidationError, path: str = "") -> str:
         """
         Format a jsonschema validation error into a human-readable message.
 
