@@ -19,6 +19,12 @@ User Workspaces Server is a Django-based REST API that provides workspace and jo
    modules
 
 .. toctree::
+   :maxdepth: 2
+   :caption: Configuration:
+
+   config_reference
+
+.. toctree::
    :maxdepth: 1
    :caption: Development:
 

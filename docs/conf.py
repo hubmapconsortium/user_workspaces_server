@@ -47,6 +47,7 @@ extensions = [
     "sphinx_autodoc_typehints",
     "myst_parser",
     "sphinxcontrib.mermaid",
+    "user_workspaces_server.sphinx_ext.json_schema_autodoc",
 ]
 
 templates_path = ["_templates"]

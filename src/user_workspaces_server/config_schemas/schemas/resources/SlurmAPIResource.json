@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "SlurmAPIResource",
+  "title": "SlurmAPIResource",
+  "description": "SLURM cluster resource using SLURM REST API v0.0.40",
+  "type": "object",
+  "x-category": "resource",
+  "required": ["name", "resource_type", "storage", "user_authentication", "connection_details"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this resource instance"
+    },
+    "resource_type": {
+      "type": "string",
+      "enum": ["SlurmAPIResource"],
+      "description": "Must be 'SlurmAPIResource'"
+    },
+    "storage": {
+      "type": "string",
+      "description": "Reference to storage configuration key in available_storage"
+    },
+    "user_authentication": {
+      "type": "string",
+      "description": "Reference to authentication configuration key in available_user_authentication"
+    },
+    "passthrough_domain": {
+      "type": "string",
+      "default": "",
+      "description": "Domain for passthrough connections"
+    },
+    "parameter_mapping": {
+      "type": "object",
+      "default": {},
+      "description": "Maps generic parameter names to SLURM-specific names (e.g., num_cpus -> cpus_per_task)"
+    },
+    "cpu_partition": {
+      "type": "string",
+      "default": "",
+      "description": "SLURM partition name for CPU jobs"
+    },
+    "gpu_partition": {
+      "type": "string",
+      "default": "",
+      "description": "SLURM partition name for GPU jobs"
+    },
+    "connection_details": {
+      "type": "object",
+      "description": "SLURM API connection configuration",
+      "required": ["root_url", "api_token"],
+      "properties": {
+        "root_url": {
+          "type": "string",
+          "description": "Base URL for SLURM REST API (e.g., 'https://slurm.example.com/api')"
+        },
+        "api_token": {
+          "type": "string",
+          "description": "API token for SLURM REST API authentication"
+        },
+        "token_lifespan": {
+          "type": "string",
+          "default": "3600",
+          "description": "Token lifespan in seconds"
+        },
+        "health_check_url": {
+          "type": "string",
+          "description": "URL for health check endpoint"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "SLURM Cluster",
+      "resource_type": "SlurmAPIResource",
+      "storage": "main_storage",
+      "user_authentication": "main_auth",
+      "connection_details": {
+        "root_url": "https://slurm.example.com/api",
+        "api_token": "your-api-token-here",
+        "token_lifespan": "3600"
+      },
+      "cpu_partition": "cpu",
+      "gpu_partition": "gpu"
+    }
+  ]
+}
