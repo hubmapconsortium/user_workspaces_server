@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "GlobusUserAuthentication",
+  "title": "GlobusUserAuthentication",
+  "description": "Globus Auth integration for user authentication",
+  "type": "object",
+  "x-category": "authentication",
+  "required": ["name", "user_authentication_type", "connection_details"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this authentication method"
+    },
+    "user_authentication_type": {
+      "type": "string",
+      "enum": ["GlobusUserAuthentication"],
+      "description": "Must be 'GlobusUserAuthentication'"
+    },
+    "connection_details": {
+      "type": "object",
+      "description": "Globus authentication configuration",
+      "required": ["client_id", "client_secret", "authentication_type", "health_check_url"],
+      "properties": {
+        "client_id": {
+          "type": "string",
+          "description": "Globus OAuth client ID"
+        },
+        "client_secret": {
+          "type": "string",
+          "description": "Globus OAuth client secret"
+        },
+        "authentication_type": {
+          "type": "string",
+          "enum": ["oauth", "token"],
+          "description": "Authentication flow type: 'oauth' for full OAuth flow, 'token' for direct token validation"
+        },
+        "health_check_url": {
+          "type": "string",
+          "description": "URL for health check endpoint"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "Globus Token Auth",
+      "user_authentication_type": "GlobusUserAuthentication",
+      "connection_details": {
+        "client_id": "your-client-id",
+        "client_secret": "your-client-secret",
+        "authentication_type": "token"
+      }
+    }
+  ]
+}

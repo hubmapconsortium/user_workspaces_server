@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "AppyterJob",
+  "title": "AppyterJob",
+  "description": "Appyter notebook application job",
+  "type": "object",
+  "x-category": "job_type",
+  "required": ["name", "job_type", "environment_details"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this job type"
+    },
+    "job_type": {
+      "type": "string",
+      "enum": ["AppyterJob"],
+      "description": "Must be 'AppyterJob'"
+    },
+    "environment_details": {
+      "type": "object",
+      "description": "Environment configuration per resource (resource name as key, config as value)",
+      "required": ["sif_file_path"],
+      "properties": {
+        "sif_file_path": {
+          "type": "string",
+          "description": "File path for sif image"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "Appyter Job",
+      "job_type": "AppyterJob",
+      "environment_details": {
+        "main_resource": {
+          "sif_file_path": "/path/to/sif_file.sif"
+        }
+      }
+    }
+  ]
+}

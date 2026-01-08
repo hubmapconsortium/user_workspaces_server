@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "PSCAPIUserAuthentication",
+  "title": "PSCAPIUserAuthentication",
+  "description": "PSC API authentication integration",
+  "type": "object",
+  "x-category": "authentication",
+  "required": ["name", "user_authentication_type", "connection_details"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this authentication method"
+    },
+    "user_authentication_type": {
+      "type": "string",
+      "enum": ["PSCAPIUserAuthentication"],
+      "description": "Must be 'PSCAPIUserAuthentication'"
+    },
+    "connection_details": {
+      "type": "object",
+      "description": "PSC API connection configuration",
+      "required": [
+        "grant_number",
+        "jwt_token",
+        "ldap_base",
+        "ldap_password",
+        "ldap_uri",
+        "ldap_user_dn",
+        "resource_name",
+        "root_url",
+        "health_check_url"
+      ],
+      "properties": {
+        "create_external_users": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to create a new user when they don't exist on the system"
+        },
+        "grant_number": {
+          "type": "string",
+          "description": "Grant number associated with user workspaces server"
+        },
+        "health_check_url": {
+          "type": "string",
+          "description": "URL for health check endpoint"
+        },
+        "jwt_token": {
+          "type": "string",
+          "description": "JWT authentication token for PSC Users API"
+        },
+        "ldap_base": {
+          "type": "string",
+          "description": "Base for PSC LDAP service"
+        },
+        "ldap_password": {
+          "type": "string",
+          "description": "Password for PSC LDAP service"
+        },
+        "ldap_uri": {
+          "type": "string",
+          "description": "URI for PSC LDAP service"
+        },
+        "ldap_user_dn": {
+          "type": "string",
+          "description": "User DN for PSC LDAP service"
+        },
+        "resource_name": {
+          "type": "string",
+          "description": "PSC resource associated with user workspaces server"
+        },
+        "root_url": {
+          "type": "string",
+          "description": "URL for the PSC Users API"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "PSC API Auth",
+      "user_authentication_type": "PSCAPIUserAuthentication",
+      "connection_details": {
+        "create_external_user": false,
+        "grant_number": "YOUR_GRANT_NUMBER",
+        "health_check_url": "https://health_check.com",
+        "jwt_token": "YOUR_JWT_TOKEN",
+        "ldap_base": "YOUR_LDAP_BASE",
+        "ldap_password": "YOUR_LDAP_PASSWORD",
+        "ldap_uri": "ldaps://ldap_uri",
+        "ldap_user_dn": "YOUR_LDAP_USER_DN",
+        "resource_name": "YOUR_RESOURCE_NAME",
+        "root_url": "https://root_url.com"
+      }
+    }
+  ]
+}
