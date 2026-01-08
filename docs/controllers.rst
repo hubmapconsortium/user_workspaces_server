@@ -114,5 +114,6 @@ Adding New Controllers
 
 1. Implement the appropriate abstract base class
 2. Add class name mapping in ``utils.translate_class_to_module()``
-3. Update configuration JSON files to register the new controller
-4. The system will automatically discover and load the controller at startup
+3. Add new JSON schema in ``schemas`` directory
+4. Update configuration JSON files to register the new controller
+5. The system will automatically discover and load the controller at startup

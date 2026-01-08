@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "LocalUserAuthentication",
+  "title": "LocalUserAuthentication",
+  "description": "Local system user authentication",
+  "type": "object",
+  "x-category": "authentication",
+  "required": ["name", "user_authentication_type", "connection_details"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this authentication method"
+    },
+    "user_authentication_type": {
+      "type": "string",
+      "enum": ["LocalUserAuthentication"],
+      "description": "Must be 'LocalUserAuthentication'"
+    },
+    "connection_details": {
+      "type": "object",
+      "default": {},
+      "description": "Local authentication configuration (typically empty)",
+      "properties": {
+        "create_external_users": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to create a new user when they don't exist on the system"
+        },
+        "operating_system": {
+          "type": "string",
+          "enum": ["linux", "osx"],
+          "description": "The operating system to which this authentication method is connected"
+        }
+      },
+      "required": ["operating_system"]
+    }
+  },
+  "examples": [
+    {
+      "name": "Local Auth",
+      "user_authentication_type": "LocalUserAuthentication",
+      "connection_details": {}
+    }
+  ]
+}

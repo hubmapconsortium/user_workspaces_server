@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "JupyterLabJob",
+  "title": "JupyterLabJob",
+  "description": "JupyterLab server job with configurable Python environment",
+  "type": "object",
+  "x-category": "job_type",
+  "required": ["name", "job_type", "environment_details"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this job type"
+    },
+    "job_type": {
+      "type": "string",
+      "enum": ["JupyterLabJob"],
+      "description": "Must be 'JupyterLabJob'"
+    },
+    "environment_details": {
+      "type": "object",
+      "description": "Environment configuration per resource (resource name as key, config as value)",
+      "required": ["module_manager", "environment_name"],
+      "properties": {
+        "module_manager": {
+          "type": "string",
+          "enum": ["tar", "lmod", "virtualenv"],
+          "description": "How this environment is managed. (Tar archive, lmod module, virtual environment)"
+        },
+        "python_version": {
+          "type": "string",
+          "description": "Python version to use. Required if using lmod or virtualenv"
+        },
+        "modules": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Modules to load. Required if using lmod"
+        },
+        "python_packages": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Python packages to install. Required if using lmod or virtualenv"
+        },
+        "time_limit": {
+          "type": "string",
+          "description": "The default time limit for this job type in minutes"
+        },
+        "tar_file_path": {
+          "type": "string",
+          "description": "File path for the tar archive. Required if using tar"
+        },
+        "environment_name": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "Jupyter Lab",
+      "job_type": "JupyterLabJob",
+      "environment_details": {
+        "main_resource": {
+          "python_version": "python3.10",
+          "module_manager": "virtualenv",
+          "modules": ["jupyterlab"],
+          "time_limit": "60",
+          "environment_name": "JupyterLabJob"
+        }
+      }
+    }
+  ]
+}

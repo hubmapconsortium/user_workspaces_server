@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "HubmapLocalFileSystemStorage",
+  "title": "HubmapLocalFileSystemStorage",
+  "description": "HuBMAP-specific local filesystem storage with custom directory structures",
+  "type": "object",
+  "x-category": "storage",
+  "required": ["name", "storage_type", "user_authentication", "root_dir", "connection_details"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this storage instance"
+    },
+    "storage_type": {
+      "type": "string",
+      "enum": ["HubmapLocalFileSystemStorage"],
+      "description": "Must be 'HubmapLocalFileSystemStorage'"
+    },
+    "user_authentication": {
+      "type": "string",
+      "description": "Reference to authentication configuration key in available_user_authentication"
+    },
+    "root_dir": {
+      "type": "string",
+      "description": "Absolute path to root directory for storing workspace files"
+    },
+    "connection_details": {
+      "type": "object",
+      "default": {},
+      "description": "Connection configuration",
+      "required": ["root_url"],
+      "properties": {
+        "root_url": {
+          "type": "string",
+          "description": "Base URL for HuBMAP API to grab dataset file paths"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "HuBMAP Local Storage",
+      "storage_type": "HubmapLocalFileSystemStorage",
+      "user_authentication": "main_auth",
+      "root_dir": "/var/hubmap/workspaces"
+    }
+  ]
+}

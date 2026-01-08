@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "LocalTestJob",
+  "title": "LocalTestJob",
+  "description": "Simple test job for development and debugging",
+  "type": "object",
+  "x-category": "job_type",
+  "required": ["name", "job_type"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this job type"
+    },
+    "job_type": {
+      "type": "string",
+      "enum": ["LocalTestJob"],
+      "description": "Must be 'LocalTestJob'"
+    },
+    "environment_details": {
+      "type": "object",
+      "default": {},
+      "description": "Environment configuration per resource (typically empty for test jobs)"
+    }
+  },
+  "examples": [
+    {
+      "name": "Local Test Job",
+      "job_type": "LocalTestJob",
+      "environment_details": {
+        "main_resource": {}
+      }
+    }
+  ]
+}
