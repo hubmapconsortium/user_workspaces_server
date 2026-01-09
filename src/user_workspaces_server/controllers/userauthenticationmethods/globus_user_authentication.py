@@ -150,8 +150,8 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
             }
         )
 
-        # Check whether the user is part of predefined set of Globus groups
-        if not external_user_mapping and self.allowed_globus_groups:
+        # Check whether the user is part of predefined set of Globus groups every time we log in
+        if self.allowed_globus_groups:
             # For new users, check group membership before creating account
             groups_token = globus_user_info.get("globus_groups_token")
             if not groups_token:
