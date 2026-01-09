@@ -37,6 +37,15 @@
         "health_check_url": {
           "type": "string",
           "description": "URL for health check endpoint"
+        },
+        "allowed_globus_groups": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Globus group UUID"
+          },
+          "description": "List of Globus group UUIDs. Users must be members of at least one group to authenticate. If empty, group checking is disabled.",
+          "default": []
         }
       }
     }

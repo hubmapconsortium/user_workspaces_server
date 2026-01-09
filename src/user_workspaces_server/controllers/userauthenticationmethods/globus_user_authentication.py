@@ -4,7 +4,7 @@ import logging
 import globus_sdk
 from flask.wrappers import Response as flask_response
 from hubmap_commons.hm_auth import AuthHelper
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ParseError, PermissionDenied
 from rest_framework.response import Response
 
 from user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication import (
@@ -21,13 +21,108 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
         client_secret = self.connection_details["client_secret"]
         self.authentication_type = self.connection_details["authentication_type"]
         self.oauth = globus_sdk.ConfidentialAppAuthClient(client_id, client_secret)
+        self.allowed_globus_groups = self.connection_details.get("allowed_globus_groups", [])
         if not AuthHelper.isInitialized():
             self.auth_helper = AuthHelper.create(clientId=client_id, clientSecret=client_secret)
         else:
             self.auth_helper = AuthHelper.instance()
 
     def has_permission(self, internal_user):
-        pass
+        """
+        Verify user has permission by checking external user mapping exists
+        and optionally validating Globus group membership.
+
+        Returns:
+            ExternalUserMapping on success, False on failure
+        """
+        external_user_mapping = self.get_external_user_mapping(
+            {"user_id": internal_user, "user_authentication_name": type(self).__name__}
+        )
+
+        if not external_user_mapping:
+            # No mapping exists - user needs to authenticate first
+            return False
+
+        # If group checking is enabled, validate membership
+        if self.allowed_globus_groups:
+            try:
+                # Extract groups token from stored external_user_details
+                external_user_details = external_user_mapping.external_user_details or {}
+                groups_token = external_user_details.get("globus_groups_token")
+
+                if not groups_token:
+                    logger.error(
+                        f"Groups token not found for user {internal_user.username}. "
+                        "User may need to re-authenticate."
+                    )
+                    return False
+
+                # Check if user is still a member of allowed groups
+                if not self._check_group_membership(
+                    groups_token, external_user_mapping.external_user_id
+                ):
+                    logger.warning(
+                        f"User {internal_user.username} is no longer a member of allowed Globus groups."
+                    )
+                    return False
+
+            except Exception as e:
+                logger.error(
+                    f"Error checking group membership for {internal_user.username}: {repr(e)}"
+                )
+                return False
+
+        # User has valid mapping and (if required) is in allowed groups
+        return external_user_mapping
+
+    def _check_group_membership(self, groups_token, user_id):
+        """
+        Check if user is a member of any allowed Globus groups.
+
+        Args:
+            groups_token: Access token for Globus Groups API
+            user_id: Globus user ID (sub)
+
+        Returns:
+            True if user is in at least one allowed group or if no groups configured, False otherwise
+        """
+        if not self.allowed_globus_groups:
+            # No groups configured - skip check
+            return True
+
+        try:
+            # Create GroupsClient with access token
+            authorizer = globus_sdk.AccessTokenAuthorizer(groups_token)
+            groups_client = globus_sdk.GroupsClient(authorizer=authorizer)
+
+            # Get user's group memberships
+            user_groups = groups_client.get_my_groups()
+
+            # Extract group IDs from response
+            user_group_ids = {group["id"] for group in user_groups}
+
+            # Check if user is in any allowed group (OR logic)
+            allowed_groups_set = set(self.allowed_globus_groups)
+            intersection = user_group_ids.intersection(allowed_groups_set)
+
+            if intersection:
+                logger.info(f"User {user_id} is member of allowed groups: {intersection}")
+                return True
+            else:
+                logger.warning(
+                    f"User {user_id} is not a member of any allowed groups. "
+                    f"User groups: {user_group_ids}, Allowed: {allowed_groups_set}"
+                )
+                return False
+
+        except globus_sdk.GlobusAPIError as e:
+            logger.error(f"Globus API error checking groups for {user_id}: {e.code} - {e.message}")
+            # Fail closed - deny access on API errors
+            return False
+        except Exception as e:
+            logger.error(f"Unexpected error checking groups for {user_id}: {repr(e)}")
+            # Fail closed - deny access on unexpected errors
+            return False
 
     def api_authenticate(self, request):
         try:
@@ -55,6 +150,19 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
             }
         )
 
+        # Check whether the user is part of predefined set of Globus groups every time we log in
+        if self.allowed_globus_groups:
+            # For new users, check group membership before creating account
+            groups_token = globus_user_info.get("globus_groups_token")
+            if not groups_token:
+                raise PermissionDenied("Groups token not available for authentication.")
+
+            if not self._check_group_membership(groups_token, globus_user_info["sub"]):
+                raise PermissionDenied(
+                    "User is not a member of any allowed Globus groups. "
+                    "Please contact your administrator for access."
+                )
+
         if not external_user_mapping:
             # Since its Globus, lets get the username from the email
             username = globus_user_info["email"].split("@")[0]
@@ -73,13 +181,13 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
                     }
                 )
 
-            globus_user_info["internal_user_id"] = internal_user
             self.create_external_user_mapping(
                 {
-                    "user_id": globus_user_info["internal_user_id"],
+                    "user_id": internal_user,
                     "user_authentication_name": type(self).__name__,
                     "external_user_id": globus_user_info["sub"],
                     "external_username": globus_user_info["username"],
+                    "external_user_details": globus_user_info,
                 }
             )
             return internal_user
@@ -125,13 +233,23 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
             code = body["code"]
             tokens = self.oauth.oauth2_exchange_code_for_tokens(code)
 
-            # Need to add call here to grab user profile info
-            return self.introspect_globus_user(
-                tokens.by_resource_server["groups.api.globus.org"]["access_token"]
-            )
+            # Get user profile info using groups token
+            groups_token = tokens.by_resource_server["groups.api.globus.org"]["access_token"]
+            user_info = self.introspect_globus_user(groups_token)
+
+            # Store the groups token for later group membership checking
+            user_info["globus_groups_token"] = groups_token
+
+            return user_info
 
     def globus_token_get_user_info(self, body):
         if "auth_token" not in body:
             raise ParseError("Missing auth_token.")
 
-        return self.introspect_globus_user(body.get("auth_token"))
+        auth_token = body.get("auth_token")
+        user_info = self.introspect_globus_user(auth_token)
+
+        # Store the auth token as groups token for group membership checking
+        user_info["globus_groups_token"] = auth_token
+
+        return user_info
