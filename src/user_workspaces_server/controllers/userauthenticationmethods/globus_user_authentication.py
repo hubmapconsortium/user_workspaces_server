@@ -181,10 +181,9 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
                     }
                 )
 
-            globus_user_info["internal_user_id"] = internal_user
             self.create_external_user_mapping(
                 {
-                    "user_id": globus_user_info["internal_user_id"],
+                    "user_id": internal_user,
                     "user_authentication_name": type(self).__name__,
                     "external_user_id": globus_user_info["sub"],
                     "external_username": globus_user_info["username"],
