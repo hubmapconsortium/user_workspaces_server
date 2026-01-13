@@ -1,0 +1,16 @@
+Configuration Reference
+=========================
+
+This documentation is automatically generated from JSON Schema files.
+All validation rules described here are enforced at startup time.
+
+Schema files are located in ``src/user_workspaces_server/config_schemas/schemas/``
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Configuration:
+
+   config_resources
+   config_storage
+   config_authentication
+   config_job_types

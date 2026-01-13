@@ -1,0 +1,203 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="user_workspaces_server" href="modules.html" />
+    <link rel="prev" title="Controllers" href="controllers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controllers.html">Controllers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authentication-endpoints">Authentication Endpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#workspace-management">Workspace Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#shared-workspace-management">Shared Workspace Management</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#job-management">Job Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#job-type-information">Job Type Information</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#user-management">User Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-information">System Information</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parameter-validation">Parameter Validation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#websocket-support">WebSocket Support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#passthrough-proxy">Passthrough Proxy</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-models">Data Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">user_workspaces_server</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_reference.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<p>The User Workspaces Server provides a RESTful API for managing workspaces, jobs, users, and system resources. All endpoints use JSON for request and response payloads.</p>
+<section id="authentication">
+<h2>Authentication<a class="headerlink" href="#authentication" title="Link to this heading"></a></h2>
+<p>The API uses custom token-based authentication with the <code class="docutils literal notranslate"><span class="pre">UWS-Authorization</span></code> header:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">UWS-Authorization: &lt;token&gt;</span>
+</pre></div>
+</div>
+<section id="authentication-endpoints">
+<h3>Authentication Endpoints<a class="headerlink" href="#authentication-endpoints" title="Link to this heading"></a></h3>
+</section>
+</section>
+<section id="workspace-management">
+<h2>Workspace Management<a class="headerlink" href="#workspace-management" title="Link to this heading"></a></h2>
+<p>Workspaces represent user environments with isolated storage and compute access.</p>
+<section id="shared-workspace-management">
+<h3>Shared Workspace Management<a class="headerlink" href="#shared-workspace-management" title="Link to this heading"></a></h3>
+<p>Collaborative workspace features for sharing between users.</p>
+</section>
+</section>
+<section id="job-management">
+<h2>Job Management<a class="headerlink" href="#job-management" title="Link to this heading"></a></h2>
+<p>Jobs represent computational tasks executed within workspaces.</p>
+<section id="job-type-information">
+<h3>Job Type Information<a class="headerlink" href="#job-type-information" title="Link to this heading"></a></h3>
+<p>Information about available job types and their parameters.</p>
+</section>
+</section>
+<section id="user-management">
+<h2>User Management<a class="headerlink" href="#user-management" title="Link to this heading"></a></h2>
+<p>User information, quotas, and authentication details.</p>
+</section>
+<section id="system-information">
+<h2>System Information<a class="headerlink" href="#system-information" title="Link to this heading"></a></h2>
+<p>System status and configuration information.</p>
+<section id="parameter-validation">
+<h3>Parameter Validation<a class="headerlink" href="#parameter-validation" title="Link to this heading"></a></h3>
+<p>Parameter and configuration validation endpoints.</p>
+</section>
+</section>
+<section id="websocket-support">
+<h2>WebSocket Support<a class="headerlink" href="#websocket-support" title="Link to this heading"></a></h2>
+<p>Real-time communication for job status updates and interactive sessions.</p>
+<section id="passthrough-proxy">
+<h3>Passthrough Proxy<a class="headerlink" href="#passthrough-proxy" title="Link to this heading"></a></h3>
+<p>HTTP proxy for forwarding requests to running jobs.</p>
+</section>
+</section>
+<section id="data-models">
+<h2>Data Models<a class="headerlink" href="#data-models" title="Link to this heading"></a></h2>
+<p>Core data models used by the API.</p>
+</section>
+<section id="serializers">
+<h2>Serializers<a class="headerlink" href="#serializers" title="Link to this heading"></a></h2>
+<p>Request/response serialization classes.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="controllers.html" class="btn btn-neutral float-left" title="Controllers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="user_workspaces_server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

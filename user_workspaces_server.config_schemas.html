@@ -1,0 +1,697 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>user_workspaces_server.config_schemas package &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="user_workspaces_server.controllers package" href="user_workspaces_server.controllers.html" />
+    <link rel="prev" title="user_workspaces_server package" href="user_workspaces_server.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controllers.html">Controllers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">user_workspaces_server</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="user_workspaces_server.html">user_workspaces_server package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="user_workspaces_server.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">user_workspaces_server.config_schemas package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.html">user_workspaces_server.controllers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html">user_workspaces_server.sphinx_ext package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#user-workspaces-server-admin-module">user_workspaces_server.admin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#module-user_workspaces_server.apps">user_workspaces_server.apps module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#user-workspaces-server-auth-module">user_workspaces_server.auth module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#user-workspaces-server-exceptions-module">user_workspaces_server.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#module-user_workspaces_server.logging">user_workspaces_server.logging module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#user-workspaces-server-models-module">user_workspaces_server.models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#user-workspaces-server-serializers-module">user_workspaces_server.serializers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#user-workspaces-server-tasks-module">user_workspaces_server.tasks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#user-workspaces-server-urls-module">user_workspaces_server.urls module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#module-user_workspaces_server.utils">user_workspaces_server.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#user-workspaces-server-ws-consumers-module">user_workspaces_server.ws_consumers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.html#module-user_workspaces_server">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_reference.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">user_workspaces_server</a></li>
+          <li class="breadcrumb-item"><a href="user_workspaces_server.html">user_workspaces_server package</a></li>
+      <li class="breadcrumb-item active">user_workspaces_server.config_schemas package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/user_workspaces_server.config_schemas.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-workspaces-server-config-schemas-package">
+<h1>user_workspaces_server.config_schemas package<a class="headerlink" href="#user-workspaces-server-config-schemas-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-user_workspaces_server.config_schemas.json_schema_loader">
+<span id="user-workspaces-server-config-schemas-json-schema-loader-module"></span><h2>user_workspaces_server.config_schemas.json_schema_loader module<a class="headerlink" href="#module-user_workspaces_server.config_schemas.json_schema_loader" title="Link to this heading"></a></h2>
+<p>JSON Schema loader for configuration validation.</p>
+<p>This module loads JSON Schema files for validation and documentation generation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.json_schema_loader.</span></span><span class="sig-name descname"><span class="pre">JSONSchemaWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Wrapper around a JSON Schema providing convenient access methods.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize a JSONSchemaWrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>schema</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The parsed JSON Schema dictionary</p></li>
+<li><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to the schema file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.fields">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.fields" title="Link to this definition"></a></dt>
+<dd><p>Get all fields (properties) from the schema.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_required_fields">
+<span class="sig-name descname"><span class="pre">get_required_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper.get_required_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_required_fields" title="Link to this definition"></a></dt>
+<dd><p>Get list of required field names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_optional_fields">
+<span class="sig-name descname"><span class="pre">get_optional_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper.get_optional_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_optional_fields" title="Link to this definition"></a></dt>
+<dd><p>Get list of optional field names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_field">
+<span class="sig-name descname"><span class="pre">get_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper.get_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_field" title="Link to this definition"></a></dt>
+<dd><p>Get a specific field definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the field</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Field definition dict or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.example">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">example</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.example" title="Link to this definition"></a></dt>
+<dd><p>Get the first example (for backwards compatibility with YAML schemas).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.json_schema_loader.</span></span><span class="sig-name descname"><span class="pre">JSONSchemaLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Loads and manages JSON Schema files.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the JSON Schema loader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>schemas_dir</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to directory containing JSON schemas.
+Defaults to schemas/ subdirectory of this module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_schema">
+<span class="sig-name descname"><span class="pre">get_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_schema" title="Link to this definition"></a></dt>
+<dd><p>Get a schema by category and controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>category</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Schema category (resources, storage, authentication, job_types)</p></li>
+<li><p><strong>controller_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the controller</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSONSchemaWrapper object or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_all_schemas">
+<span class="sig-name descname"><span class="pre">get_all_schemas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_all_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_all_schemas" title="Link to this definition"></a></dt>
+<dd><p>Get all loaded schemas organized by category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_resource_schema">
+<span class="sig-name descname"><span class="pre">get_resource_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_resource_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_resource_schema" title="Link to this definition"></a></dt>
+<dd><p>Get a resource schema by controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_storage_schema">
+<span class="sig-name descname"><span class="pre">get_storage_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_storage_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_storage_schema" title="Link to this definition"></a></dt>
+<dd><p>Get a storage schema by controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_authentication_schema">
+<span class="sig-name descname"><span class="pre">get_authentication_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_authentication_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_authentication_schema" title="Link to this definition"></a></dt>
+<dd><p>Get an authentication schema by controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_job_type_schema">
+<span class="sig-name descname"><span class="pre">get_job_type_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_job_type_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_job_type_schema" title="Link to this definition"></a></dt>
+<dd><p>Get a job type schema by controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_loader.get_schema_loader">
+<span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.json_schema_loader.</span></span><span class="sig-name descname"><span class="pre">get_schema_loader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#get_schema_loader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_loader.get_schema_loader" title="Link to this definition"></a></dt>
+<dd><p>Get the global schema loader instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaLoader</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-user_workspaces_server.config_schemas.json_schema_validator">
+<span id="user-workspaces-server-config-schemas-json-schema-validator-module"></span><h2>user_workspaces_server.config_schemas.json_schema_validator module<a class="headerlink" href="#module-user_workspaces_server.config_schemas.json_schema_validator" title="Link to this heading"></a></h2>
+<p>Configuration validation using JSON Schema.</p>
+<p>This module provides validation logic for configuration files using
+JSON Schema definitions.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_validator.ValidationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.json_schema_validator.</span></span><span class="sig-name descname"><span class="pre">ValidationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#ValidationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_validator.ValidationError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception raised when configuration validation fails.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_validator.ValidationError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#ValidationError.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_validator.ValidationError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.json_schema_validator.</span></span><span class="sig-name descname"><span class="pre">JSONSchemaConfigValidator</span></span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Validates configuration dictionaries against JSON schemas.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the validator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_with_schema">
+<span class="sig-name descname"><span class="pre">validate_with_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator.validate_with_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_with_schema" title="Link to this definition"></a></dt>
+<dd><p>Validate a configuration dictionary against a JSON schema.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The configuration dictionary to validate</p></li>
+<li><p><strong>schema_dict</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The JSON Schema to validate against</p></li>
+<li><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The current path in the config (for error messages)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if validation passes, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_controller_config">
+<span class="sig-name descname"><span class="pre">validate_controller_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_wrapper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator.validate_controller_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_controller_config" title="Link to this definition"></a></dt>
+<dd><p>Validate a controller configuration against its schema.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The configuration dictionary to validate</p></li>
+<li><p><strong>schema_wrapper</strong> – The JSONSchemaWrapper to validate against</p></li>
+<li><p><strong>config_key</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The key in the config file (for error messages)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if validation passes, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_uws_config">
+<span class="sig-name descname"><span class="pre">validate_uws_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator.validate_uws_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_uws_config" title="Link to this definition"></a></dt>
+<dd><p>Validate the complete UWS config.json file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The loaded config.json dictionary</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if validation passes, False otherwise</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_validator.ValidationError" title="user_workspaces_server.config_schemas.json_schema_validator.ValidationError"><strong>ValidationError</strong></a> – If validation fails</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-user_workspaces_server.config_schemas">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-user_workspaces_server.config_schemas" title="Link to this heading"></a></h2>
+<p>Configuration schema definitions and validation for User Workspaces Server.</p>
+<p>This module provides a JSON Schema-based system for validating configuration
+files (config.json) at startup time.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.</span></span><span class="sig-name descname"><span class="pre">JSONSchemaWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaWrapper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Wrapper around a JSON Schema providing convenient access methods.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaWrapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaWrapper.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize a JSONSchemaWrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>schema</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The parsed JSON Schema dictionary</p></li>
+<li><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to the schema file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaWrapper.fields">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaWrapper.fields" title="Link to this definition"></a></dt>
+<dd><p>Get all fields (properties) from the schema.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaWrapper.get_required_fields">
+<span class="sig-name descname"><span class="pre">get_required_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper.get_required_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaWrapper.get_required_fields" title="Link to this definition"></a></dt>
+<dd><p>Get list of required field names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaWrapper.get_optional_fields">
+<span class="sig-name descname"><span class="pre">get_optional_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper.get_optional_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaWrapper.get_optional_fields" title="Link to this definition"></a></dt>
+<dd><p>Get list of optional field names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaWrapper.get_field">
+<span class="sig-name descname"><span class="pre">get_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaWrapper.get_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaWrapper.get_field" title="Link to this definition"></a></dt>
+<dd><p>Get a specific field definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the field</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Field definition dict or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaWrapper.example">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">example</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaWrapper.example" title="Link to this definition"></a></dt>
+<dd><p>Get the first example (for backwards compatibility with YAML schemas).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaLoader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.</span></span><span class="sig-name descname"><span class="pre">JSONSchemaLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaLoader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Loads and manages JSON Schema files.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaLoader.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaLoader.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the JSON Schema loader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>schemas_dir</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to directory containing JSON schemas.
+Defaults to schemas/ subdirectory of this module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaLoader.get_schema">
+<span class="sig-name descname"><span class="pre">get_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaLoader.get_schema" title="Link to this definition"></a></dt>
+<dd><p>Get a schema by category and controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>category</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Schema category (resources, storage, authentication, job_types)</p></li>
+<li><p><strong>controller_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the controller</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSONSchemaWrapper object or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaLoader.get_all_schemas">
+<span class="sig-name descname"><span class="pre">get_all_schemas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_all_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaLoader.get_all_schemas" title="Link to this definition"></a></dt>
+<dd><p>Get all loaded schemas organized by category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaLoader.get_resource_schema">
+<span class="sig-name descname"><span class="pre">get_resource_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_resource_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaLoader.get_resource_schema" title="Link to this definition"></a></dt>
+<dd><p>Get a resource schema by controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaLoader.get_storage_schema">
+<span class="sig-name descname"><span class="pre">get_storage_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_storage_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaLoader.get_storage_schema" title="Link to this definition"></a></dt>
+<dd><p>Get a storage schema by controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaLoader.get_authentication_schema">
+<span class="sig-name descname"><span class="pre">get_authentication_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_authentication_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaLoader.get_authentication_schema" title="Link to this definition"></a></dt>
+<dd><p>Get an authentication schema by controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaLoader.get_job_type_schema">
+<span class="sig-name descname"><span class="pre">get_job_type_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#JSONSchemaLoader.get_job_type_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaLoader.get_job_type_schema" title="Link to this definition"></a></dt>
+<dd><p>Get a job type schema by controller name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaConfigValidator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.</span></span><span class="sig-name descname"><span class="pre">JSONSchemaConfigValidator</span></span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaConfigValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Validates configuration dictionaries against JSON schemas.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaConfigValidator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaConfigValidator.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the validator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_with_schema">
+<span class="sig-name descname"><span class="pre">validate_with_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator.validate_with_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_with_schema" title="Link to this definition"></a></dt>
+<dd><p>Validate a configuration dictionary against a JSON schema.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The configuration dictionary to validate</p></li>
+<li><p><strong>schema_dict</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The JSON Schema to validate against</p></li>
+<li><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The current path in the config (for error messages)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if validation passes, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_controller_config">
+<span class="sig-name descname"><span class="pre">validate_controller_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_wrapper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator.validate_controller_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_controller_config" title="Link to this definition"></a></dt>
+<dd><p>Validate a controller configuration against its schema.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The configuration dictionary to validate</p></li>
+<li><p><strong>schema_wrapper</strong> – The JSONSchemaWrapper to validate against</p></li>
+<li><p><strong>config_key</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The key in the config file (for error messages)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if validation passes, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_uws_config">
+<span class="sig-name descname"><span class="pre">validate_uws_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#JSONSchemaConfigValidator.validate_uws_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_uws_config" title="Link to this definition"></a></dt>
+<dd><p>Validate the complete UWS config.json file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – The loaded config.json dictionary</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if validation passes, False otherwise</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#user_workspaces_server.config_schemas.ValidationError" title="user_workspaces_server.config_schemas.ValidationError"><strong>ValidationError</strong></a> – If validation fails</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.get_schema_loader">
+<span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.</span></span><span class="sig-name descname"><span class="pre">get_schema_loader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_loader.html#get_schema_loader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.get_schema_loader" title="Link to this definition"></a></dt>
+<dd><p>Get the global schema loader instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader" title="user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchemaLoader</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.ValidationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.config_schemas.</span></span><span class="sig-name descname"><span class="pre">ValidationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#ValidationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.ValidationError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception raised when configuration validation fails.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.config_schemas.ValidationError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/config_schemas/json_schema_validator.html#ValidationError.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.config_schemas.ValidationError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="user_workspaces_server.html" class="btn btn-neutral float-left" title="user_workspaces_server package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="user_workspaces_server.controllers.html" class="btn btn-neutral float-right" title="user_workspaces_server.controllers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+user\_workspaces\_server.controllers.jobtypes package
+=====================================================
+
+Submodules
+----------
+
+user\_workspaces\_server.controllers.jobtypes.abstract\_job module
+------------------------------------------------------------------
+
+.. automodule:: user_workspaces_server.controllers.jobtypes.abstract_job
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.controllers.jobtypes.appyter\_job module
+-----------------------------------------------------------------
+
+.. automodule:: user_workspaces_server.controllers.jobtypes.appyter_job
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.controllers.jobtypes.jupyter\_lab\_job module
+----------------------------------------------------------------------
+
+.. automodule:: user_workspaces_server.controllers.jobtypes.jupyter_lab_job
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.controllers.jobtypes.local\_test\_job module
+---------------------------------------------------------------------
+
+.. automodule:: user_workspaces_server.controllers.jobtypes.local_test_job
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.controllers.jobtypes.yac\_job module
+-------------------------------------------------------------
+
+.. automodule:: user_workspaces_server.controllers.jobtypes.yac_job
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: user_workspaces_server.controllers.jobtypes
+   :members:
+   :undoc-members:
+   :show-inheritance:

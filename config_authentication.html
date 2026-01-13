@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Authentication Controllers &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Job Type Controllers" href="config_job_types.html" />
+    <link rel="prev" title="Storage Controllers" href="config_storage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controllers.html">Controllers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">user_workspaces_server</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="config_reference.html">Configuration Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="config_resources.html">Resource Controllers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config_storage.html">Storage Controllers</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Authentication Controllers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#globususerauthentication">GlobusUserAuthentication</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#required-configuration-fields">Required Configuration Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-configuration">Example Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#localuserauthentication">LocalUserAuthentication</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Required Configuration Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Example Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pscapiuserauthentication">PSCAPIUserAuthentication</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Required Configuration Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Example Configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="config_job_types.html">Job Type Controllers</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="config_reference.html">Configuration Reference</a></li>
+      <li class="breadcrumb-item active">Authentication Controllers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/config_authentication.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="authentication-controllers">
+<h1>Authentication Controllers<a class="headerlink" href="#authentication-controllers" title="Link to this heading"></a></h1>
+<p>Authentication controllers handle user authentication and authorization.</p>
+<section id="globususerauthentication">
+<h2>GlobusUserAuthentication<a class="headerlink" href="#globususerauthentication" title="Link to this heading"></a></h2>
+<p>Globus Auth integration for user authentication</p>
+<p><strong>Configuration value:</strong> <code class="docutils literal notranslate"><span class="pre">&quot;GlobusUserAuthentication&quot;</span></code></p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">user_authentication_type</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;GlobusUserAuthentication&quot;</span></code> to use this controller.</p>
+<section id="required-configuration-fields">
+<h3>Required Configuration Fields<a class="headerlink" href="#required-configuration-fields" title="Link to this heading"></a></h3>
+<p><strong>name</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Human-readable name for this authentication method</p>
+</div></blockquote>
+<p><strong>user_authentication_type</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Must be ‘GlobusUserAuthentication’</p>
+<p><em>Allowed values:</em> <code class="docutils literal notranslate"><span class="pre">&quot;GlobusUserAuthentication&quot;</span></code></p>
+</div></blockquote>
+<p><strong>connection_details</strong> (object) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Globus authentication configuration</p>
+<p><em>Nested fields:</em></p>
+<blockquote>
+<div><p><strong>client_id</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Globus OAuth client ID</p>
+</div></blockquote>
+<p><strong>client_secret</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Globus OAuth client secret</p>
+</div></blockquote>
+<p><strong>authentication_type</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Authentication flow type: ‘oauth’ for full OAuth flow, ‘token’ for direct token validation</p>
+<p><em>Allowed values:</em> <code class="docutils literal notranslate"><span class="pre">&quot;oauth&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;token&quot;</span></code></p>
+</div></blockquote>
+<p><strong>health_check_url</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>URL for health check endpoint</p>
+</div></blockquote>
+<p><strong>allowed_globus_groups</strong> (array) <em>[Optional]</em></p>
+<blockquote>
+<div><p>List of Globus group UUIDs. Users must be members of at least one group to authenticate. If empty, group checking is disabled.</p>
+<p><em>Default:</em> <code class="docutils literal notranslate"><span class="pre">[]</span></code></p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="example-configuration">
+<h3>Example Configuration<a class="headerlink" href="#example-configuration" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Globus Token Auth&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;user_authentication_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GlobusUserAuthentication&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;connection_details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;your-client-id&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;client_secret&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;your-client-secret&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;authentication_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;token&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="localuserauthentication">
+<h2>LocalUserAuthentication<a class="headerlink" href="#localuserauthentication" title="Link to this heading"></a></h2>
+<p>Local system user authentication</p>
+<p><strong>Configuration value:</strong> <code class="docutils literal notranslate"><span class="pre">&quot;LocalUserAuthentication&quot;</span></code></p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">user_authentication_type</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;LocalUserAuthentication&quot;</span></code> to use this controller.</p>
+<section id="id1">
+<h3>Required Configuration Fields<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><strong>name</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Human-readable name for this authentication method</p>
+</div></blockquote>
+<p><strong>user_authentication_type</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Must be ‘LocalUserAuthentication’</p>
+<p><em>Allowed values:</em> <code class="docutils literal notranslate"><span class="pre">&quot;LocalUserAuthentication&quot;</span></code></p>
+</div></blockquote>
+<p><strong>connection_details</strong> (object) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Local authentication configuration (typically empty)</p>
+<p><em>Nested fields:</em></p>
+<blockquote>
+<div><p><strong>create_external_users</strong> (boolean) <em>[Optional]</em></p>
+<blockquote>
+<div><p>Whether to create a new user when they don’t exist on the system</p>
+<p><em>Default:</em> <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</div></blockquote>
+<p><strong>operating_system</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>The operating system to which this authentication method is connected</p>
+<p><em>Allowed values:</em> <code class="docutils literal notranslate"><span class="pre">&quot;linux&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;osx&quot;</span></code></p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="id2">
+<h3>Example Configuration<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Local Auth&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;user_authentication_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LocalUserAuthentication&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;connection_details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="pscapiuserauthentication">
+<h2>PSCAPIUserAuthentication<a class="headerlink" href="#pscapiuserauthentication" title="Link to this heading"></a></h2>
+<p>PSC API authentication integration</p>
+<p><strong>Configuration value:</strong> <code class="docutils literal notranslate"><span class="pre">&quot;PSCAPIUserAuthentication&quot;</span></code></p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">user_authentication_type</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;PSCAPIUserAuthentication&quot;</span></code> to use this controller.</p>
+<section id="id3">
+<h3>Required Configuration Fields<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p><strong>name</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Human-readable name for this authentication method</p>
+</div></blockquote>
+<p><strong>user_authentication_type</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Must be ‘PSCAPIUserAuthentication’</p>
+<p><em>Allowed values:</em> <code class="docutils literal notranslate"><span class="pre">&quot;PSCAPIUserAuthentication&quot;</span></code></p>
+</div></blockquote>
+<p><strong>connection_details</strong> (object) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>PSC API connection configuration</p>
+<p><em>Nested fields:</em></p>
+<blockquote>
+<div><p><strong>create_external_users</strong> (boolean) <em>[Optional]</em></p>
+<blockquote>
+<div><p>Whether to create a new user when they don’t exist on the system</p>
+<p><em>Default:</em> <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</div></blockquote>
+<p><strong>grant_number</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Grant number associated with user workspaces server</p>
+</div></blockquote>
+<p><strong>health_check_url</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>URL for health check endpoint</p>
+</div></blockquote>
+<p><strong>jwt_token</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>JWT authentication token for PSC Users API</p>
+</div></blockquote>
+<p><strong>ldap_base</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Base for PSC LDAP service</p>
+</div></blockquote>
+<p><strong>ldap_password</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>Password for PSC LDAP service</p>
+</div></blockquote>
+<p><strong>ldap_uri</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>URI for PSC LDAP service</p>
+</div></blockquote>
+<p><strong>ldap_user_dn</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>User DN for PSC LDAP service</p>
+</div></blockquote>
+<p><strong>resource_name</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>PSC resource associated with user workspaces server</p>
+</div></blockquote>
+<p><strong>root_url</strong> (string) <strong>[Required]</strong></p>
+<blockquote>
+<div><p>URL for the PSC Users API</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="id4">
+<h3>Example Configuration<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PSC API Auth&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;user_authentication_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PSCAPIUserAuthentication&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;connection_details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;create_external_user&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;grant_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;YOUR_GRANT_NUMBER&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;health_check_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://health_check.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;jwt_token&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;YOUR_JWT_TOKEN&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;ldap_base&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;YOUR_LDAP_BASE&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;ldap_password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;YOUR_LDAP_PASSWORD&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;ldap_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ldaps://ldap_uri&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;ldap_user_dn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;YOUR_LDAP_USER_DN&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;resource_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;YOUR_RESOURCE_NAME&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;root_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://root_url.com&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="config_storage.html" class="btn btn-neutral float-left" title="Storage Controllers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="config_job_types.html" class="btn btn-neutral float-right" title="Job Type Controllers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

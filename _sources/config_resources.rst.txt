@@ -1,0 +1,187 @@
+Resource Controllers
+====================
+
+Resource controllers manage job execution on different compute platforms.
+
+LocalResource
+^^^^^^^^^^^^^
+
+Local machine resource for running jobs via subprocess
+
+**Configuration value:** ``"LocalResource"``
+
+Set ``resource_type`` to ``"LocalResource"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this resource instance
+
+
+**resource_type** (string) **[Required]**
+
+  Must be 'LocalResource'
+
+  *Allowed values:* ``"LocalResource"``
+
+
+**storage** (string) **[Required]**
+
+  Reference to storage configuration key in available_storage
+
+
+**user_authentication** (string) **[Required]**
+
+  Reference to authentication configuration key in available_user_authentication
+
+
+Optional Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**passthrough_domain** (string) *[Optional]*
+
+  Domain for passthrough connections (e.g., '127.0.0.1:8000')
+
+  *Default:* ``""``
+
+
+**parameter_mapping** (object) *[Optional]*
+
+  Maps generic parameter names to resource-specific names
+
+  *Default:* ``{}``
+
+
+**connection_details** (object) *[Optional]*
+
+  Connection configuration (typically empty for LocalResource)
+
+  *Default:* ``{}``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "Local Resource",
+    "resource_type": "LocalResource",
+    "storage": "main_storage",
+    "user_authentication": "main_auth",
+    "passthrough_domain": "127.0.0.1:8000",
+    "connection_details": {}
+  }
+
+
+SlurmAPIResource
+^^^^^^^^^^^^^^^^
+
+SLURM cluster resource using SLURM REST API v0.0.40
+
+**Configuration value:** ``"SlurmAPIResource"``
+
+Set ``resource_type`` to ``"SlurmAPIResource"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this resource instance
+
+
+**resource_type** (string) **[Required]**
+
+  Must be 'SlurmAPIResource'
+
+  *Allowed values:* ``"SlurmAPIResource"``
+
+
+**storage** (string) **[Required]**
+
+  Reference to storage configuration key in available_storage
+
+
+**user_authentication** (string) **[Required]**
+
+  Reference to authentication configuration key in available_user_authentication
+
+
+**connection_details** (object) **[Required]**
+
+  SLURM API connection configuration
+
+  *Nested fields:*
+
+    **root_url** (string) **[Required]**
+
+      Base URL for SLURM REST API (e.g., 'https://slurm.example.com/api')
+
+    **api_token** (string) **[Required]**
+
+      API token for SLURM REST API authentication
+
+    **token_lifespan** (string) *[Optional]*
+
+      Token lifespan in seconds
+
+      *Default:* ``"3600"``
+
+    **health_check_url** (string) *[Optional]*
+
+      URL for health check endpoint
+
+
+Optional Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**passthrough_domain** (string) *[Optional]*
+
+  Domain for passthrough connections
+
+  *Default:* ``""``
+
+
+**parameter_mapping** (object) *[Optional]*
+
+  Maps generic parameter names to SLURM-specific names (e.g., num_cpus -> cpus_per_task)
+
+  *Default:* ``{}``
+
+
+**cpu_partition** (string) *[Optional]*
+
+  SLURM partition name for CPU jobs
+
+  *Default:* ``""``
+
+
+**gpu_partition** (string) *[Optional]*
+
+  SLURM partition name for GPU jobs
+
+  *Default:* ``""``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "SLURM Cluster",
+    "resource_type": "SlurmAPIResource",
+    "storage": "main_storage",
+    "user_authentication": "main_auth",
+    "connection_details": {
+      "root_url": "https://slurm.example.com/api",
+      "api_token": "your-api-token-here",
+      "token_lifespan": "3600"
+    },
+    "cpu_partition": "cpu",
+    "gpu_partition": "gpu"
+  }
+

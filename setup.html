@@ -1,0 +1,214 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Development Setup &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Testing" href="testing.html" />
+    <link rel="prev" title="Job Type Controllers" href="config_job_types.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controllers.html">Controllers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">user_workspaces_server</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_reference.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Development Setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docker-development">Docker Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-files">Configuration Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#config-json">config.json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#django-config-json">django_config.json</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#development-tools">Development Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#code-formatting-and-linting">Code Formatting and Linting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#common-issues">Common Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Development Setup</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="development-setup">
+<h1>Development Setup<a class="headerlink" href="#development-setup" title="Link to this heading"></a></h1>
+<p>This guide walks you through setting up a development environment for the User Workspaces Server.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Docker</p></li>
+</ul>
+</section>
+<section id="docker-development">
+<h2>Docker Development<a class="headerlink" href="#docker-development" title="Link to this heading"></a></h2>
+<p>For a containerized development environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build and start Docker Compose cluster</span>
+<span class="nb">cd</span><span class="w"> </span>docker
+docker<span class="w"> </span>compose<span class="w"> </span>build
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</pre></div>
+</div>
+</section>
+<section id="configuration-files">
+<h2>Configuration Files<a class="headerlink" href="#configuration-files" title="Link to this heading"></a></h2>
+<p>The server requires two configuration files in the <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory. Example templates are provided that you can copy and customize.</p>
+<section id="config-json">
+<h3>config.json<a class="headerlink" href="#config-json" title="Link to this heading"></a></h3>
+<p>Contains UWS-specific configuration including controller types, authentication, storage, resources, and job types.</p>
+<p>To get started, copy the example configuration:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>src/example_config.json<span class="w"> </span>src/config.json
+</pre></div>
+</div>
+<p>The configuration file defines:</p>
+<ul class="simple">
+<li><p><strong>Authentication Methods</strong>: User authentication backends (e.g., Globus, local)</p></li>
+<li><p><strong>Storage Methods</strong>: File system storage backends</p></li>
+<li><p><strong>Resources</strong>: Compute resource providers (e.g., local execution, SLURM)</p></li>
+<li><p><strong>Job Types</strong>: Available job types (e.g., JupyterLab, test jobs)</p></li>
+<li><p><strong>Parameters</strong>: User-configurable job parameters (CPUs, memory, time limits)</p></li>
+</ul>
+<p>See <code class="docutils literal notranslate"><span class="pre">src/example_config.json</span></code> for the complete structure and available options.</p>
+</section>
+<section id="django-config-json">
+<h3>django_config.json<a class="headerlink" href="#django-config-json" title="Link to this heading"></a></h3>
+<p>Contains Django application settings including database configuration, Redis settings, email configuration, and logging.</p>
+<p>To get started, copy the example configuration:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>src/example_django_config.json<span class="w"> </span>src/django_config.json
+</pre></div>
+</div>
+<p>The configuration file defines:</p>
+<ul class="simple">
+<li><p><strong>SECRET_KEY</strong>: Django secret key for cryptographic signing</p></li>
+<li><p><strong>DATABASES</strong>: Database connection settings</p></li>
+<li><p><strong>Q_CLUSTER</strong>: Django-Q task queue configuration with Redis</p></li>
+<li><p><strong>CHANNEL_LAYERS</strong>: Django Channels WebSocket configuration</p></li>
+<li><p><strong>EMAIL_HOST</strong>: Email server settings for notifications</p></li>
+<li><p><strong>LOGGING</strong>: Application logging configuration</p></li>
+</ul>
+<p>See <code class="docutils literal notranslate"><span class="pre">src/example_django_config.json</span></code> for the complete structure and available options.</p>
+</section>
+</section>
+<section id="development-tools">
+<h2>Development Tools<a class="headerlink" href="#development-tools" title="Link to this heading"></a></h2>
+<section id="code-formatting-and-linting">
+<h3>Code Formatting and Linting<a class="headerlink" href="#code-formatting-and-linting" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Format code</span>
+black<span class="w"> </span>--line-length<span class="w"> </span><span class="m">99</span><span class="w"> </span>src
+isort<span class="w"> </span>--profile<span class="w"> </span>black<span class="w"> </span>src
+
+<span class="c1"># Check code quality</span>
+flake8<span class="w"> </span>--ignore<span class="o">=</span>E501,W503<span class="w"> </span>src
+</pre></div>
+</div>
+</section>
+</section>
+<section id="common-issues">
+<h2>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>Permission Errors</strong></dt><dd><p>The application requires root privileges for user management. Ensure you’re running with <code class="docutils literal notranslate"><span class="pre">sudo</span></code> in development.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="config_job_types.html" class="btn btn-neutral float-left" title="Job Type Controllers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="testing.html" class="btn btn-neutral float-right" title="Testing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

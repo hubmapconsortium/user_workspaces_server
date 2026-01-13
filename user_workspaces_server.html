@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>user_workspaces_server package &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="user_workspaces_server.config_schemas package" href="user_workspaces_server.config_schemas.html" />
+    <link rel="prev" title="user_workspaces_server" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controllers.html">Controllers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">user_workspaces_server</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">user_workspaces_server package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html">user_workspaces_server.config_schemas package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.html">user_workspaces_server.controllers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html">user_workspaces_server.sphinx_ext package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-workspaces-server-admin-module">user_workspaces_server.admin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-user_workspaces_server.apps">user_workspaces_server.apps module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.apps.UserWorkspacesServerConfig"><code class="docutils literal notranslate"><span class="pre">UserWorkspacesServerConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user-workspaces-server-auth-module">user_workspaces_server.auth module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-workspaces-server-exceptions-module">user_workspaces_server.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-user_workspaces_server.logging">user_workspaces_server.logging module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.logging.AsyncEmailHandler"><code class="docutils literal notranslate"><span class="pre">AsyncEmailHandler</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user-workspaces-server-models-module">user_workspaces_server.models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-workspaces-server-serializers-module">user_workspaces_server.serializers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-workspaces-server-tasks-module">user_workspaces_server.tasks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-workspaces-server-urls-module">user_workspaces_server.urls module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-user_workspaces_server.utils">user_workspaces_server.utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.utils.translate_class_to_module"><code class="docutils literal notranslate"><span class="pre">translate_class_to_module()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user_workspaces_server.utils.generate_controller_object"><code class="docutils literal notranslate"><span class="pre">generate_controller_object()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#user-workspaces-server-ws-consumers-module">user_workspaces_server.ws_consumers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-user_workspaces_server">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_reference.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">user_workspaces_server</a></li>
+      <li class="breadcrumb-item active">user_workspaces_server package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/user_workspaces_server.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-workspaces-server-package">
+<h1>user_workspaces_server package<a class="headerlink" href="#user-workspaces-server-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.config_schemas.html">user_workspaces_server.config_schemas package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.config_schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.config_schemas.html#module-user_workspaces_server.config_schemas.json_schema_loader">user_workspaces_server.config_schemas.json_schema_loader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.fields"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_required_fields"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.get_required_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_optional_fields"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.get_optional_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.get_field"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.get_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaWrapper.example"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.example</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.__init__"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_all_schemas"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_all_schemas()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_resource_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_resource_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_storage_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_storage_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_authentication_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_authentication_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.JSONSchemaLoader.get_job_type_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_job_type_schema()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_loader.get_schema_loader"><code class="docutils literal notranslate"><span class="pre">get_schema_loader()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.config_schemas.html#module-user_workspaces_server.config_schemas.json_schema_validator">user_workspaces_server.config_schemas.json_schema_validator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_validator.ValidationError"><code class="docutils literal notranslate"><span class="pre">ValidationError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_validator.ValidationError.__init__"><code class="docutils literal notranslate"><span class="pre">ValidationError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.__init__"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_with_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator.validate_with_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_controller_config"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator.validate_controller_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.json_schema_validator.JSONSchemaConfigValidator.validate_uws_config"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator.validate_uws_config()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.config_schemas.html#module-user_workspaces_server.config_schemas">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaWrapper"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaWrapper.fields"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaWrapper.get_required_fields"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.get_required_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaWrapper.get_optional_fields"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.get_optional_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaWrapper.get_field"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.get_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaWrapper.example"><code class="docutils literal notranslate"><span class="pre">JSONSchemaWrapper.example</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaLoader"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaLoader.__init__"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaLoader.get_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaLoader.get_all_schemas"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_all_schemas()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaLoader.get_resource_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_resource_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaLoader.get_storage_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_storage_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaLoader.get_authentication_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_authentication_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaLoader.get_job_type_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaLoader.get_job_type_schema()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaConfigValidator"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaConfigValidator.__init__"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_with_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator.validate_with_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_controller_config"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator.validate_controller_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.JSONSchemaConfigValidator.validate_uws_config"><code class="docutils literal notranslate"><span class="pre">JSONSchemaConfigValidator.validate_uws_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.get_schema_loader"><code class="docutils literal notranslate"><span class="pre">get_schema_loader()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.ValidationError"><code class="docutils literal notranslate"><span class="pre">ValidationError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.config_schemas.html#user_workspaces_server.config_schemas.ValidationError.__init__"><code class="docutils literal notranslate"><span class="pre">ValidationError.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.controllers.html">user_workspaces_server.controllers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.controllers.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.controllers.jobtypes.html">user_workspaces_server.controllers.jobtypes package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.jobtypes.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.jobtypes.html#module-user_workspaces_server.controllers.jobtypes.abstract_job">user_workspaces_server.controllers.jobtypes.abstract_job module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.jobtypes.html#user-workspaces-server-controllers-jobtypes-appyter-job-module">user_workspaces_server.controllers.jobtypes.appyter_job module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.jobtypes.html#user-workspaces-server-controllers-jobtypes-jupyter-lab-job-module">user_workspaces_server.controllers.jobtypes.jupyter_lab_job module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.jobtypes.html#module-user_workspaces_server.controllers.jobtypes.local_test_job">user_workspaces_server.controllers.jobtypes.local_test_job module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.jobtypes.html#user-workspaces-server-controllers-jobtypes-yac-job-module">user_workspaces_server.controllers.jobtypes.yac_job module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.jobtypes.html#module-user_workspaces_server.controllers.jobtypes">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.controllers.resources.html">user_workspaces_server.controllers.resources package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.resources.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.resources.html#user-workspaces-server-controllers-resources-abstract-resource-module">user_workspaces_server.controllers.resources.abstract_resource module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.resources.html#user-workspaces-server-controllers-resources-local-resource-module">user_workspaces_server.controllers.resources.local_resource module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.resources.html#user-workspaces-server-controllers-resources-slurm-api-resource-module">user_workspaces_server.controllers.resources.slurm_api_resource module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.resources.html#module-user_workspaces_server.controllers.resources">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.controllers.storagemethods.html">user_workspaces_server.controllers.storagemethods package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.storagemethods.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.storagemethods.html#user-workspaces-server-controllers-storagemethods-abstract-storage-module">user_workspaces_server.controllers.storagemethods.abstract_storage module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.storagemethods.html#user-workspaces-server-controllers-storagemethods-hubmap-local-file-system-storage-module">user_workspaces_server.controllers.storagemethods.hubmap_local_file_system_storage module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.storagemethods.html#user-workspaces-server-controllers-storagemethods-local-file-system-storage-module">user_workspaces_server.controllers.storagemethods.local_file_system_storage module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.storagemethods.html#module-user_workspaces_server.controllers.storagemethods">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.controllers.userauthenticationmethods.html">user_workspaces_server.controllers.userauthenticationmethods package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.userauthenticationmethods.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.userauthenticationmethods.html#user-workspaces-server-controllers-userauthenticationmethods-abstract-user-authentication-module">user_workspaces_server.controllers.userauthenticationmethods.abstract_user_authentication module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.userauthenticationmethods.html#user-workspaces-server-controllers-userauthenticationmethods-globus-user-authentication-module">user_workspaces_server.controllers.userauthenticationmethods.globus_user_authentication module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.userauthenticationmethods.html#user-workspaces-server-controllers-userauthenticationmethods-local-user-authentication-module">user_workspaces_server.controllers.userauthenticationmethods.local_user_authentication module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.userauthenticationmethods.html#user-workspaces-server-controllers-userauthenticationmethods-psc-api-user-authentication-module">user_workspaces_server.controllers.userauthenticationmethods.psc_api_user_authentication module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user_workspaces_server.controllers.userauthenticationmethods.html#module-user_workspaces_server.controllers.userauthenticationmethods">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.controllers.html#module-user_workspaces_server.controllers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html">user_workspaces_server.sphinx_ext package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#module-user_workspaces_server.sphinx_ext.json_schema_autodoc">user_workspaces_server.sphinx_ext.json_schema_autodoc module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#user_workspaces_server.sphinx_ext.json_schema_autodoc.generate_field_doc"><code class="docutils literal notranslate"><span class="pre">generate_field_doc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#user_workspaces_server.sphinx_ext.json_schema_autodoc.generate_controller_doc"><code class="docutils literal notranslate"><span class="pre">generate_controller_doc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#user_workspaces_server.sphinx_ext.json_schema_autodoc.generate_category_doc"><code class="docutils literal notranslate"><span class="pre">generate_category_doc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#user_workspaces_server.sphinx_ext.json_schema_autodoc.generate_config_reference"><code class="docutils literal notranslate"><span class="pre">generate_config_reference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#user_workspaces_server.sphinx_ext.json_schema_autodoc.builder_inited"><code class="docutils literal notranslate"><span class="pre">builder_inited()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#user_workspaces_server.sphinx_ext.json_schema_autodoc.setup"><code class="docutils literal notranslate"><span class="pre">setup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_workspaces_server.sphinx_ext.html#module-user_workspaces_server.sphinx_ext">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="user-workspaces-server-admin-module">
+<h2>user_workspaces_server.admin module<a class="headerlink" href="#user-workspaces-server-admin-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-user_workspaces_server.apps">
+<span id="user-workspaces-server-apps-module"></span><h2>user_workspaces_server.apps module<a class="headerlink" href="#module-user_workspaces_server.apps" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.apps.</span></span><span class="sig-name descname"><span class="pre">UserWorkspacesServerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/apps.html#UserWorkspacesServerConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.default_auto_field">
+<span class="sig-name descname"><span class="pre">default_auto_field</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'django.db.models.BigAutoField'</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.default_auto_field" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_workspaces_server'</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.api_user_authentication">
+<span class="sig-name descname"><span class="pre">api_user_authentication</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.api_user_authentication" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.main_storage">
+<span class="sig-name descname"><span class="pre">main_storage</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.main_storage" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.main_resource">
+<span class="sig-name descname"><span class="pre">main_resource</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.main_resource" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.available_resources">
+<span class="sig-name descname"><span class="pre">available_resources</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.available_resources" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.available_storage_methods">
+<span class="sig-name descname"><span class="pre">available_storage_methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.available_storage_methods" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.available_user_authentication_methods">
+<span class="sig-name descname"><span class="pre">available_user_authentication_methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.available_user_authentication_methods" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.available_job_types">
+<span class="sig-name descname"><span class="pre">available_job_types</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.available_job_types" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.apps.UserWorkspacesServerConfig.ready">
+<span class="sig-name descname"><span class="pre">ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/apps.html#UserWorkspacesServerConfig.ready"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.apps.UserWorkspacesServerConfig.ready" title="Link to this definition"></a></dt>
+<dd><p>Override this method in subclasses to run code when Django starts.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="user-workspaces-server-auth-module">
+<h2>user_workspaces_server.auth module<a class="headerlink" href="#user-workspaces-server-auth-module" title="Link to this heading"></a></h2>
+</section>
+<section id="user-workspaces-server-exceptions-module">
+<h2>user_workspaces_server.exceptions module<a class="headerlink" href="#user-workspaces-server-exceptions-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-user_workspaces_server.logging">
+<span id="user-workspaces-server-logging-module"></span><h2>user_workspaces_server.logging module<a class="headerlink" href="#module-user_workspaces_server.logging" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="user_workspaces_server.logging.AsyncEmailHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_workspaces_server.logging.</span></span><span class="sig-name descname"><span class="pre">AsyncEmailHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/logging.html#AsyncEmailHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.logging.AsyncEmailHandler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Handler" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Handler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.logging.AsyncEmailHandler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/logging.html#AsyncEmailHandler.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.logging.AsyncEmailHandler.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the instance - basically setting the formatter to None
+and the filter list to empty.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="user_workspaces_server.logging.AsyncEmailHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/logging.html#AsyncEmailHandler.emit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.logging.AsyncEmailHandler.emit" title="Link to this definition"></a></dt>
+<dd><p>Do whatever it takes to actually log the specified logging record.</p>
+<p>This version is intended to be implemented by subclasses and so
+raises a NotImplementedError.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="user-workspaces-server-models-module">
+<h2>user_workspaces_server.models module<a class="headerlink" href="#user-workspaces-server-models-module" title="Link to this heading"></a></h2>
+</section>
+<section id="user-workspaces-server-serializers-module">
+<h2>user_workspaces_server.serializers module<a class="headerlink" href="#user-workspaces-server-serializers-module" title="Link to this heading"></a></h2>
+</section>
+<section id="user-workspaces-server-tasks-module">
+<h2>user_workspaces_server.tasks module<a class="headerlink" href="#user-workspaces-server-tasks-module" title="Link to this heading"></a></h2>
+</section>
+<section id="user-workspaces-server-urls-module">
+<h2>user_workspaces_server.urls module<a class="headerlink" href="#user-workspaces-server-urls-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-user_workspaces_server.utils">
+<span id="user-workspaces-server-utils-module"></span><h2>user_workspaces_server.utils module<a class="headerlink" href="#module-user_workspaces_server.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="user_workspaces_server.utils.translate_class_to_module">
+<span class="sig-prename descclassname"><span class="pre">user_workspaces_server.utils.</span></span><span class="sig-name descname"><span class="pre">translate_class_to_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/utils.html#translate_class_to_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.utils.translate_class_to_module" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="user_workspaces_server.utils.generate_controller_object">
+<span class="sig-prename descclassname"><span class="pre">user_workspaces_server.utils.</span></span><span class="sig-name descname"><span class="pre">generate_controller_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_workspaces_server/utils.html#generate_controller_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_workspaces_server.utils.generate_controller_object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="user-workspaces-server-ws-consumers-module">
+<h2>user_workspaces_server.ws_consumers module<a class="headerlink" href="#user-workspaces-server-ws-consumers-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-user_workspaces_server">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-user_workspaces_server" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="user_workspaces_server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="user_workspaces_server.config_schemas.html" class="btn btn-neutral float-right" title="user_workspaces_server.config_schemas package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
