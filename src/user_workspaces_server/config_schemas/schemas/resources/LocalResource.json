@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "LocalResource",
+  "title": "LocalResource",
+  "description": "Local machine resource for running jobs via subprocess",
+  "type": "object",
+  "x-category": "resource",
+  "required": ["name", "resource_type", "storage", "user_authentication"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this resource instance"
+    },
+    "resource_type": {
+      "type": "string",
+      "enum": ["LocalResource"],
+      "description": "Must be 'LocalResource'"
+    },
+    "storage": {
+      "type": "string",
+      "description": "Reference to storage configuration key in available_storage"
+    },
+    "user_authentication": {
+      "type": "string",
+      "description": "Reference to authentication configuration key in available_user_authentication"
+    },
+    "passthrough_domain": {
+      "type": "string",
+      "default": "",
+      "description": "Domain for passthrough connections (e.g., '127.0.0.1:8000')"
+    },
+    "parameter_mapping": {
+      "type": "object",
+      "default": {},
+      "description": "Maps generic parameter names to resource-specific names"
+    },
+    "connection_details": {
+      "type": "object",
+      "default": {},
+      "description": "Connection configuration (typically empty for LocalResource)"
+    }
+  },
+  "examples": [
+    {
+      "name": "Local Resource",
+      "resource_type": "LocalResource",
+      "storage": "main_storage",
+      "user_authentication": "main_auth",
+      "passthrough_domain": "127.0.0.1:8000",
+      "connection_details": {}
+    }
+  ]
+}

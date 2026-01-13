@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "LocalFileSystemStorage",
+  "title": "LocalFileSystemStorage",
+  "description": "Local filesystem storage for workspace data",
+  "type": "object",
+  "x-category": "storage",
+  "required": ["name", "storage_type", "user_authentication", "root_dir"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this storage instance"
+    },
+    "storage_type": {
+      "type": "string",
+      "enum": ["LocalFileSystemStorage"],
+      "description": "Must be 'LocalFileSystemStorage'"
+    },
+    "user_authentication": {
+      "type": "string",
+      "description": "Reference to authentication configuration key in available_user_authentication"
+    },
+    "root_dir": {
+      "type": "string",
+      "description": "Absolute path to root directory for storing workspace files"
+    },
+    "connection_details": {
+      "type": "object",
+      "default": {},
+      "description": "Connection configuration (typically empty for local filesystem)"
+    }
+  },
+  "examples": [
+    {
+      "name": "Local File Storage",
+      "storage_type": "LocalFileSystemStorage",
+      "user_authentication": "main_auth",
+      "root_dir": "/var/workspaces"
+    }
+  ]
+}
