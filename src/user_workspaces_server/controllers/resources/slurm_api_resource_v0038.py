@@ -49,7 +49,6 @@ class SlurmAPIResourceV0038(SlurmAPIResource):
                     job_full_path, f'slurm_{job.job_details["id"]}_error.out'
                 ),
                 "environment": {
-                    "SLURM_GET_USER_ENV": 1,
                     "PATH": "/bin/:/usr/bin/:/usr/local/bin/",
                     "LD_LIBRARY_PATH": "/lib/:/lib64/:/usr/local/lib",
                 },
