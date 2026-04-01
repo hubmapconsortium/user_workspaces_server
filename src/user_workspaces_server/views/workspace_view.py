@@ -14,6 +14,10 @@ from rest_framework.views import APIView
 
 from user_workspaces_server import models, utils
 from user_workspaces_server.exceptions import WorkspaceClientException
+from user_workspaces_server.services.resource_selector import (
+    ResourceSelector,
+    ResourceSelectionError,
+)
 from user_workspaces_server.tasks import async_update_workspace
 
 logger = logging.getLogger(__name__)
@@ -272,11 +276,26 @@ class WorkspaceView(APIView):
             if not isinstance(resource_options, dict):
                 raise ParseError("Resource options not JSON.")
 
-            # TODO: Grabbing the resource needs to be a bit more intelligent
-            resource = apps.get_app_config("user_workspaces_server").main_resource
+            selector = ResourceSelector(
+                apps.get_app_config("user_workspaces_server").available_resources
+            )
 
-            # TODO: GPU support "gpu_enabled": true,
-            # {"num_cpus": 0, "memory_mb": 0, "time_limit_minutes": 30}
+            try:
+                resource_key, resource = selector.select_resource(
+                    job_type=job_type,
+                    resource_options=resource_options,
+                    user=workspace.user_id,
+                )
+            except ResourceSelectionError as e:
+                logger.error("Resource selection failed: %s", str(e))
+                raise ParseError(f"Unable to find suitable compute resource for this job. {e}")
+
+            logger.info(
+                "Selected resource: %s (%s) for job type: %s",
+                resource_key,
+                type(resource).__name__,
+                job_type,
+            )
 
             if not resource.validate_options(resource_options):
                 raise ParseError("Invalid resource options found.")
@@ -310,13 +329,17 @@ class WorkspaceView(APIView):
                     "user_workspaces_server"
                 ).available_job_types.get(job_type)
 
+                environment_details = job_type_config.get("environment_details", {})
+                job_type_env = environment_details.get(
+                    resource_key,
+                    environment_details.get(settings.UWS_CONFIG["main_resource"]),
+                )
+
                 job_to_launch = utils.generate_controller_object(
                     job_type_config["job_type"],
                     "jobtypes",
                     {
-                        "config": job_type_config["environment_details"][
-                            settings.UWS_CONFIG["main_resource"]
-                        ],
+                        "config": job_type_env,
                         "job_details": model_to_dict(job),
                     },
                 )
