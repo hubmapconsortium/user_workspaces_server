@@ -52,6 +52,8 @@ class SlurmAPIResourceV0038(SlurmAPIResource):
                     "PATH": "/bin/:/usr/bin/:/usr/local/bin/",
                     "LD_LIBRARY_PATH": "/lib/:/lib64/:/usr/local/lib",
                 },
+                # v0.0.38: use get_user_environment field instead of SLURM_GET_USER_ENV env var
+                "get_user_environment": 1,
                 "time_limit": time_limit,
                 "requeue": False,
                 "partition": cpu_partition,
