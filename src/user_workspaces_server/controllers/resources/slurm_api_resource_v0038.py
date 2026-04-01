@@ -41,8 +41,7 @@ class SlurmAPIResourceV0038(SlurmAPIResource):
             "job": {
                 "name": f'{workspace.name} {job.job_details["id"]}',
                 "current_working_directory": job_full_path,
-                # v0.0.38: nodes must be an array [min_nodes, max_nodes]
-                "nodes": [1],
+                "nodes": 1,
                 "standard_output": os.path.join(
                     job_full_path, f'slurm_{job.job_details["id"]}.out'
                 ),
@@ -187,7 +186,9 @@ class SlurmAPIResourceV0038(SlurmAPIResource):
             )
             # v0.0.38: DELETE response has no defined body; treat any non-error status as success
             if response.status_code not in [200, 201, 204]:
-                raise APIException(f"Unexpected status {response.status_code} cancelling job {job.resource_job_id}")
+                raise APIException(
+                    f"Unexpected status {response.status_code} cancelling job {job.resource_job_id}"
+                )
             return True
         except Exception as e:
             logger.error(repr(e))
