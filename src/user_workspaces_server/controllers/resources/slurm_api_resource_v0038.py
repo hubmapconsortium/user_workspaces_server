@@ -196,13 +196,11 @@ class SlurmAPIResourceV0038(SlurmAPIResource):
             return False
 
     def translate_options(self, resource_options):
-        # tres_per_job is not a valid submission field in v0.0.38
+        # tres_per_job is not a valid submission field in v0.0.38. map gpu_enabled to gpus
         translated_options = super().translate_options(resource_options)
-        translated_options.pop("tres_per_job", None)
-
-        # GPU partition override still applies without tres_per_job
         gpu_enabled = resource_options.get("gpu_enabled", False)
         if isinstance(gpu_enabled, bool) and gpu_enabled:
+            translated_options["gpus"] = "1"
             if gpu_partition := self.config.get("gpu_partition"):
                 translated_options["partition"] = gpu_partition
 
