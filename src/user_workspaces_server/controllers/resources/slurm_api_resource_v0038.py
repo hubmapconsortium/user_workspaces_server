@@ -6,15 +6,15 @@ import time
 import requests as http_r
 from rest_framework.exceptions import APIException
 
-from user_workspaces_server.controllers.resources.slurm_api_resource import (
-    SlurmAPIResource,
+from user_workspaces_server.controllers.resources.abstract_resource import (
+    AbstractResource,
 )
 from user_workspaces_server.models import Job
 
 logger = logging.getLogger(__name__)
 
 
-class SlurmAPIResourceV0038(SlurmAPIResource):
+class SlurmAPIResourceV0038(AbstractResource):
 
     def launch_job(self, job, workspace, resource_options):
         workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
