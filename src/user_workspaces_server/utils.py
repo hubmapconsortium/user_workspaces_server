@@ -1,6 +1,7 @@
 def translate_class_to_module(class_name):
     translation = {
         "SlurmAPIResource": "slurm_api_resource",
+        "SlurmAPIResourceV0038": "slurm_api_resource_v0038",
         "LocalResource": "local_resource",
         "LocalFileSystemStorage": "local_file_system_storage",
         "HubmapLocalFileSystemStorage": "hubmap_local_file_system_storage",
