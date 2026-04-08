@@ -6,11 +6,11 @@ import time
 import requests as http_r
 from rest_framework.exceptions import APIException
 
-from user_workspaces_server.controllers.resources.slurm_api_resource import (
-    SlurmAPIResource,
-)
 from user_workspaces_server.controllers.resources.abstract_resource import (
     AbstractResource,
+)
+from user_workspaces_server.controllers.resources.slurm_api_resource import (
+    SlurmAPIResource,
 )
 from user_workspaces_server.models import Job
 
