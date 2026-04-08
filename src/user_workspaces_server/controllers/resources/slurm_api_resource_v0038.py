@@ -6,6 +6,9 @@ import time
 import requests as http_r
 from rest_framework.exceptions import APIException
 
+from user_workspaces_server.controllers.resources.slurm_api_resource import (
+    SlurmAPIResource,
+)
 from user_workspaces_server.controllers.resources.abstract_resource import (
     AbstractResource,
 )
@@ -14,7 +17,7 @@ from user_workspaces_server.models import Job
 logger = logging.getLogger(__name__)
 
 
-class SlurmAPIResourceV0038(AbstractResource):
+class SlurmAPIResourceV0038(SlurmAPIResource):
 
     def launch_job(self, job, workspace, resource_options):
         workspace_full_path = os.path.join(self.resource_storage.root_dir, workspace.file_path)
@@ -197,7 +200,9 @@ class SlurmAPIResourceV0038(AbstractResource):
 
     def translate_options(self, resource_options):
         # tres_per_job is not a valid submission field in v0.0.38. map gpu_enabled to gpus
-        translated_options = super().translate_options(resource_options)
+        translated_options = AbstractResource().translate_options(resource_options)
+
+        # GPU partition override still applies without tres_per_job
         gpu_enabled = resource_options.get("gpu_enabled", False)
         if isinstance(gpu_enabled, bool) and gpu_enabled:
             translated_options["gpus"] = "1"
