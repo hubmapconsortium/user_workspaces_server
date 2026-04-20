@@ -193,7 +193,6 @@ class ResourceSelector:
                     "resource_name": resource_name,
                     "resource": resource,
                     "score": score,
-                    "utilization": utilization,
                 }
             )
 
