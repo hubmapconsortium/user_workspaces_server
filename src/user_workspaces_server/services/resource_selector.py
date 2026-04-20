@@ -183,9 +183,10 @@ class ResourceSelector:
             cost = selection.get("cost_per_core_hour", 1.0)
             score -= cost * 5
 
-            # Factor 5: Current load (-20 to 0 points)
+            # Factor 5: Current load — scale score down by utilization so a
+            # fully-loaded resource can never beat an idle one on priority alone.
             utilization = self._get_utilization(resource_name, resource)
-            score -= utilization * 20
+            score *= (1 - utilization)
 
             scored.append(
                 {
