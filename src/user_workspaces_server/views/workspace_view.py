@@ -314,7 +314,7 @@ class WorkspaceView(APIView):
                     "current_job_details": {},
                 },
                 "resource_options": translated_options,
-                "resource_name": type(resource).__name__,
+                "resource_name": resource_key,
                 "status": "pending",
                 "resource_job_id": -1,
                 "core_hours": 0,
