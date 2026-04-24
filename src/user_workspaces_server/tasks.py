@@ -72,7 +72,7 @@ def update_job_status(job_id):
 
         environment_details = job_type_config.get("environment_details", {})
         job_type_env = environment_details.get(
-            resource_key,
+            job.resource_name,
             environment_details.get(settings.UWS_CONFIG["main_resource"]),
         )
 
