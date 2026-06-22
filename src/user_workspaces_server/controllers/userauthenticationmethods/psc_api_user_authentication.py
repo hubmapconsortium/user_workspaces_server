@@ -275,7 +275,8 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
         for allocation_user in external_user.get("allocationUsers", []):
             allocation = allocation_user.get("allocation", {})
-            if allocation.get("grant", {}).get("number", False) == self.grant_number:
+            if (allocation.get("grant", {}).get("number", False) == self.grant_number
+                    and allocation.get("resource", {}).get("name", False) == self.resource_name):
                 gid = allocation.get("gid", False)
 
         if not gid:
