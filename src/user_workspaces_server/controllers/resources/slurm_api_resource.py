@@ -225,7 +225,7 @@ class SlurmAPIResource(AbstractResource):
         external_user_mapping = self.resource_user_authentication.get_external_user_mapping(
             {
                 "user_id": external_user.user_id,
-                "user_authentication_name": f"{type(self).__name__}Authentication",
+                "user_authentication_name": f"{self.resource_name}Authentication",
             }
         )
 
@@ -234,7 +234,7 @@ class SlurmAPIResource(AbstractResource):
             external_user_mapping = self.resource_user_authentication.create_external_user_mapping(
                 {
                     "user_id": external_user.user_id,
-                    "user_authentication_name": f"{type(self).__name__}Authentication",
+                    "user_authentication_name": f"{self.resource_name}Authentication",
                     "external_user_id": external_user.user_id,
                     "external_username": external_user.external_username,
                     "external_user_details": {"token": token},

@@ -21,7 +21,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping(
-            {"user_id": internal_user, "user_authentication_name": type(self).__name__}
+            {"user_id": internal_user, "user_authentication_name": self.auth_name}
         )
 
         if not external_user_mapping:
@@ -42,7 +42,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
             external_user_mapping = self.create_external_user_mapping(
                 {
                     "user_id": internal_user,
-                    "user_authentication_name": type(self).__name__,
+                    "user_authentication_name": self.auth_name,
                     "external_user_id": external_user["external_user_uid"],
                     "external_username": external_user["external_username"],
                     "external_user_details": external_user["external_user_details"],
@@ -90,7 +90,7 @@ class LocalUserAuthentication(AbstractUserAuthentication):
 
             external_user_mapping = self.get_external_user_mapping(
                 {
-                    "user_authentication_name": type(self).__name__,
+                    "user_authentication_name": self.auth_name,
                     "external_username": user_info["username"],
                 }
             )

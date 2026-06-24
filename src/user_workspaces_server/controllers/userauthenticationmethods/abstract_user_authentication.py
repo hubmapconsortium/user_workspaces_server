@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class AbstractUserAuthentication(ABC):
     def __init__(self, config):
+        self.auth_name = config.get("auth_name", type(self).__name__)
         self.connection_details = config.get("connection_details", {})
 
     @abstractmethod
