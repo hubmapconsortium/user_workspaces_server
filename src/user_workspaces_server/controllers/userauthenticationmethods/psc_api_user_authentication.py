@@ -276,8 +276,8 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
         for allocation_user in external_user.get("allocationUsers", []):
             allocation = allocation_user.get("allocation", {})
             grant_number = allocation.get("grant", {}).get("number", False)
-            resource_name = allocation_user.get("resource", {}).get("name", False)
-            active = allocation_user.get("active", False)
+            resource_name = allocation.get("resource", {}).get("name", False)
+            active = allocation.get("active", False)
 
             if not active:
                 continue
