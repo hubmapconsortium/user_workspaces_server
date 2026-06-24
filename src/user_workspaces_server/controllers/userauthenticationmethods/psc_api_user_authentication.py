@@ -275,10 +275,17 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
         for allocation_user in external_user.get("allocationUsers", []):
             allocation = allocation_user.get("allocation", {})
-            if (allocation.get("grant", {}).get("number", False) == self.grant_number
-                    and allocation.get("resource", {}).get("name", False) == self.resource_name):
-                gid = allocation.get("gid", False)
+            grant_number = allocation.get("grant", {}).get("number", False)
+            resource_name = allocation_user.get("resource", {}).get("name", False)
+            active = allocation_user.get("active", False)
 
+            if not active:
+                continue
+
+            if resource_name == self.resource_name and (
+                not self.grant_number or grant_number == self.grant_number
+            ):
+                gid = allocation.get("gid", False)
         if not gid:
             # If this user is not assigned to this grant, then we need to assign the user
             if not (gid := self.add_external_user_to_allocation(external_user["username"])):
