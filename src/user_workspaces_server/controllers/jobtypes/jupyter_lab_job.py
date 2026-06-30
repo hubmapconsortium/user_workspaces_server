@@ -29,7 +29,9 @@ class JupyterLabJob(AbstractJob):
 
     def status_check(self, job_model):
         output_file_name = f"JupyterLabJob_{job_model.id}_output.log"
-        resource = apps.get_app_config("user_workspaces_server").available_resources[job_model.resource_name]
+        resource = apps.get_app_config("user_workspaces_server").available_resources[
+            job_model.resource_name
+        ]
 
         if job_model.status == models.Job.Status.FAILED:
             return {

@@ -32,7 +32,12 @@ class UserWorkspacesServerConfig(AppConfig):
                 utils.generate_controller_object(
                     user_authentication_dict["user_authentication_type"],
                     "userauthenticationmethods",
-                    {"config": {**user_authentication_dict, "auth_name": user_authentication_name}},
+                    {
+                        "config": {
+                            **user_authentication_dict,
+                            "auth_name": user_authentication_name,
+                        }
+                    },
                 )
             )
 

@@ -186,7 +186,7 @@ class ResourceSelector:
             # Factor 5: Current load — scale score down by utilization so a
             # fully-loaded resource can never beat an idle one on priority alone.
             utilization = self._get_utilization(resource_name, resource)
-            score *= (1 - utilization)
+            score *= 1 - utilization
 
             scored.append(
                 {

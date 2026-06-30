@@ -11,7 +11,7 @@ from user_workspaces_server.services.resource_selector import (
 def make_resource(
     gpu_enabled=False,
     max_cpus=64,
-    max_memory_mb=262144,   # 256 GB in MB
+    max_memory_mb=262144,  # 256 GB in MB
     max_time_minutes=10080,  # 7 days in minutes
     max_gpus=0,
     max_concurrent_jobs=100,
@@ -45,12 +45,22 @@ def make_resource(
 
 def make_two_resource_dict():
     gpu = make_resource(
-        gpu_enabled=True, max_cpus=128, max_memory_mb=524288, max_time_minutes=2880,
-        priority=10, cost=1.5, preferred_for=["jupyter_lab"],
+        gpu_enabled=True,
+        max_cpus=128,
+        max_memory_mb=524288,
+        max_time_minutes=2880,
+        priority=10,
+        cost=1.5,
+        preferred_for=["jupyter_lab"],
     )
     cpu = make_resource(
-        gpu_enabled=False, max_cpus=64, max_memory_mb=262144, max_time_minutes=10080,
-        priority=5, cost=0.8, preferred_for=["jupyter_lab"],
+        gpu_enabled=False,
+        max_cpus=64,
+        max_memory_mb=262144,
+        max_time_minutes=10080,
+        priority=5,
+        cost=0.8,
+        preferred_for=["jupyter_lab"],
     )
     return {"gpu_cluster": gpu, "cpu_cluster": cpu}
 
@@ -108,26 +118,34 @@ class TestFilterEligibleResources(TestCase):
         self.assertEqual(eligible, [])
 
     def test_unhealthy_resource_filtered(self):
-        self.available["cpu_cluster"].config["connection_details"]["health_check_url"] = "http://example.com/health"
+        self.available["cpu_cluster"].config["connection_details"][
+            "health_check_url"
+        ] = "http://example.com/health"
         self.available["cpu_cluster"].health_check.return_value = {"connected": False}
         eligible = self.selector._filter_eligible_resources("job", BASE_OPTIONS, self.user)
         names = [name for name, _ in eligible]
         self.assertNotIn("cpu_cluster", names)
 
     def test_resource_filtered_when_auth_denies(self):
-        self.available["cpu_cluster"].resource_user_authentication.has_permission.return_value = False
+        self.available["cpu_cluster"].resource_user_authentication.has_permission.return_value = (
+            False
+        )
         eligible = self.selector._filter_eligible_resources("job", BASE_OPTIONS, self.user)
         names = [name for name, _ in eligible]
         self.assertNotIn("cpu_cluster", names)
 
     def test_resource_included_when_auth_allows(self):
-        self.available["cpu_cluster"].resource_user_authentication.has_permission.return_value = MagicMock()
+        self.available["cpu_cluster"].resource_user_authentication.has_permission.return_value = (
+            MagicMock()
+        )
         eligible = self.selector._filter_eligible_resources("job", BASE_OPTIONS, self.user)
         names = [name for name, _ in eligible]
         self.assertIn("cpu_cluster", names)
 
     def test_resource_filtered_when_auth_raises(self):
-        self.available["cpu_cluster"].resource_user_authentication.has_permission.side_effect = Exception("auth error")
+        self.available["cpu_cluster"].resource_user_authentication.has_permission.side_effect = (
+            Exception("auth error")
+        )
         eligible = self.selector._filter_eligible_resources("job", BASE_OPTIONS, self.user)
         names = [name for name, _ in eligible]
         self.assertNotIn("cpu_cluster", names)
@@ -213,7 +231,9 @@ class TestLoadTracker(TestCase):
 
     def test_get_job_count_queries_db(self):
         tracker = LoadTracker()
-        with patch("user_workspaces_server.services.resource_selector.LoadTracker.get_job_count") as mock_count:
+        with patch(
+            "user_workspaces_server.services.resource_selector.LoadTracker.get_job_count"
+        ) as mock_count:
             mock_count.return_value = 5
             result = tracker.get_job_count("SlurmAPIResource")
             self.assertEqual(result, 5)
