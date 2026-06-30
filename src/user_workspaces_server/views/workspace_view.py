@@ -15,8 +15,8 @@ from rest_framework.views import APIView
 from user_workspaces_server import models, utils
 from user_workspaces_server.exceptions import WorkspaceClientException
 from user_workspaces_server.services.resource_selector import (
-    ResourceSelector,
     ResourceSelectionError,
+    ResourceSelector,
 )
 from user_workspaces_server.tasks import async_update_workspace
 
