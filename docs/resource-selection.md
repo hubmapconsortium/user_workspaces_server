@@ -26,12 +26,13 @@ Resources that do not have a `capabilities` section in their config are skipped 
 Each eligible resource receives a score and the highest scorer is selected:
 
 ```
-score = (priority × 10)
-      + (50 if job_type in preferred_for_job_types)
-      + (30 if GPU job on GPU resource)
-      + (20 if CPU job on CPU-only resource)
-      - (cost_per_core_hour × 5)
-      - (utilization_fraction × 20)
+score = (
+        (priority × 10)
+        + (50 if job_type in preferred_for_job_types)
+        + (30 if GPU job on GPU resource)
+        + (20 if CPU job on CPU-only resource)
+        - (cost_per_core_hour × 5)
+      ) * (1 - utilization_fraction)
 ```
 
 `utilization_fraction` = active jobs / `capabilities.max_concurrent_jobs`, capped at 1.0. Omit `max_concurrent_jobs` from a resource's capabilities to disable utilization scoring for that resource.
