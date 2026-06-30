@@ -209,7 +209,7 @@ class ResourceSelector:
         if not max_jobs:
             return 0.0
 
-        current = self.load_tracker.get_job_count(type(resource).__name__)
+        current = self.load_tracker.get_job_count(resource_name)
         return min(current / max_jobs, 1.0)
 
     def _is_resource_healthy(self, resource) -> bool:
