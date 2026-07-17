@@ -48,7 +48,7 @@ def update_job_status(job_id):
             datetime.datetime.now(job.datetime_created.tzinfo) - job.datetime_created
         ).total_seconds()
         time_pending_catch = resource.config.get("time_pending_catch")
-        if int(time_pending_catch) and current_time_pending > time_pending_catch:
+        if int(time_pending_catch) and time_pending_catch < current_time_pending < time_pending_catch + 1:
             logger.error(
                 f"Job {job_id} for user {job.user_id.username} has been pending more than {time_pending_catch}"
             )
