@@ -31,10 +31,23 @@
       "passthrough_domain": "127.0.0.1:8000",
       "connection_details": {},
       "parameter_mapping": {
-            "num_cpus": "cpus_per_task",
-            "memory_mb": "memory_per_node",
-            "time_limit_min": "time_limit"
-       }
+        "num_cpus": "cpus_per_task",
+        "memory_mb": "memory_per_node",
+        "time_limit_min": "time_limit"
+      },
+      "capabilities": {
+        "gpu_enabled": false,
+        "max_cpus": 4,
+        "max_memory_mb": 8192,
+        "max_time_minutes": 480,
+        "max_gpus": 0,
+        "max_concurrent_jobs": 10
+      },
+      "selection_criteria": {
+        "priority": 1,
+        "cost_per_core_hour": 0.0,
+        "preferred_for_job_types": ["local_test_job", "jupyter_lab"]
+      }
     }
   },
   "available_job_types": {

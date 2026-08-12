@@ -28,6 +28,6 @@ jobs:
         run: |
           echo $(git describe --always --dirty --abbrev) > BUILD
       - name: Git Auto Commit
-        uses: stefanzweifel/git-auto-commit-action@v7-next
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Generate new BUILD file"

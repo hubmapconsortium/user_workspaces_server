@@ -26,7 +26,7 @@ def update_job_status(job_id):
         logger.exception(f"Job {job_id} does not exist.")
         raise
 
-    resource = apps.get_app_config("user_workspaces_server").main_resource
+    resource = apps.get_app_config("user_workspaces_server").available_resources[job.resource_name]
     resource_job_info = resource.get_resource_job(job)
     current_job_status = resource_job_info["status"]
 
@@ -70,13 +70,17 @@ def update_job_status(job_id):
             job.job_type
         )
 
+        environment_details = job_type_config.get("environment_details", {})
+        job_type_env = environment_details.get(
+            job.resource_name,
+            environment_details.get(settings.UWS_CONFIG["main_resource"]),
+        )
+
         job_type = utils.generate_controller_object(
             job_type_config["job_type"],
             "jobtypes",
             {
-                "config": job_type_config["environment_details"][
-                    settings.UWS_CONFIG["main_resource"]
-                ],
+                "config": job_type_env,
                 "job_details": model_to_dict(job),
             },
         )
@@ -161,7 +165,7 @@ def update_job_core_hours(job_id):
         logger.exception(f"Job {job_id} does not exist.")
         raise
 
-    resource = apps.get_app_config("user_workspaces_server").main_resource
+    resource = apps.get_app_config("user_workspaces_server").available_resources[job.resource_name]
     job.core_hours = resource.get_job_core_hours(job)
     job.save()
     user_quota = models.UserQuota.objects.filter(user_id=job.workspace_id.user_id).first()
@@ -179,7 +183,7 @@ def stop_job(job_id):
         logger.exception(f"Job {job_id} does not exist.")
         raise
 
-    resource = apps.get_app_config("user_workspaces_server").main_resource
+    resource = apps.get_app_config("user_workspaces_server").available_resources[job.resource_name]
     if not resource.stop_job(job):
         job.status = models.Job.Status.FAILED
         job.save()
