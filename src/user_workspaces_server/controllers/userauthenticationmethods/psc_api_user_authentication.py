@@ -30,7 +30,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
     def has_permission(self, internal_user):
         external_user_mapping = self.get_external_user_mapping(
-            {"user_id": internal_user, "user_authentication_name": type(self).__name__}
+            {"user_id": internal_user, "user_authentication_name": self.auth_name}
         )
 
         if not external_user_mapping:
@@ -54,7 +54,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
             external_user_mapping = self.create_external_user_mapping(
                 {
                     "user_id": internal_user,
-                    "user_authentication_name": type(self).__name__,
+                    "user_authentication_name": self.auth_name,
                     "external_user_id": external_user["external_user_id"],
                     "external_username": external_user["external_username"],
                     "external_user_details": external_user["external_user_details"],
@@ -101,7 +101,7 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
             external_user_mapping = self.get_external_user_mapping(
                 {
-                    "user_authentication_name": type(self).__name__,
+                    "user_authentication_name": self.auth_name,
                     "external_username": user_info["username"],
                 }
             )
@@ -275,9 +275,17 @@ class PSCAPIUserAuthentication(AbstractUserAuthentication):
 
         for allocation_user in external_user.get("allocationUsers", []):
             allocation = allocation_user.get("allocation", {})
-            if allocation.get("grant", {}).get("number", False) == self.grant_number:
-                gid = allocation.get("gid", False)
+            grant_number = allocation.get("grant", {}).get("number", False)
+            resource_name = allocation.get("resource", {}).get("name", False)
+            active = allocation.get("active", False)
 
+            if not active:
+                continue
+
+            if resource_name == self.resource_name and (
+                not self.grant_number or grant_number == self.grant_number
+            ):
+                gid = allocation.get("gid", False)
         if not gid:
             # If this user is not assigned to this grant, then we need to assign the user
             if not (gid := self.add_external_user_to_allocation(external_user["username"])):

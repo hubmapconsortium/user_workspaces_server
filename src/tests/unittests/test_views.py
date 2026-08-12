@@ -139,7 +139,10 @@ class UserAPITests(UserWorkspacesAPITestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.search_user = User.objects.create_user(
-            "search_user", first_name="Search", last_name="User", email="search_user@querying.com"
+            "search_user",
+            first_name="Search",
+            last_name="User",
+            email="search_user@querying.com",
         )
 
     def test_get_all_users(self):
@@ -710,7 +713,7 @@ class WorkspacePUTAPITests(WorkspaceAPITestCase):
             (
                 {"num_cpus": "one"},
                 {
-                    "msg": "[\"num_cpus: Value 'one' of type str does not match required type int. Skipping further validation of parameter num_cpus.\"]"
+                    "msg": "[\"num_cpus: Value 'one' of type str does not match required type int.\"]"
                 },
             ),
             (
@@ -1066,7 +1069,10 @@ class SharedWorkspacePOSTAPITests(SharedWorkspaceAPITestCase):
 
     def test_invalid_original_workspace_for_user(self):
         self.client.force_authenticate(user=self.user)
-        body = {"shared_user_ids": [], "original_workspace_id": self.shared_workspace.pk}
+        body = {
+            "shared_user_ids": [],
+            "original_workspace_id": self.shared_workspace.pk,
+        }
         response = self.client.post(self.shared_workspaces_url, body)
         self.assertValidResponse(
             response,
@@ -1077,7 +1083,10 @@ class SharedWorkspacePOSTAPITests(SharedWorkspaceAPITestCase):
 
     def test_invalid_shared_user_ids_format(self):
         self.client.force_authenticate(user=self.user)
-        body = {"shared_user_ids": "", "original_workspace_id": self.original_workspace.pk}
+        body = {
+            "shared_user_ids": "",
+            "original_workspace_id": self.original_workspace.pk,
+        }
         response = self.client.post(self.shared_workspaces_url, body)
         self.assertValidResponse(
             response,
@@ -1245,7 +1254,9 @@ class WorkspaceAndSharedWorkspaceAPITests(SharedWorkspaceAPITestCase):
             message=f"Workspace {self.shared_workspace.pk} is a shared workspace and has not been accepted.",
         )
 
-    def test_workspace_delete_original_workspace_with_not_accepted_shared_workspace(self):
+    def test_workspace_delete_original_workspace_with_not_accepted_shared_workspace(
+        self,
+    ):
         self.client.force_authenticate(user=self.user)
         response = self.client.delete(
             reverse("workspaces_with_id", args=[self.original_workspace.pk])

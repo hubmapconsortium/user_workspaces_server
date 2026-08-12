@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 class AbstractResource(ABC):
     def __init__(self, config, resource_storage, resource_user_authentication):
         self.config = config
+        self.resource_name = config.get("resource_name", type(self).__name__)
         self.resource_storage = resource_storage
         self.resource_user_authentication = resource_user_authentication
         self.passthrough_domain = config.get("passthrough_domain", "")

@@ -33,6 +33,7 @@ class ParamValidator:
                 continue
             self._validate_above_min(param, value)
             self._validate_below_max(param, value)
+            self._validate_categorical(param, value)
         if not self.errors:
             self.is_valid = True
         else:
@@ -41,22 +42,17 @@ class ParamValidator:
     def _validate_required(self, resource_options):
         for param, details in self.param_details.items():
             if details.get("validation", {}).get("required"):
-                if not details.get("variable_name") in resource_options.keys():
+                if details.get("variable_name") not in resource_options.keys():
                     self.errors.append(f"Missing required: {param}")
 
     def _validate_allowed(self, resource_options) -> dict:
-        not_allowed = resource_options.keys() - self.param_details.keys()
-        # not_allowed are ignored in validation and stripped in the translation step
-        if not_allowed:
-            resource_options = {
-                key: value for key, value in resource_options.items() if key not in not_allowed
-            }
-        return resource_options
+        # submitted fields that are not in the app_config params are ignored (later stripped in the translation step)
+        return {key: value for key, value in resource_options.items() if key in self.param_details}
 
     def _validate_type(self, param, value):
         if req_type := self.param_details[param].get("validation", {}).get("type"):
             if not type(value).__name__ == req_type:
-                msg = f"{param}: Value '{value}' of type {type(value).__name__} does not match required type {req_type}. Skipping further validation of parameter {param}."
+                msg = f"{param}: Value '{value}' of type {type(value).__name__} does not match required type {req_type}."
                 self.errors.append(msg)
                 raise ValidationError(msg)
 
@@ -69,3 +65,10 @@ class ParamValidator:
         if max := self.param_details[param].get("validation", {}).get("max"):
             if value > max:
                 self.errors.append(f"{param}: Value '{value}' above maximum of {max}.")
+
+    def _validate_categorical(self, param: str, value: int):
+        if categories := self.param_details[param].get("validation", {}).get("enums"):
+            if value not in categories:
+                self.errors.append(
+                    f"{param}: Value '{value}' is invalid. Valid values: {', '.join(categories)}."
+                )

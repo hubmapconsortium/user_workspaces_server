@@ -32,7 +32,12 @@ class UserWorkspacesServerConfig(AppConfig):
                 utils.generate_controller_object(
                     user_authentication_dict["user_authentication_type"],
                     "userauthenticationmethods",
-                    {"config": user_authentication_dict},
+                    {
+                        "config": {
+                            **user_authentication_dict,
+                            "auth_name": user_authentication_name,
+                        }
+                    },
                 )
             )
 
@@ -53,7 +58,7 @@ class UserWorkspacesServerConfig(AppConfig):
                 resource_dict["resource_type"],
                 "resources",
                 {
-                    "config": resource_dict,
+                    "config": {**resource_dict, "resource_name": resource_name},
                     "resource_storage": self.available_storage_methods[resource_dict["storage"]],
                     "resource_user_authentication": self.available_user_authentication_methods[
                         resource_dict["user_authentication"]

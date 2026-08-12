@@ -64,24 +64,115 @@
         },
         "health_check_url": {
           "type": "string",
-          "description": "URL for health check endpoint"
+          "description": "URL for health check endpoint. When present, the resource is health-checked before each selection."
         }
       }
+    },
+    "capabilities": {
+      "type": "object",
+      "description": "Hardware capabilities used by the intelligent resource selector to filter ineligible resources. Omit this section to exclude the resource from intelligent selection (it will still be used as main_resource fallback).",
+      "properties": {
+        "gpu_enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this resource has GPU support"
+        },
+        "gpu_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Available GPU models (e.g. ['A100', 'V100'])"
+        },
+        "max_cpus": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum CPUs that can be requested per job"
+        },
+        "max_memory_mb": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum memory per job in MB (matches the memory_mb resource option)"
+        },
+        "max_time_minutes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum walltime per job in minutes (matches the time_limit_min resource option)"
+        },
+        "max_gpus": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Maximum GPUs per job (0 = no GPU support)"
+        },
+        "max_concurrent_jobs": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Soft concurrent-job ceiling used to calculate utilization fraction for scoring. Omit to disable utilization scoring for this resource."
+        },
+        "partitions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Available SLURM partition names"
+        }
+      },
+      "required": ["gpu_enabled", "max_cpus", "max_memory_mb", "max_time_minutes"]
+    },
+    "selection_criteria": {
+      "type": "object",
+      "description": "Scoring hints used by the intelligent resource selector to rank eligible resources.",
+      "properties": {
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 5,
+          "description": "Base priority score (0-100). Higher values make this resource preferred when all else is equal."
+        },
+        "cost_per_core_hour": {
+          "type": "number",
+          "minimum": 0,
+          "default": 1.0,
+          "description": "Relative cost metric per core-hour. Lower values are preferred for cost-optimised routing."
+        },
+        "preferred_for_job_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Job type keys (matching available_job_types keys) that this resource is preferred for. Matching jobs receive a bonus score."
+        }
+      },
+      "required": ["priority"]
     }
   },
   "examples": [
     {
-      "name": "SLURM Cluster",
+      "name": "SLURM GPU Cluster",
       "resource_type": "SlurmAPIResource",
       "storage": "main_storage",
       "user_authentication": "main_auth",
       "connection_details": {
-        "root_url": "https://slurm.example.com/api",
+        "root_url": "https://slurm-gpu.example.com/api",
         "api_token": "your-api-token-here",
-        "token_lifespan": "3600"
+        "token_lifespan": "3600",
+        "health_check_url": "https://slurm-gpu.example.com/health"
       },
-      "cpu_partition": "cpu",
-      "gpu_partition": "gpu"
+      "cpu_partition": "GPU-shared",
+      "gpu_partition": "GPU",
+      "capabilities": {
+        "gpu_enabled": true,
+        "gpu_types": ["A100", "V100"],
+        "max_cpus": 128,
+        "max_memory_mb": 524288,
+        "max_time_minutes": 2880,
+        "max_gpus": 8,
+        "max_concurrent_jobs": 50,
+        "partitions": ["GPU", "GPU-shared"]
+      },
+      "selection_criteria": {
+        "priority": 10,
+        "cost_per_core_hour": 1.5,
+        "preferred_for_job_types": ["jupyter_lab"]
+      }
     }
   ]
 }

@@ -36,7 +36,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
             ExternalUserMapping on success, False on failure
         """
         external_user_mapping = self.get_external_user_mapping(
-            {"user_id": internal_user, "user_authentication_name": type(self).__name__}
+            {"user_id": internal_user, "user_authentication_name": self.auth_name}
         )
 
         if not external_user_mapping:
@@ -146,7 +146,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
         external_user_mapping = self.get_external_user_mapping(
             {
                 "external_user_id": globus_user_info["sub"],
-                "user_authentication_name": type(self).__name__,
+                "user_authentication_name": self.auth_name,
             }
         )
 
@@ -184,7 +184,7 @@ class GlobusUserAuthentication(AbstractUserAuthentication):
             self.create_external_user_mapping(
                 {
                     "user_id": internal_user,
-                    "user_authentication_name": type(self).__name__,
+                    "user_authentication_name": self.auth_name,
                     "external_user_id": globus_user_info["sub"],
                     "external_username": globus_user_info["username"],
                     "external_user_details": globus_user_info,
