@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controllers &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Architecture" href="architecture.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Controllers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#controller-layer-details">Controller Layer Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#abstract-controller-pattern">Abstract Controller Pattern</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authentication-methods">Authentication Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storage-methods">Storage Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#job-types">Job Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-new-controllers">Adding New Controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">user_workspaces_server</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_reference.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Controllers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/controllers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="controllers">
+<h1>Controllers<a class="headerlink" href="#controllers" title="Link to this heading"></a></h1>
+<section id="controller-layer-details">
+<h2>Controller Layer Details<a class="headerlink" href="#controller-layer-details" title="Link to this heading"></a></h2>
+<p>The Controller Layer implements a plugin-based architecture where each controller type has an abstract base class with concrete implementations. This diagram shows the extensibility pattern:</p>
+<pre  class="mermaid">
+        graph TB
+    subgraph &quot;Job Types&quot;
+        JobAbstract[AbstractJob]
+        LocalTestJob
+        JobOther[Other Job Types...]
+
+        JobAbstract -.-&gt;|implements| LocalTestJob
+        JobAbstract -.-&gt;|can implement| JobOther
+    end
+
+    subgraph &quot;Resources&quot;
+        ResourceAbstract[AbstractResource]
+        LocalResource
+        ResourceOther[Other Resources...]
+
+        ResourceAbstract -.-&gt;|implements| LocalResource
+        ResourceAbstract -.-&gt;|can implement| ResourceOther
+    end
+
+    subgraph &quot;Storage Methods&quot;
+        StorageAbstract[AbstractStorage]
+        LocalFileSystemStorage
+        StorageOther[Other Storage Methods...]
+
+        StorageAbstract -.-&gt;|implements| LocalFileSystemStorage
+        StorageAbstract -.-&gt;|can implement| StorageOther
+    end
+
+    subgraph &quot;Authentication Methods&quot;
+        AuthAbstract[AbstractUserAuthentication]
+        LocalUserAuthentication
+        AuthOther[Other Auth Methods...]
+
+        AuthAbstract -.-&gt;|implements| LocalUserAuthentication
+        AuthAbstract -.-&gt;|can implement| AuthOther
+    end
+
+    ResourceAbstract --&gt;|depends on| StorageAbstract
+    ResourceAbstract --&gt;|depends on| AuthAbstract
+    StorageAbstract --&gt;|depends on| AuthAbstract
+
+    style JobAbstract fill:#e1f5ff
+    style ResourceAbstract fill:#e1f5ff
+    style StorageAbstract fill:#e1f5ff
+    style AuthAbstract fill:#e1f5ff
+    style JobOther fill:#ffe1e1,stroke-dasharray: 5 5
+    style ResourceOther fill:#ffe1e1,stroke-dasharray: 5 5
+    style StorageOther fill:#ffe1e1,stroke-dasharray: 5 5
+    style AuthOther fill:#ffe1e1,stroke-dasharray: 5 5
+    </pre></section>
+<section id="abstract-controller-pattern">
+<h2>Abstract Controller Pattern<a class="headerlink" href="#abstract-controller-pattern" title="Link to this heading"></a></h2>
+<p>All major components follow an abstract base class pattern for extensibility:</p>
+<section id="authentication-methods">
+<h3>Authentication Methods<a class="headerlink" href="#authentication-methods" title="Link to this heading"></a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">controllers/userauthenticationmethods/</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Abstract</strong>: <code class="docutils literal notranslate"><span class="pre">AbstractUserAuthentication</span></code></p></li>
+<li><p><strong>Implementations</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">GlobusUserAuthentication</span></code> - Globus OAuth integration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PSCAPIUserAuthentication</span></code> - Pittsburgh Supercomputing Center API</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalUserAuthentication</span></code> - Local user management</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="storage-methods">
+<h3>Storage Methods<a class="headerlink" href="#storage-methods" title="Link to this heading"></a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">controllers/storagemethods/</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Abstract</strong>: <code class="docutils literal notranslate"><span class="pre">AbstractStorage</span></code></p></li>
+<li><p><strong>Implementations</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalFileSystemStorage</span></code> - Standard filesystem storage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HubmapLocalFileSystemStorage</span></code> - HuBMAP-specific storage with custom features</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="resources">
+<h3>Resources<a class="headerlink" href="#resources" title="Link to this heading"></a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">controllers/resources/</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Abstract</strong>: <code class="docutils literal notranslate"><span class="pre">AbstractResource</span></code></p></li>
+<li><p><strong>Implementations</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalResource</span></code> - Local process execution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SlurmAPIResource</span></code> - SLURM cluster integration</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="job-types">
+<h3>Job Types<a class="headerlink" href="#job-types" title="Link to this heading"></a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">controllers/jobtypes/</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Abstract</strong>: <code class="docutils literal notranslate"><span class="pre">AbstractJob</span></code></p></li>
+<li><p><strong>Implementations</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">JupyterLabJob</span></code> - JupyterLab notebook environment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalTestJob</span></code> - Testing and development jobs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AppyterJob</span></code> - Appyter application support</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="adding-new-controllers">
+<h2>Adding New Controllers<a class="headerlink" href="#adding-new-controllers" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Implement the appropriate abstract base class</p></li>
+<li><p>Add class name mapping in <code class="docutils literal notranslate"><span class="pre">utils.translate_class_to_module()</span></code></p></li>
+<li><p>Add new JSON schema in <code class="docutils literal notranslate"><span class="pre">schemas</span></code> directory</p></li>
+<li><p>Update configuration JSON files to register the new controller</p></li>
+<li><p>The system will automatically discover and load the controller at startup</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="architecture.html" class="btn btn-neutral float-left" title="Architecture" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

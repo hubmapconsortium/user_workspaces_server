@@ -1,0 +1,29 @@
+user\_workspaces\_server.config\_schemas package
+================================================
+
+Submodules
+----------
+
+user\_workspaces\_server.config\_schemas.json\_schema\_loader module
+--------------------------------------------------------------------
+
+.. automodule:: user_workspaces_server.config_schemas.json_schema_loader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+user\_workspaces\_server.config\_schemas.json\_schema\_validator module
+-----------------------------------------------------------------------
+
+.. automodule:: user_workspaces_server.config_schemas.json_schema_validator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: user_workspaces_server.config_schemas
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,119 @@
+Storage Controllers
+===================
+
+Storage controllers manage workspace file storage backends.
+
+HubmapLocalFileSystemStorage
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+HuBMAP-specific local filesystem storage with custom directory structures
+
+**Configuration value:** ``"HubmapLocalFileSystemStorage"``
+
+Set ``storage_type`` to ``"HubmapLocalFileSystemStorage"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this storage instance
+
+
+**storage_type** (string) **[Required]**
+
+  Must be 'HubmapLocalFileSystemStorage'
+
+  *Allowed values:* ``"HubmapLocalFileSystemStorage"``
+
+
+**user_authentication** (string) **[Required]**
+
+  Reference to authentication configuration key in available_user_authentication
+
+
+**root_dir** (string) **[Required]**
+
+  Absolute path to root directory for storing workspace files
+
+
+**connection_details** (object) **[Required]**
+
+  Connection configuration
+
+  *Nested fields:*
+
+    **root_url** (string) **[Required]**
+
+      Base URL for HuBMAP API to grab dataset file paths
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "HuBMAP Local Storage",
+    "storage_type": "HubmapLocalFileSystemStorage",
+    "user_authentication": "main_auth",
+    "root_dir": "/var/hubmap/workspaces"
+  }
+
+
+LocalFileSystemStorage
+^^^^^^^^^^^^^^^^^^^^^^
+
+Local filesystem storage for workspace data
+
+**Configuration value:** ``"LocalFileSystemStorage"``
+
+Set ``storage_type`` to ``"LocalFileSystemStorage"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this storage instance
+
+
+**storage_type** (string) **[Required]**
+
+  Must be 'LocalFileSystemStorage'
+
+  *Allowed values:* ``"LocalFileSystemStorage"``
+
+
+**user_authentication** (string) **[Required]**
+
+  Reference to authentication configuration key in available_user_authentication
+
+
+**root_dir** (string) **[Required]**
+
+  Absolute path to root directory for storing workspace files
+
+
+Optional Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**connection_details** (object) *[Optional]*
+
+  Connection configuration (typically empty for local filesystem)
+
+  *Default:* ``{}``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "Local File Storage",
+    "storage_type": "LocalFileSystemStorage",
+    "user_authentication": "main_auth",
+    "root_dir": "/var/workspaces"
+  }
+

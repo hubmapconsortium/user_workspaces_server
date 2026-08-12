@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intelligent Resource Selection &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controllers.html">Controllers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">user_workspaces_server</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_reference.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Intelligent Resource Selection</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/resource-selection.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="intelligent-resource-selection">
+<h1>Intelligent Resource Selection<a class="headerlink" href="#intelligent-resource-selection" title="Link to this heading"></a></h1>
+<p>When a job is submitted, the server automatically selects the most appropriate compute resource rather than routing everything to a single hardcoded <code class="docutils literal notranslate"><span class="pre">main_resource</span></code>. Selection runs in two phases: filter and score.</p>
+<hr class="docutils" />
+<section id="how-it-works">
+<h2>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading"></a></h2>
+<section id="phase-1-filter-hard-constraints">
+<h3>Phase 1 — Filter (hard constraints)<a class="headerlink" href="#phase-1-filter-hard-constraints" title="Link to this heading"></a></h3>
+<p>Resources that cannot fulfil the job are eliminated:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Check</p></th>
+<th class="head"><p>Resource config field</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GPU required but resource has none</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">capabilities.gpu_enabled</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Requested CPUs exceed limit</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">capabilities.max_cpus</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Requested memory (MB) exceeds limit</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">capabilities.max_memory_mb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Requested time (minutes) exceeds limit</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">capabilities.max_time_minutes</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>User lacks permission on this resource</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resource_user_authentication.has_permission()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Health check fails</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">connection_details.health_check_url</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Resources that do not have a <code class="docutils literal notranslate"><span class="pre">capabilities</span></code> section in their config are skipped entirely and never considered by the selector (they remain available as the <code class="docutils literal notranslate"><span class="pre">main_resource</span></code> fallback).</p>
+</section>
+<section id="phase-2-score-soft-preferences">
+<h3>Phase 2 — Score (soft preferences)<a class="headerlink" href="#phase-2-score-soft-preferences" title="Link to this heading"></a></h3>
+<p>Each eligible resource receives a score and the highest scorer is selected:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>score = (
+        (priority × 10)
+        + (50 if job_type in preferred_for_job_types)
+        + (30 if GPU job on GPU resource)
+        + (20 if CPU job on CPU-only resource)
+        - (cost_per_core_hour × 5)
+      ) * (1 - utilization_fraction)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">utilization_fraction</span></code> = active jobs / <code class="docutils literal notranslate"><span class="pre">capabilities.max_concurrent_jobs</span></code>, capped at 1.0. Omit <code class="docutils literal notranslate"><span class="pre">max_concurrent_jobs</span></code> from a resource’s capabilities to disable utilization scoring for that resource.</p>
+</section>
+<section id="fallback">
+<h3>Fallback<a class="headerlink" href="#fallback" title="Link to this heading"></a></h3>
+<p>If no resource passes the filter (e.g. a GPU job on a CPU-only deployment, or impossible resource limits), the server falls back to <code class="docutils literal notranslate"><span class="pre">main_resource</span></code> and logs a warning. No error is raised.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>Add three optional sections to any resource in <code class="docutils literal notranslate"><span class="pre">available_resources</span></code>. Resources without these sections are ignored by the selector.</p>
+<section id="capabilities">
+<h3><code class="docutils literal notranslate"><span class="pre">capabilities</span></code><a class="headerlink" href="#capabilities" title="Link to this heading"></a></h3>
+<p>Hard limits used for filtering. Units match the resource option parameter names directly — no conversion needed. <strong>Required fields</strong> when the section is present: <code class="docutils literal notranslate"><span class="pre">gpu_enabled</span></code>, <code class="docutils literal notranslate"><span class="pre">max_cpus</span></code>, <code class="docutils literal notranslate"><span class="pre">max_memory_mb</span></code>, <code class="docutils literal notranslate"><span class="pre">max_time_minutes</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;gpu_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;gpu_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;A100&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;V100&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;max_cpus&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">128</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;max_memory_mb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">524288</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;max_time_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2880</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;max_gpus&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;max_concurrent_jobs&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;partitions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;GPU&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;GPU-shared&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gpu_enabled</span></code></p></td>
+<td><p>boolean</p></td>
+<td><p>yes</p></td>
+<td><p>Whether the resource has GPU support</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_cpus</span></code></p></td>
+<td><p>integer</p></td>
+<td><p>yes</p></td>
+<td><p>Maximum CPUs per job (matches <code class="docutils literal notranslate"><span class="pre">num_cpus</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_memory_mb</span></code></p></td>
+<td><p>integer</p></td>
+<td><p>yes</p></td>
+<td><p>Maximum memory per job in MB (matches <code class="docutils literal notranslate"><span class="pre">memory_mb</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_time_minutes</span></code></p></td>
+<td><p>integer</p></td>
+<td><p>yes</p></td>
+<td><p>Maximum walltime per job in minutes (matches <code class="docutils literal notranslate"><span class="pre">time_limit_min</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gpu_types</span></code></p></td>
+<td><p>array[string]</p></td>
+<td><p>no</p></td>
+<td><p>Available GPU models</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_gpus</span></code></p></td>
+<td><p>integer</p></td>
+<td><p>no</p></td>
+<td><p>Maximum GPUs per job (default: 0)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_concurrent_jobs</span></code></p></td>
+<td><p>integer</p></td>
+<td><p>no</p></td>
+<td><p>Soft job ceiling for utilization scoring. Omit to skip utilization scoring.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">partitions</span></code></p></td>
+<td><p>array[string]</p></td>
+<td><p>no</p></td>
+<td><p>Available Slurm partitions</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="selection-criteria">
+<h3><code class="docutils literal notranslate"><span class="pre">selection_criteria</span></code><a class="headerlink" href="#selection-criteria" title="Link to this heading"></a></h3>
+<p>Scoring hints. <strong>Required field</strong>: <code class="docutils literal notranslate"><span class="pre">priority</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;selection_criteria&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;cost_per_core_hour&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;preferred_for_job_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;jupyter_lab&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">priority</span></code></p></td>
+<td><p>integer (0–100)</p></td>
+<td><p>yes</p></td>
+<td><p>Base score multiplier. Higher = preferred when all else is equal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cost_per_core_hour</span></code></p></td>
+<td><p>float</p></td>
+<td><p>no</p></td>
+<td><p>Relative cost metric. Lower = preferred. (default: 1.0)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">preferred_for_job_types</span></code></p></td>
+<td><p>array[string]</p></td>
+<td><p>no</p></td>
+<td><p>Job type keys that earn a +50 bonus on this resource.</p></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><p><strong>Note:</strong> User/group access control is enforced through the resource’s <code class="docutils literal notranslate"><span class="pre">user_authentication</span></code> controller (e.g. <code class="docutils literal notranslate"><span class="pre">GlobusUserAuthentication</span></code>), not through <code class="docutils literal notranslate"><span class="pre">selection_criteria</span></code>. Configure <code class="docutils literal notranslate"><span class="pre">allowed_globus_groups</span></code> on the auth controller itself.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="multi-resource-example">
+<h2>Multi-Resource Example<a class="headerlink" href="#multi-resource-example" title="Link to this heading"></a></h2>
+<p>A deployment with a GPU cluster and a CPU cluster:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;available_resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;hive_gpu_cluster&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hive GPU Cluster&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;resource_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SlurmAPIResource&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;storage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hubmap_local_fs&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;user_authentication&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;globus_auth&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;connection_details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;root_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://slurm-gpu.hive.psc.edu/proxy&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;api_token&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://slurm-gpu.hive.psc.edu/health&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;cpu_partition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GPU-shared&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;gpu_partition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GPU&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;gpu_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;gpu_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;A100&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;max_cpus&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">128</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_memory_mb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">524288</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_time_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2880</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_gpus&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_concurrent_jobs&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;selection_criteria&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;cost_per_core_hour&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;preferred_for_job_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;jupyter_lab&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+
+<span class="w">  </span><span class="nt">&quot;hive_cpu_cluster&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hive CPU Cluster&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;resource_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SlurmAPIResource&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;storage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hubmap_local_fs&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;user_authentication&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;globus_auth&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;connection_details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;root_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://slurm-cpu.hive.psc.edu/proxy&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;api_token&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://slurm-cpu.hive.psc.edu/health&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;cpu_partition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RM&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;gpu_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_cpus&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_memory_mb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">262144</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_time_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10080</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_gpus&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;max_concurrent_jobs&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;selection_criteria&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;cost_per_core_hour&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;preferred_for_job_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;jupyter_lab&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>With this config:</p>
+<ul class="simple">
+<li><p>A GPU job is routed to <code class="docutils literal notranslate"><span class="pre">hive_gpu_cluster</span></code> (CPU cluster filtered out).</p></li>
+<li><p>A CPU job can go to either cluster — GPU cluster scores higher due to priority, but CPU cluster scores an efficiency bonus (+20). Whether they load-balance depends on how close the scores are at runtime.</p></li>
+<li><p>If both clusters are unhealthy or over capacity, the job falls back to <code class="docutils literal notranslate"><span class="pre">main_resource</span></code>.</p></li>
+</ul>
+<section id="environment-details-for-multi-resource-job-types">
+<h3><code class="docutils literal notranslate"><span class="pre">environment_details</span></code> for multi-resource job types<a class="headerlink" href="#environment-details-for-multi-resource-job-types" title="Link to this heading"></a></h3>
+<p>When multiple resources are configured, each job type’s <code class="docutils literal notranslate"><span class="pre">environment_details</span></code> can provide per-resource environment config. The server uses the selected resource’s key first, then falls back to the <code class="docutils literal notranslate"><span class="pre">main_resource</span></code> key:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;available_job_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;jupyter_lab&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jupyter Lab&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;job_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JupyterLabJob&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;environment_details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;hive_gpu_cluster&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;python_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;python3.10&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;module_manager&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;virtualenv&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;modules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;jupyterlab&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;time_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;environment_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JupyterLabJob&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;hive_cpu_cluster&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;python_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;python3.10&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;module_manager&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;virtualenv&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;modules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;jupyterlab&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;time_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;environment_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JupyterLabJob&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;main_resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;python_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;python3.10&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;module_manager&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;virtualenv&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;modules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;jupyterlab&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;time_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;environment_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JupyterLabJob&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="access-control">
+<h2>Access Control<a class="headerlink" href="#access-control" title="Link to this heading"></a></h2>
+<p>Resource-level access control is handled by the resource’s <code class="docutils literal notranslate"><span class="pre">user_authentication</span></code> controller, not by the selector config. When a user submits a job, the selector calls <code class="docutils literal notranslate"><span class="pre">has_permission(user)</span></code> on each candidate resource’s auth controller. Resources for which the user lacks permission are filtered out.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">GlobusUserAuthentication</span></code>, this means:</p>
+<ul class="simple">
+<li><p>The user must have a stored external mapping (i.e. must have authenticated at least once).</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">allowed_globus_groups</span></code> is set on the auth controller, the user’s stored groups token is checked against those groups.</p></li>
+</ul>
+<p>To restrict a resource to a specific group, configure <code class="docutils literal notranslate"><span class="pre">allowed_globus_groups</span></code> on the auth controller assigned to that resource:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;available_user_authentication&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;gpu_cluster_auth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;user_authentication_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GlobusUserAuthentication&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;connection_details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;client_secret&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;authentication_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;allowed_globus_groups&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;&lt;globus-group-uuid&gt;&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">},</span>
+<span class="nt">&quot;available_resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;hive_gpu_cluster&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;user_authentication&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpu_cluster_auth&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="err">...</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Known limitation:</strong> <code class="docutils literal notranslate"><span class="pre">has_permission</span></code> is currently a placeholder that always returns <code class="docutils literal notranslate"><span class="pre">True</span></code>. Real group membership enforcement is pending Phase 4 implementation in <code class="docutils literal notranslate"><span class="pre">GlobusUserAuthentication</span></code>.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="backward-compatibility">
+<h2>Backward Compatibility<a class="headerlink" href="#backward-compatibility" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Existing deployments with no <code class="docutils literal notranslate"><span class="pre">capabilities</span></code> section continue to work unchanged — those resources are skipped by the selector and the <code class="docutils literal notranslate"><span class="pre">main_resource</span></code> fallback is used.</p></li>
+<li><p>Adding <code class="docutils literal notranslate"><span class="pre">capabilities</span></code> to a resource opts it into the selector without any other changes required.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">main_resource</span></code> key in <code class="docutils literal notranslate"><span class="pre">config.json</span></code> still determines the fallback resource.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

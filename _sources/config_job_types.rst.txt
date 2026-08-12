@@ -1,0 +1,184 @@
+Job Type Controllers
+====================
+
+Job type controllers define different types of computational jobs.
+
+AppyterJob
+^^^^^^^^^^
+
+Appyter notebook application job
+
+**Configuration value:** ``"AppyterJob"``
+
+Set ``job_type`` to ``"AppyterJob"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this job type
+
+
+**job_type** (string) **[Required]**
+
+  Must be 'AppyterJob'
+
+  *Allowed values:* ``"AppyterJob"``
+
+
+**environment_details** (object) **[Required]**
+
+  Environment configuration per resource (resource name as key, config as value)
+
+  *Nested fields:*
+
+    **sif_file_path** (string) **[Required]**
+
+      File path for sif image
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "Appyter Job",
+    "job_type": "AppyterJob",
+    "environment_details": {
+      "main_resource": {
+        "sif_file_path": "/path/to/sif_file.sif"
+      }
+    }
+  }
+
+
+JupyterLabJob
+^^^^^^^^^^^^^
+
+JupyterLab server job with configurable Python environment
+
+**Configuration value:** ``"JupyterLabJob"``
+
+Set ``job_type`` to ``"JupyterLabJob"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this job type
+
+
+**job_type** (string) **[Required]**
+
+  Must be 'JupyterLabJob'
+
+  *Allowed values:* ``"JupyterLabJob"``
+
+
+**environment_details** (object) **[Required]**
+
+  Environment configuration per resource (resource name as key, config as value)
+
+  *Nested fields:*
+
+    **module_manager** (string) **[Required]**
+
+      How this environment is managed. (Tar archive, lmod module, virtual environment)
+
+      *Allowed values:* ``"tar"``, ``"lmod"``, ``"virtualenv"``
+
+    **python_version** (string) *[Optional]*
+
+      Python version to use. Required if using lmod or virtualenv
+
+    **modules** (array) *[Optional]*
+
+      Modules to load. Required if using lmod
+
+    **python_packages** (array) *[Optional]*
+
+      Python packages to install. Required if using lmod or virtualenv
+
+    **time_limit** (string) *[Optional]*
+
+      The default time limit for this job type in minutes
+
+    **tar_file_path** (string) *[Optional]*
+
+      File path for the tar archive. Required if using tar
+
+    **environment_name** (string) **[Required]**
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "Jupyter Lab",
+    "job_type": "JupyterLabJob",
+    "environment_details": {
+      "main_resource": {
+        "python_version": "python3.10",
+        "module_manager": "virtualenv",
+        "modules": [
+          "jupyterlab"
+        ],
+        "time_limit": "60",
+        "environment_name": "JupyterLabJob"
+      }
+    }
+  }
+
+
+LocalTestJob
+^^^^^^^^^^^^
+
+Simple test job for development and debugging
+
+**Configuration value:** ``"LocalTestJob"``
+
+Set ``job_type`` to ``"LocalTestJob"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this job type
+
+
+**job_type** (string) **[Required]**
+
+  Must be 'LocalTestJob'
+
+  *Allowed values:* ``"LocalTestJob"``
+
+
+Optional Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**environment_details** (object) *[Optional]*
+
+  Environment configuration per resource (typically empty for test jobs)
+
+  *Default:* ``{}``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "Local Test Job",
+    "job_type": "LocalTestJob",
+    "environment_details": {
+      "main_resource": {}
+    }
+  }
+

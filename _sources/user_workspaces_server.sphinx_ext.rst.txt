@@ -1,0 +1,21 @@
+user\_workspaces\_server.sphinx\_ext package
+============================================
+
+Submodules
+----------
+
+user\_workspaces\_server.sphinx\_ext.json\_schema\_autodoc module
+-----------------------------------------------------------------
+
+.. automodule:: user_workspaces_server.sphinx_ext.json_schema_autodoc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: user_workspaces_server.sphinx_ext
+   :members:
+   :undoc-members:
+   :show-inheritance:

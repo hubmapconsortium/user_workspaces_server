@@ -1,0 +1,226 @@
+Authentication Controllers
+==========================
+
+Authentication controllers handle user authentication and authorization.
+
+GlobusUserAuthentication
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Globus Auth integration for user authentication
+
+**Configuration value:** ``"GlobusUserAuthentication"``
+
+Set ``user_authentication_type`` to ``"GlobusUserAuthentication"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this authentication method
+
+
+**user_authentication_type** (string) **[Required]**
+
+  Must be 'GlobusUserAuthentication'
+
+  *Allowed values:* ``"GlobusUserAuthentication"``
+
+
+**connection_details** (object) **[Required]**
+
+  Globus authentication configuration
+
+  *Nested fields:*
+
+    **client_id** (string) **[Required]**
+
+      Globus OAuth client ID
+
+    **client_secret** (string) **[Required]**
+
+      Globus OAuth client secret
+
+    **authentication_type** (string) **[Required]**
+
+      Authentication flow type: 'oauth' for full OAuth flow, 'token' for direct token validation
+
+      *Allowed values:* ``"oauth"``, ``"token"``
+
+    **health_check_url** (string) **[Required]**
+
+      URL for health check endpoint
+
+    **allowed_globus_groups** (array) *[Optional]*
+
+      List of Globus group UUIDs. Users must be members of at least one group to authenticate. If empty, group checking is disabled.
+
+      *Default:* ``[]``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "Globus Token Auth",
+    "user_authentication_type": "GlobusUserAuthentication",
+    "connection_details": {
+      "client_id": "your-client-id",
+      "client_secret": "your-client-secret",
+      "authentication_type": "token"
+    }
+  }
+
+
+LocalUserAuthentication
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Local system user authentication
+
+**Configuration value:** ``"LocalUserAuthentication"``
+
+Set ``user_authentication_type`` to ``"LocalUserAuthentication"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this authentication method
+
+
+**user_authentication_type** (string) **[Required]**
+
+  Must be 'LocalUserAuthentication'
+
+  *Allowed values:* ``"LocalUserAuthentication"``
+
+
+**connection_details** (object) **[Required]**
+
+  Local authentication configuration (typically empty)
+
+  *Nested fields:*
+
+    **create_external_users** (boolean) *[Optional]*
+
+      Whether to create a new user when they don't exist on the system
+
+      *Default:* ``False``
+
+    **operating_system** (string) **[Required]**
+
+      The operating system to which this authentication method is connected
+
+      *Allowed values:* ``"linux"``, ``"osx"``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "Local Auth",
+    "user_authentication_type": "LocalUserAuthentication",
+    "connection_details": {}
+  }
+
+
+PSCAPIUserAuthentication
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+PSC API authentication integration
+
+**Configuration value:** ``"PSCAPIUserAuthentication"``
+
+Set ``user_authentication_type`` to ``"PSCAPIUserAuthentication"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this authentication method
+
+
+**user_authentication_type** (string) **[Required]**
+
+  Must be 'PSCAPIUserAuthentication'
+
+  *Allowed values:* ``"PSCAPIUserAuthentication"``
+
+
+**connection_details** (object) **[Required]**
+
+  PSC API connection configuration
+
+  *Nested fields:*
+
+    **create_external_users** (boolean) *[Optional]*
+
+      Whether to create a new user when they don't exist on the system
+
+      *Default:* ``False``
+
+    **grant_number** (string) **[Required]**
+
+      Grant number associated with user workspaces server
+
+    **health_check_url** (string) **[Required]**
+
+      URL for health check endpoint
+
+    **jwt_token** (string) **[Required]**
+
+      JWT authentication token for PSC Users API
+
+    **ldap_base** (string) **[Required]**
+
+      Base for PSC LDAP service
+
+    **ldap_password** (string) **[Required]**
+
+      Password for PSC LDAP service
+
+    **ldap_uri** (string) **[Required]**
+
+      URI for PSC LDAP service
+
+    **ldap_user_dn** (string) **[Required]**
+
+      User DN for PSC LDAP service
+
+    **resource_name** (string) **[Required]**
+
+      PSC resource associated with user workspaces server
+
+    **root_url** (string) **[Required]**
+
+      URL for the PSC Users API
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "PSC API Auth",
+    "user_authentication_type": "PSCAPIUserAuthentication",
+    "connection_details": {
+      "create_external_user": false,
+      "grant_number": "YOUR_GRANT_NUMBER",
+      "health_check_url": "https://health_check.com",
+      "jwt_token": "YOUR_JWT_TOKEN",
+      "ldap_base": "YOUR_LDAP_BASE",
+      "ldap_password": "YOUR_LDAP_PASSWORD",
+      "ldap_uri": "ldaps://ldap_uri",
+      "ldap_user_dn": "YOUR_LDAP_USER_DN",
+      "resource_name": "YOUR_RESOURCE_NAME",
+      "root_url": "https://root_url.com"
+    }
+  }
+

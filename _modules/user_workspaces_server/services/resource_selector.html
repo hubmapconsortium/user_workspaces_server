@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>user_workspaces_server.services.resource_selector &mdash; User Workspaces Server 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            User Workspaces Server
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../controllers.html">Controllers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">user_workspaces_server</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../config_reference.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../deployment.html">Deployment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">User Workspaces Server</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">user_workspaces_server.services.resource_selector</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for user_workspaces_server.services.resource_selector</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ResourceSelectionError">
+<a class="viewcode-back" href="../../../user_workspaces_server.services.html#user_workspaces_server.services.resource_selector.ResourceSelectionError">[docs]</a>
+<span class="k">class</span> <span class="nc">ResourceSelectionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when no suitable resource can be found.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="LoadTracker">
+<a class="viewcode-back" href="../../../user_workspaces_server.services.html#user_workspaces_server.services.resource_selector.LoadTracker">[docs]</a>
+<span class="k">class</span> <span class="nc">LoadTracker</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Track current job counts per resource for utilization scoring.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LoadTracker.get_job_count">
+<a class="viewcode-back" href="../../../user_workspaces_server.services.html#user_workspaces_server.services.resource_selector.LoadTracker.get_job_count">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_job_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get current active job count for resource (by class name).&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">user_workspaces_server.models</span> <span class="kn">import</span> <span class="n">Job</span>
+
+        <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">resource_name</span><span class="o">=</span><span class="n">resource_name</span><span class="p">,</span>
+            <span class="n">status__in</span><span class="o">=</span><span class="p">[</span><span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">PENDING</span><span class="p">,</span> <span class="n">Job</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">],</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ResourceSelector">
+<a class="viewcode-back" href="../../../user_workspaces_server.services.html#user_workspaces_server.services.resource_selector.ResourceSelector">[docs]</a>
+<span class="k">class</span> <span class="nc">ResourceSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Intelligent resource selection based on job requirements,</span>
+<span class="sd">    resource capabilities, user permissions, and current load.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ResourceSelector.__init__">
+<a class="viewcode-back" href="../../../user_workspaces_server.services.html#user_workspaces_server.services.resource_selector.ResourceSelector.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">available_resources</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">available_resources</span> <span class="o">=</span> <span class="n">available_resources</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_tracker</span> <span class="o">=</span> <span class="n">LoadTracker</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ResourceSelector.select_resource">
+<a class="viewcode-back" href="../../../user_workspaces_server.services.html#user_workspaces_server.services.resource_selector.ResourceSelector.select_resource">[docs]</a>
+    <span class="k">def</span> <span class="nf">select_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource_options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Two-phase resource selection: filter then score.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (resource_key, AbstractResource). resource_key is the</span>
+<span class="sd">            key in available_resources (e.g. &quot;hive_gpu_cluster&quot;).</span>
+
+<span class="sd">        Falls back to main_resource if no eligible resources are found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">eligible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_eligible_resources</span><span class="p">(</span><span class="n">job_type</span><span class="p">,</span> <span class="n">resource_options</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">eligible</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;No eligible resources found for job_type=</span><span class="si">%s</span><span class="s2"> resource_options=</span><span class="si">%s</span><span class="s2">; &quot;</span>
+                <span class="s2">&quot;falling back to main_resource&quot;</span><span class="p">,</span>
+                <span class="n">job_type</span><span class="p">,</span>
+                <span class="n">resource_options</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">main_resource_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">UWS_CONFIG</span><span class="p">[</span><span class="s2">&quot;main_resource&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">main_resource_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_resources</span><span class="p">[</span><span class="n">main_resource_key</span><span class="p">]</span>
+
+        <span class="n">scored</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score_resources</span><span class="p">(</span><span class="n">eligible</span><span class="p">,</span> <span class="n">job_type</span><span class="p">,</span> <span class="n">resource_options</span><span class="p">)</span>
+        <span class="n">best</span> <span class="o">=</span> <span class="n">scored</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Resource selection completed&quot;</span><span class="p">,</span>
+            <span class="n">extra</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;job_type&quot;</span><span class="p">:</span> <span class="n">job_type</span><span class="p">,</span>
+                <span class="s2">&quot;resource_options&quot;</span><span class="p">:</span> <span class="n">resource_options</span><span class="p">,</span>
+                <span class="s2">&quot;eligible_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">eligible</span><span class="p">),</span>
+                <span class="s2">&quot;selected_resource&quot;</span><span class="p">:</span> <span class="n">best</span><span class="p">[</span><span class="s2">&quot;resource_name&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">best</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">best</span><span class="p">[</span><span class="s2">&quot;resource_name&quot;</span><span class="p">],</span> <span class="n">best</span><span class="p">[</span><span class="s2">&quot;resource&quot;</span><span class="p">]</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Phase 1: Filter</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="k">def</span> <span class="nf">_filter_eligible_resources</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">job_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource_options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">user</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]:</span>
+        <span class="n">eligible</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">resource_name</span><span class="p">,</span> <span class="n">resource</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_resources</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">capabilities</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;capabilities&quot;</span><span class="p">)</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;selection_criteria&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Resources without capabilities/selection_criteria config are</span>
+            <span class="c1"># skipped; fallback to main_resource handles this case.</span>
+            <span class="k">if</span> <span class="n">capabilities</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">selection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Resource </span><span class="si">%s</span><span class="s2"> has no capabilities/selection_criteria config; skipping&quot;</span><span class="p">,</span>
+                    <span class="n">resource_name</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Check 1: GPU requirement</span>
+            <span class="k">if</span> <span class="n">resource_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gpu_enabled&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gpu_enabled&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resource </span><span class="si">%s</span><span class="s2"> filtered: no GPU support&quot;</span><span class="p">,</span> <span class="n">resource_name</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># Check 2: CPU capacity</span>
+            <span class="n">requested_cpus</span> <span class="o">=</span> <span class="n">resource_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_cpus&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">requested_cpus</span> <span class="o">&gt;</span> <span class="n">capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_cpus&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Resource </span><span class="si">%s</span><span class="s2"> filtered: requested </span><span class="si">%s</span><span class="s2"> CPUs &gt; max </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">resource_name</span><span class="p">,</span>
+                    <span class="n">requested_cpus</span><span class="p">,</span>
+                    <span class="n">capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_cpus&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Check 3: Memory capacity (both in MB)</span>
+            <span class="n">requested_memory_mb</span> <span class="o">=</span> <span class="n">resource_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;memory_mb&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">requested_memory_mb</span> <span class="o">&gt;</span> <span class="n">capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_memory_mb&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Resource </span><span class="si">%s</span><span class="s2"> filtered: requested </span><span class="si">%s</span><span class="s2"> MB memory &gt; max </span><span class="si">%s</span><span class="s2"> MB&quot;</span><span class="p">,</span>
+                    <span class="n">resource_name</span><span class="p">,</span>
+                    <span class="n">requested_memory_mb</span><span class="p">,</span>
+                    <span class="n">capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_memory_mb&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Check 4: Time limit (both in minutes)</span>
+            <span class="n">requested_minutes</span> <span class="o">=</span> <span class="n">resource_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;time_limit_min&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">requested_minutes</span> <span class="o">&gt;</span> <span class="n">capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_time_minutes&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Resource </span><span class="si">%s</span><span class="s2"> filtered: requested </span><span class="si">%s</span><span class="s2"> min &gt; max </span><span class="si">%s</span><span class="s2"> min&quot;</span><span class="p">,</span>
+                    <span class="n">resource_name</span><span class="p">,</span>
+                    <span class="n">requested_minutes</span><span class="p">,</span>
+                    <span class="n">capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_time_minutes&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Check 5: User authorization via the resource&#39;s own auth method</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_has_resource_permission</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">resource</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Resource </span><span class="si">%s</span><span class="s2"> filtered: user </span><span class="si">%s</span><span class="s2"> lacks permission&quot;</span><span class="p">,</span>
+                    <span class="n">resource_name</span><span class="p">,</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Check 6: Health status</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_resource_healthy</span><span class="p">(</span><span class="n">resource</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resource </span><span class="si">%s</span><span class="s2"> filtered: health check failed&quot;</span><span class="p">,</span> <span class="n">resource_name</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">eligible</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">resource_name</span><span class="p">,</span> <span class="n">resource</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">eligible</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Phase 2: Score</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="k">def</span> <span class="nf">_score_resources</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">eligible</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">job_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource_options</span><span class="p">:</span> <span class="n">Dict</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="n">scored</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">resource_name</span><span class="p">,</span> <span class="n">resource</span> <span class="ow">in</span> <span class="n">eligible</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;selection_criteria&quot;</span><span class="p">]</span>
+            <span class="n">capabilities</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;capabilities&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Factor 1: Base priority (0-100 points)</span>
+            <span class="n">score</span> <span class="o">+=</span> <span class="n">selection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;priority&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span>
+
+            <span class="c1"># Factor 2: Job type preference (+50 if preferred)</span>
+            <span class="k">if</span> <span class="n">job_type</span> <span class="ow">in</span> <span class="n">selection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;preferred_for_job_types&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+                <span class="n">score</span> <span class="o">+=</span> <span class="mi">50</span>
+
+            <span class="c1"># Factor 3: Resource efficiency (0-30 points)</span>
+            <span class="k">if</span> <span class="n">resource_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gpu_enabled&quot;</span><span class="p">):</span>
+                <span class="n">score</span> <span class="o">+=</span> <span class="mi">30</span>  <span class="c1"># GPU job on GPU resource</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gpu_enabled&quot;</span><span class="p">):</span>
+                <span class="n">score</span> <span class="o">+=</span> <span class="mi">20</span>  <span class="c1"># CPU job on CPU-only resource (right-sizing)</span>
+
+            <span class="c1"># Factor 4: Cost optimization</span>
+            <span class="n">cost</span> <span class="o">=</span> <span class="n">selection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cost_per_core_hour&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">score</span> <span class="o">-=</span> <span class="n">cost</span> <span class="o">*</span> <span class="mi">5</span>
+
+            <span class="c1"># Factor 5: Current load — scale score down by utilization so a</span>
+            <span class="c1"># fully-loaded resource can never beat an idle one on priority alone.</span>
+            <span class="n">utilization</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_utilization</span><span class="p">(</span><span class="n">resource_name</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span>
+            <span class="n">score</span> <span class="o">*=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">utilization</span>
+
+            <span class="n">scored</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;resource_name&quot;</span><span class="p">:</span> <span class="n">resource_name</span><span class="p">,</span>
+                    <span class="s2">&quot;resource&quot;</span><span class="p">:</span> <span class="n">resource</span><span class="p">,</span>
+                    <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="n">scored</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scored</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Helpers</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="k">def</span> <span class="nf">_get_utilization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return utilization as a fraction [0, 1] based on active job count.&quot;&quot;&quot;</span>
+        <span class="n">max_jobs</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;capabilities&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_concurrent_jobs&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">max_jobs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_tracker</span><span class="o">.</span><span class="n">get_job_count</span><span class="p">(</span><span class="n">resource_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">current</span> <span class="o">/</span> <span class="n">max_jobs</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_is_resource_healthy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the resource passes its health check.</span>
+
+<span class="sd">        NOTE: This calls health_check() which makes a live HTTP request on</span>
+<span class="sd">        every job submission. Consider caching results if this becomes a</span>
+<span class="sd">        bottleneck (e.g. 30s TTL).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection_details</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;connection_details&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">connection_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;health_check_url&quot;</span><span class="p">):</span>
+            <span class="c1"># No health check URL configured; assume healthy.</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">health_check</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;connected&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Health check raised exception for </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">resource</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_user_has_resource_permission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the user has permission to use this resource by delegating to</span>
+<span class="sd">        the resource&#39;s own user authentication method (has_permission).</span>
+
+<span class="sd">        For GlobusUserAuthentication this verifies the external user mapping</span>
+<span class="sd">        exists and, when the auth controller is configured with</span>
+<span class="sd">        allowed_globus_groups, confirms the user is still a member.</span>
+
+<span class="sd">        Returns True for auth methods whose has_permission always succeeds</span>
+<span class="sd">        (e.g. LocalUserAuthentication) or when the user passes all checks.</span>
+<span class="sd">        Returns False if the auth method denies access or raises an exception.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">resource_user_authentication</span><span class="o">.</span><span class="n">has_permission</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;has_permission raised for resource </span><span class="si">%s</span><span class="s2"> user </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">),</span>
+                <span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, HuBMAP Consortium.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

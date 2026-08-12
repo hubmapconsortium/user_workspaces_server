@@ -1,0 +1,494 @@
+Resource Controllers
+====================
+
+Resource controllers manage job execution on different compute platforms.
+
+LocalResource
+^^^^^^^^^^^^^
+
+Local machine resource for running jobs via subprocess
+
+**Configuration value:** ``"LocalResource"``
+
+Set ``resource_type`` to ``"LocalResource"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this resource instance
+
+
+**resource_type** (string) **[Required]**
+
+  Must be 'LocalResource'
+
+  *Allowed values:* ``"LocalResource"``
+
+
+**storage** (string) **[Required]**
+
+  Reference to storage configuration key in available_storage
+
+
+**user_authentication** (string) **[Required]**
+
+  Reference to authentication configuration key in available_user_authentication
+
+
+Optional Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**passthrough_domain** (string) *[Optional]*
+
+  Domain for passthrough connections (e.g., '127.0.0.1:8000')
+
+  *Default:* ``""``
+
+
+**parameter_mapping** (object) *[Optional]*
+
+  Maps generic parameter names to resource-specific names
+
+  *Default:* ``{}``
+
+
+**connection_details** (object) *[Optional]*
+
+  Connection configuration (typically empty for LocalResource)
+
+  *Default:* ``{}``
+
+
+**capabilities** (object) *[Optional]*
+
+  Hardware capabilities used by the intelligent resource selector to filter ineligible resources. Omit this section to exclude the resource from intelligent selection (it will still be used as main_resource fallback).
+
+  *Nested fields:*
+
+    **gpu_enabled** (boolean) **[Required]**
+
+      Whether this resource has GPU support
+
+    **gpu_types** (array) *[Optional]*
+
+      Available GPU models
+
+      *Default:* ``[]``
+
+    **max_cpus** (integer) **[Required]**
+
+      Maximum CPUs that can be requested per job
+
+      *Constraints:* minimum: 1
+
+    **max_memory_mb** (integer) **[Required]**
+
+      Maximum memory per job in MB (matches the memory_mb resource option)
+
+      *Constraints:* minimum: 1
+
+    **max_time_minutes** (integer) **[Required]**
+
+      Maximum walltime per job in minutes (matches the time_limit_min resource option)
+
+      *Constraints:* minimum: 1
+
+    **max_gpus** (integer) *[Optional]*
+
+      Maximum GPUs per job (0 = no GPU support)
+
+      *Default:* ``0``
+
+      *Constraints:* minimum: 0
+
+    **max_concurrent_jobs** (integer) *[Optional]*
+
+      Soft concurrent-job ceiling used to calculate utilization fraction for scoring. Omit to disable utilization scoring for this resource.
+
+      *Constraints:* minimum: 1
+
+
+**selection_criteria** (object) *[Optional]*
+
+  Scoring hints used by the intelligent resource selector to rank eligible resources.
+
+  *Nested fields:*
+
+    **priority** (integer) **[Required]**
+
+      Base priority score (0-100). Higher values make this resource preferred when all else is equal.
+
+      *Constraints:* minimum: 0
+
+    **cost_per_core_hour** (number) *[Optional]*
+
+      Relative cost metric per core-hour.
+
+      *Default:* ``1.0``
+
+      *Constraints:* minimum: 0
+
+    **preferred_for_job_types** (array) *[Optional]*
+
+      Job type keys that this resource is preferred for.
+
+      *Default:* ``[]``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "Local Resource",
+    "resource_type": "LocalResource",
+    "storage": "main_storage",
+    "user_authentication": "main_auth",
+    "passthrough_domain": "127.0.0.1:8000",
+    "connection_details": {},
+    "capabilities": {
+      "gpu_enabled": false,
+      "max_cpus": 4,
+      "max_memory_mb": 16384,
+      "max_time_minutes": 480,
+      "max_gpus": 0,
+      "max_concurrent_jobs": 10
+    },
+    "selection_criteria": {
+      "priority": 1,
+      "cost_per_core_hour": 0.0,
+      "preferred_for_job_types": [
+        "local_test_job"
+      ]
+    }
+  }
+
+
+SlurmAPIResource
+^^^^^^^^^^^^^^^^
+
+SLURM cluster resource using SLURM REST API v0.0.40
+
+**Configuration value:** ``"SlurmAPIResource"``
+
+Set ``resource_type`` to ``"SlurmAPIResource"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this resource instance
+
+
+**resource_type** (string) **[Required]**
+
+  Must be 'SlurmAPIResource'
+
+  *Allowed values:* ``"SlurmAPIResource"``
+
+
+**storage** (string) **[Required]**
+
+  Reference to storage configuration key in available_storage
+
+
+**user_authentication** (string) **[Required]**
+
+  Reference to authentication configuration key in available_user_authentication
+
+
+**connection_details** (object) **[Required]**
+
+  SLURM API connection configuration
+
+  *Nested fields:*
+
+    **root_url** (string) **[Required]**
+
+      Base URL for SLURM REST API (e.g., 'https://slurm.example.com/api')
+
+    **api_token** (string) **[Required]**
+
+      API token for SLURM REST API authentication
+
+    **token_lifespan** (string) *[Optional]*
+
+      Token lifespan in seconds
+
+      *Default:* ``"3600"``
+
+    **health_check_url** (string) *[Optional]*
+
+      URL for health check endpoint. When present, the resource is health-checked before each selection.
+
+
+Optional Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**passthrough_domain** (string) *[Optional]*
+
+  Domain for passthrough connections
+
+  *Default:* ``""``
+
+
+**parameter_mapping** (object) *[Optional]*
+
+  Maps generic parameter names to SLURM-specific names (e.g., num_cpus -> cpus_per_task)
+
+  *Default:* ``{}``
+
+
+**cpu_partition** (string) *[Optional]*
+
+  SLURM partition name for CPU jobs
+
+  *Default:* ``""``
+
+
+**gpu_partition** (string) *[Optional]*
+
+  SLURM partition name for GPU jobs
+
+  *Default:* ``""``
+
+
+**capabilities** (object) *[Optional]*
+
+  Hardware capabilities used by the intelligent resource selector to filter ineligible resources. Omit this section to exclude the resource from intelligent selection (it will still be used as main_resource fallback).
+
+  *Nested fields:*
+
+    **gpu_enabled** (boolean) **[Required]**
+
+      Whether this resource has GPU support
+
+    **gpu_types** (array) *[Optional]*
+
+      Available GPU models (e.g. ['A100', 'V100'])
+
+      *Default:* ``[]``
+
+    **max_cpus** (integer) **[Required]**
+
+      Maximum CPUs that can be requested per job
+
+      *Constraints:* minimum: 1
+
+    **max_memory_mb** (integer) **[Required]**
+
+      Maximum memory per job in MB (matches the memory_mb resource option)
+
+      *Constraints:* minimum: 1
+
+    **max_time_minutes** (integer) **[Required]**
+
+      Maximum walltime per job in minutes (matches the time_limit_min resource option)
+
+      *Constraints:* minimum: 1
+
+    **max_gpus** (integer) *[Optional]*
+
+      Maximum GPUs per job (0 = no GPU support)
+
+      *Default:* ``0``
+
+      *Constraints:* minimum: 0
+
+    **max_concurrent_jobs** (integer) *[Optional]*
+
+      Soft concurrent-job ceiling used to calculate utilization fraction for scoring. Omit to disable utilization scoring for this resource.
+
+      *Constraints:* minimum: 1
+
+    **partitions** (array) *[Optional]*
+
+      Available SLURM partition names
+
+      *Default:* ``[]``
+
+
+**selection_criteria** (object) *[Optional]*
+
+  Scoring hints used by the intelligent resource selector to rank eligible resources.
+
+  *Nested fields:*
+
+    **priority** (integer) **[Required]**
+
+      Base priority score (0-100). Higher values make this resource preferred when all else is equal.
+
+      *Constraints:* minimum: 0
+
+    **cost_per_core_hour** (number) *[Optional]*
+
+      Relative cost metric per core-hour. Lower values are preferred for cost-optimised routing.
+
+      *Default:* ``1.0``
+
+      *Constraints:* minimum: 0
+
+    **preferred_for_job_types** (array) *[Optional]*
+
+      Job type keys (matching available_job_types keys) that this resource is preferred for. Matching jobs receive a bonus score.
+
+      *Default:* ``[]``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "SLURM GPU Cluster",
+    "resource_type": "SlurmAPIResource",
+    "storage": "main_storage",
+    "user_authentication": "main_auth",
+    "connection_details": {
+      "root_url": "https://slurm-gpu.example.com/api",
+      "api_token": "your-api-token-here",
+      "token_lifespan": "3600",
+      "health_check_url": "https://slurm-gpu.example.com/health"
+    },
+    "cpu_partition": "GPU-shared",
+    "gpu_partition": "GPU",
+    "capabilities": {
+      "gpu_enabled": true,
+      "gpu_types": [
+        "A100",
+        "V100"
+      ],
+      "max_cpus": 128,
+      "max_memory_mb": 524288,
+      "max_time_minutes": 2880,
+      "max_gpus": 8,
+      "max_concurrent_jobs": 50,
+      "partitions": [
+        "GPU",
+        "GPU-shared"
+      ]
+    },
+    "selection_criteria": {
+      "priority": 10,
+      "cost_per_core_hour": 1.5,
+      "preferred_for_job_types": [
+        "jupyter_lab"
+      ]
+    }
+  }
+
+
+SlurmAPIResourceV0038
+^^^^^^^^^^^^^^^^^^^^^
+
+SLURM cluster resource using SLURM REST API v0.0.38
+
+**Configuration value:** ``"SlurmAPIResourceV0038"``
+
+Set ``resource_type`` to ``"SlurmAPIResourceV0038"`` to use this controller.
+
+Required Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**name** (string) **[Required]**
+
+  Human-readable name for this resource instance
+
+
+**resource_type** (string) **[Required]**
+
+  Must be 'SlurmAPIResourceV0038'
+
+  *Allowed values:* ``"SlurmAPIResourceV0038"``
+
+
+**storage** (string) **[Required]**
+
+  Reference to storage configuration key in available_storage
+
+
+**user_authentication** (string) **[Required]**
+
+  Reference to authentication configuration key in available_user_authentication
+
+
+**connection_details** (object) **[Required]**
+
+  SLURM API connection configuration
+
+  *Nested fields:*
+
+    **root_url** (string) **[Required]**
+
+      Base URL for SLURM REST API (e.g., 'https://slurm.example.com/api')
+
+    **api_token** (string) **[Required]**
+
+      API token for SLURM REST API authentication
+
+    **token_lifespan** (string) *[Optional]*
+
+      Token lifespan in seconds
+
+      *Default:* ``"3600"``
+
+    **health_check_url** (string) *[Optional]*
+
+      URL for health check endpoint
+
+
+Optional Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**passthrough_domain** (string) *[Optional]*
+
+  Domain for passthrough connections
+
+  *Default:* ``""``
+
+
+**parameter_mapping** (object) *[Optional]*
+
+  Maps generic parameter names to SLURM-specific names (e.g., num_cpus -> cpus_per_task). Note: memory_per_node is not supported in v0.0.38 and will be stripped even if mapped.
+
+  *Default:* ``{}``
+
+
+**cpu_partition** (string) *[Optional]*
+
+  SLURM partition name for CPU jobs
+
+  *Default:* ``""``
+
+
+**gpu_partition** (string) *[Optional]*
+
+  SLURM partition name for GPU jobs
+
+  *Default:* ``""``
+
+
+Example Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: json
+
+  {
+    "name": "SLURM Cluster (v0.0.38)",
+    "resource_type": "SlurmAPIResourceV0038",
+    "storage": "main_storage",
+    "user_authentication": "main_auth",
+    "connection_details": {
+      "root_url": "https://slurm.example.com/api",
+      "api_token": "your-api-token-here",
+      "token_lifespan": "3600"
+    },
+    "cpu_partition": "cpu",
+    "gpu_partition": "gpu"
+  }
+

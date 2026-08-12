@@ -1,0 +1,21 @@
+user\_workspaces\_server.services package
+=========================================
+
+Submodules
+----------
+
+user\_workspaces\_server.services.resource\_selector module
+-----------------------------------------------------------
+
+.. automodule:: user_workspaces_server.services.resource_selector
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: user_workspaces_server.services
+   :members:
+   :undoc-members:
+   :show-inheritance:
